@@ -19,7 +19,8 @@ test_that("filter_na_confidence filters with default threshold (2D)", {
     x = 1:5,
     y = 6:10,
     confidence = c(0.5, 0.7, 0.4, 0.8, 0.9)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result <- filter_na_confidence(data)
 
@@ -36,7 +37,8 @@ test_that("filter_na_confidence filters with default threshold (3D)", {
     y = 6:10,
     z = 11:15,
     confidence = c(0.5, 0.7, 0.4, 0.8, 0.9)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result <- filter_na_confidence(data)
 
@@ -54,7 +56,8 @@ test_that("filter_na_confidence filters with custom threshold", {
     y = 6:10,
     z = 11:15,
     confidence = c(0.5, 0.7, 0.4, 0.8, 0.9)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result <- filter_na_confidence(data, threshold = 0.75)
 
@@ -71,7 +74,8 @@ test_that("filter_na_confidence handles boundary values", {
     x = 1:4,
     y = 5:8,
     confidence = c(0.5, 0.6, 0.7, 0.8)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result <- filter_na_confidence(data, threshold = 0.6)
 
@@ -87,7 +91,8 @@ test_that("filter_na_confidence handles threshold of 0", {
     x = 1:3,
     y = 4:6,
     confidence = c(-0.1, 0, 0.5)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result <- filter_na_confidence(data, threshold = 0)
 
@@ -102,7 +107,8 @@ test_that("filter_na_confidence handles threshold of 1", {
     x = 1:3,
     y = 4:6,
     confidence = c(0.5, 0.99, 1)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result <- filter_na_confidence(data, threshold = 1)
 
@@ -117,7 +123,8 @@ test_that("filter_na_confidence preserves existing NAs in x and y", {
     x = c(1, NA, 3, 4),
     y = c(5, 6, NA, 8),
     confidence = c(0.5, 0.7, 0.8, 0.4)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result <- filter_na_confidence(data, threshold = 0.6)
 
@@ -140,7 +147,8 @@ test_that("filter_na_confidence preserves existing NAs in z", {
     y = 5:8,
     z = c(9, NA, 11, 12),
     confidence = c(0.7, 0.8, 0.5, 0.9)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result <- filter_na_confidence(data, threshold = 0.6)
 
@@ -158,7 +166,8 @@ test_that("filter_na_confidence preserves existing NAs in confidence", {
     x = 1:4,
     y = 5:8,
     confidence = c(0.5, NA, 0.8, 0.9)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result <- filter_na_confidence(data, threshold = 0.6)
 
@@ -173,7 +182,8 @@ test_that("filter_na_confidence handles all NAs in confidence", {
     time = 1:3,
     x = 1:3,
     y = 4:6
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   # as_aniframe creates confidence column with all NAs
   result <- filter_na_confidence(data, threshold = 0.6)
@@ -192,7 +202,8 @@ test_that("filter_na_confidence preserves other columns", {
     confidence = c(0.5, 0.7, 0.9),
     id = c("a", "b", "c"),
     value = c(10, 20, 30)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result <- filter_na_confidence(data, threshold = 0.6)
 
@@ -207,7 +218,8 @@ test_that("filter_na_confidence works without z column", {
     x = 1:3,
     y = 4:6,
     confidence = c(0.5, 0.7, 0.9)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result <- filter_na_confidence(data, threshold = 0.6)
 
@@ -224,7 +236,8 @@ test_that("filter_na_confidence works with z column", {
     y = 4:6,
     z = 7:9,
     confidence = c(0.5, 0.7, 0.9)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result <- filter_na_confidence(data, threshold = 0.6)
 
@@ -261,7 +274,8 @@ test_that("filter_na_confidence validates required columns exist", {
     time = 1:3,
     y = 1:3,
     confidence = c(0.5, 0.7, 0.9)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
   expect_error(
     filter_na_confidence(data),
     class = "rlang_error"
@@ -272,7 +286,8 @@ test_that("filter_na_confidence validates required columns exist", {
     time = 1:3,
     x = 1:3,
     confidence = c(0.5, 0.7, 0.9)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
   expect_error(
     filter_na_confidence(data),
     class = "rlang_error"
@@ -286,7 +301,8 @@ test_that("filter_na_confidence does not require z column", {
     x = 1:3,
     y = 4:6,
     confidence = c(0.5, 0.7, 0.9)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   expect_no_error(filter_na_confidence(data))
 })
@@ -297,7 +313,8 @@ test_that("filter_na_confidence validates threshold is single numeric", {
     x = 1:3,
     y = 4:6,
     confidence = c(0.5, 0.7, 0.9)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   # Non-numeric
   expect_error(
@@ -324,7 +341,8 @@ test_that("filter_na_confidence validates threshold is between 0 and 1", {
     x = 1:3,
     y = 4:6,
     confidence = c(0.5, 0.7, 0.9)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   # Below 0
   expect_error(
@@ -346,7 +364,8 @@ test_that("filter_na_confidence returns an aniframe", {
     y = 4:6,
     z = 7:9,
     confidence = c(0.5, 0.7, 0.9)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result <- filter_na_confidence(data, threshold = 0.6)
 

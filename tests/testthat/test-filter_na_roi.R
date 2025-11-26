@@ -225,7 +225,8 @@ test_that("filter_na_roi works with grid data", {
   data <- expand.grid(
     x = seq(0, 10, by = 5),
     y = seq(0, 10, by = 5)
-  ) |> as.data.frame()
+  ) |>
+    as.data.frame()
 
   result <- filter_na_roi(data, x_min = 3, x_max = 8, y_min = 3, y_max = 8)
 

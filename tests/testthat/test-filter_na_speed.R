@@ -16,7 +16,8 @@ test_that("filter_na_speed handles basic numeric threshold correctly", {
     x = c(1, 2, 4, 7, 11),
     y = c(1, 1, 2, 3, 5),
     confidence = c(0.8, 0.9, 0.7, 0.85, 0.6)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   # Test with numeric threshold
   result <- filter_na_speed(test_data, threshold = 3)
@@ -42,7 +43,8 @@ test_that("filter_na_speed handles 'auto' threshold correctly", {
     x = c(1, 2, 4, 7, 200), # Last value is an outlier
     y = c(1, 1, 2, 3, 30), # Last value is an outlier
     confidence = c(0.8, 0.9, 0.7, 0.85, 0.6)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result <- filter_na_speed(test_data, threshold = 5)
 
@@ -62,7 +64,8 @@ test_that("filter_na_speed works without confidence column", {
     time = 1:5,
     x = c(1, 2, 4, 7, 11),
     y = c(1, 1, 2, 3, 5)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result <- filter_na_speed(test_data, threshold = 3)
 
@@ -79,7 +82,8 @@ test_that("filter_na_speed errors on missing required columns", {
   test_data1 <- data.frame(
     time = 1:5,
     y = c(1, 1, 2, 3, 5)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   expect_error(
     filter_na_speed(test_data1),
@@ -90,7 +94,8 @@ test_that("filter_na_speed errors on missing required columns", {
   test_data2 <- data.frame(
     time = 1:5,
     x = c(1, 2, 4, 7, 11)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   expect_error(
     filter_na_speed(test_data2),
@@ -103,7 +108,8 @@ test_that("filter_na_speed errors on invalid threshold", {
     time = 1:5,
     x = c(1, 2, 4, 7, 11),
     y = c(1, 1, 2, 3, 5)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   expect_error(
     filter_na_speed(test_data, threshold = "invalid"),
@@ -116,7 +122,8 @@ test_that("filter_na_speed preserves data frame attributes", {
     time = 1:5,
     x = c(1, 2, 4, 7, 11),
     y = c(1, 1, 2, 3, 5)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result <- filter_na_speed(test_data, threshold = 3)
 
@@ -133,7 +140,8 @@ test_that("filter_na_speed handles NA values correctly", {
     x = c(1, NA, 4, 7, 11),
     y = c(NA, 1, 2, 3, 5),
     confidence = c(0.8, 0.9, NA, 0.85, 0.6)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   # Test with numeric threshold
   result <- filter_na_speed(test_data, threshold = 3)
@@ -149,7 +157,8 @@ test_that("filter_na_speed handles NA values correctly", {
     x = c(1, 2, NA, NA, 11),
     y = c(1, 1, NA, NA, 5),
     confidence = c(0.8, 0.9, NA, NA, 0.6)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result_consecutive <- filter_na_speed(test_data_consecutive, threshold = 3)
 
@@ -163,7 +172,8 @@ test_that("filter_na_speed handles NA values correctly", {
     x = rep(NA_real_, 5),
     y = c(1, 1, 2, 3, 5),
     confidence = c(0.8, 0.9, 0.7, 0.85, 0.6)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result_all_na <- filter_na_speed(test_data_all_na, threshold = 3)
 
@@ -177,7 +187,8 @@ test_that("filter_na_speed handles speed calculation with gaps", {
     time = c(1, 2, 5, 6, 7),
     x = c(1, 2, 4, 7, 11),
     y = c(1, 1, 2, 3, 5)
-  ) |> aniframe::as_aniframe()
+  ) |>
+    aniframe::as_aniframe()
 
   result_gaps <- filter_na_speed(test_data_gaps, threshold = 3)
 
