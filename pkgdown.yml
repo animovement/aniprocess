@@ -1,8 +1,8 @@
 pandoc: 3.1.11
-pkgdown: 2.1.3
+pkgdown: 2.2.0
 pkgdown_sha: ~
 articles: {}
-last_built: 2025-10-15T09:36Z
+last_built: 2025-11-26T17:39Z
 urls:
-  reference: http://www.roald-arboel.com/aniprocess/reference
-  article: http://www.roald-arboel.com/aniprocess/articles
+  reference: http://animovement.dev/aniprocess/reference
+  article: http://animovement.dev/aniprocess/articles

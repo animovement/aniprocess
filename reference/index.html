@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,7 +18,7 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/roaldarbol/aniprocess/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/animovement/aniprocess/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch"><li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
@@ -41,8 +41,7 @@
 
       <div class="section-desc"><p>These functions ensure that your data is ready for analysis.</p></div>
 
-
-    </div><div class="section level2">
+      <dl></dl></div><div class="section level2">
 
 
 
@@ -53,25 +52,33 @@
 
         </dt>
         <dd>Filter low-confidence values in a dataset</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="filter_na_speed.html">filter_na_speed()</a></code>
 
         </dt>
         <dd>Filter values by speed threshold</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="filter_na_roi.html">filter_na_roi()</a></code>
 
         </dt>
         <dd>Filter coordinates outside a region of interest (ROI)</dd>
+
+        <dt>
+
+          <code><a href="filter_na_range.html">filter_na_range()</a></code>
+
+        </dt>
+        <dd>Filter values outside a range to NA</dd>
       </dl></div><div class="section level2">
       <h2 id="interpolate-over-missing-values">Interpolate over missing values<a class="anchor" aria-label="anchor" href="#interpolate-over-missing-values"></a></h2>
 
       <div class="section-desc"><p>These functions ensure that your data is ready for analysis.</p></div>
 
-
-    </div><div class="section level2">
+      <dl></dl></div><div class="section level2">
 
 
 
@@ -82,31 +89,36 @@
 
         </dt>
         <dd>Replace Missing Values Using Various Methods</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="replace_na_linear.html">replace_na_linear()</a></code>
 
         </dt>
         <dd>Replace Missing Values Using Linear Interpolation</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="replace_na_locf.html">replace_na_locf()</a></code>
 
         </dt>
         <dd>Replace Missing Values Using Last Observation Carried Forward</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="replace_na_spline.html">replace_na_spline()</a></code>
 
         </dt>
         <dd>Replace Missing Values Using Spline Interpolation</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="replace_na_stine.html">replace_na_stine()</a></code>
 
         </dt>
         <dd>Replace Missing Values Using Stineman Interpolation</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="replace_na_value.html">replace_na_value()</a></code>
 
@@ -117,8 +129,7 @@
 
       <div class="section-desc"><p>These functions ensure that your data is ready for analysis.</p></div>
 
-
-    </div><div class="section level2">
+      <dl></dl></div><div class="section level2">
 
 
 
@@ -129,55 +140,64 @@
           <span class="badge lifecycle lifecycle-experimental">experimental</span>
         </dt>
         <dd>Smooth Movement Data</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="filter_lowpass.html">filter_lowpass()</a></code>
 
         </dt>
         <dd>Apply Butterworth Lowpass Filter to Signal</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="filter_highpass.html">filter_highpass()</a></code>
 
         </dt>
         <dd>Apply Butterworth Highpass Filter to Signal</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="filter_lowpass_fft.html">filter_lowpass_fft()</a></code>
 
         </dt>
         <dd>Apply FFT-based Lowpass Filter to Signal</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="filter_highpass_fft.html">filter_highpass_fft()</a></code>
 
         </dt>
         <dd>Apply FFT-based Highpass Filter to Signal</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="filter_kalman.html">filter_kalman()</a></code>
 
         </dt>
         <dd>Kalman Filter for Regular Time Series</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="filter_kalman_irregular.html">filter_kalman_irregular()</a></code>
 
         </dt>
         <dd>Kalman Filter for Irregular Time Series with Optional Resampling</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="filter_rollmean.html">filter_rollmean()</a></code>
 
         </dt>
         <dd>Apply Rolling Mean Filter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="filter_rollmedian.html">filter_rollmedian()</a></code>
 
         </dt>
         <dd>Apply Rolling Median Filter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="filter_sgolay.html">filter_sgolay()</a></code>
 
@@ -188,8 +208,7 @@
 
       <div class="section-desc"><p>These functions ensure that your data is ready for analysis.</p></div>
 
-
-    </div><div class="section level2">
+      <dl></dl></div><div class="section level2">
 
 
 
@@ -200,7 +219,8 @@
 
         </dt>
         <dd>Find Peaks in Time Series Data</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="find_troughs.html">find_troughs()</a></code>
 
@@ -216,7 +236,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
