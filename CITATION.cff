@@ -8,8 +8,8 @@ message: 'To cite package "aniprocess" in publications use:'
 type: software
 license: MIT
 title: 'aniprocess: An R package for signal processing and filtering of movement data.'
-version: 0.1.0
-date-released: 2025-10-14
+version: 0.1.1
+date-released: 2025-11-26
 identifiers:
   - type: doi
     value: 10.5281/zenodo.17357778
@@ -17,11 +17,11 @@ abstract: An R package for signal processing and filtering of movement data.
 authors:
 - family-names: Roald-Arbøl
   given-names: Mikkel
-  email: aniread.fi28v@passmail.com
+  email: animovement.84w1m@passmail.com
   orcid: https://orcid.org/0000-0002-9998-0058
-url: http://www.roald-arboel.com/aniread/
+url: http://animovement.dev/aniprocess/
 contact:
 - family-names: Roald-Arbøl
   given-names: Mikkel
-  email: aniread.fi28v@passmail.com
+  email: animovement.84w1m@passmail.com
   orcid: https://orcid.org/0000-0002-9998-0058

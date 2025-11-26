@@ -36,9 +36,9 @@
     },
     "aniframe": {
       "Package": "aniframe",
-      "Version": "0.1.0",
+      "Version": "0.2.3",
       "Source": "Repository",
-      "Repository": "https://roaldarbol.r-universe.dev",
+      "Repository": "https://animovement.r-universe.dev",
       "Requirements": [
         "R",
         "cli",
@@ -46,7 +46,7 @@
         "pillar",
         "rlang"
       ],
-      "Hash": "7cdd94eaa9cdc4ea6a8c915d8ce725ef"
+      "Hash": "254affcb9b4972128158d8ecfb5908ba"
     },
     "cli": {
       "Package": "cli",

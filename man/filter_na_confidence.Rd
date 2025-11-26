@@ -7,26 +7,42 @@
 filter_na_confidence(data, threshold = 0.6)
 }
 \arguments{
-\item{data}{A data frame containing the columns \code{x}, \code{y}, and \code{confidence}.}
+\item{data}{A data frame containing the columns \code{x}, \code{y}, and \code{confidence}.
+If a \code{z} column is present, it will also be filtered.}
 
 \item{threshold}{A numeric value specifying the minimum confidence level to
-retain data. Default is 0.6.}
+retain data. Must be a single value between 0 and 1. Default is 0.6.}
 }
 \value{
 A data frame with the same structure as the input, but where \code{x}, \code{y},
-and \code{confidence} values are replaced with \code{NA} if the confidence is below the threshold.
+\code{z} (if present), and \code{confidence} values are replaced with \code{NA} if the
+confidence is below the threshold.
 }
 \description{
-This function replaces values in columns \code{x}, \code{y}, and \code{confidence} with \code{NA}
-if the confidence values are below a specified threshold.
+This function replaces values in columns \code{x}, \code{y}, and optionally \code{z} with \code{NA}
+if the confidence values are below a specified threshold. The \code{confidence}
+column is also filtered.
 }
 \examples{
-library(dplyr)
-data <- dplyr::tibble(
+# 2D example
+data <- aniframe::aniframe(
+  time = 1:5,
   x = 1:5,
   y = 6:10,
   confidence = c(0.5, 0.7, 0.4, 0.8, 0.9)
 )
+
 filter_na_confidence(data, threshold = 0.6)
+
+# With z column (3D)
+data_3d <- aniframe::aniframe(
+  time = 1:5,
+  x = 1:5,
+  y = 6:10,
+  z = 11:15,
+  confidence = c(0.5, 0.7, 0.4, 0.8, 0.9)
+)
+
+filter_na_confidence(data_3d, threshold = 0.6)
 
 }

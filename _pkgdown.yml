@@ -1,4 +1,4 @@
-url: http://www.roald-arboel.com/aniprocess/
+url: http://animovement.dev/aniprocess/
 home:
   title: "aniprocess – An R toolbox for reading and writing movement data"
 
@@ -28,6 +28,7 @@ reference:
   - filter_na_confidence
   - filter_na_speed
   - filter_na_roi
+  - filter_na_range
 
 - title: "Interpolate over missing values"
   desc: These functions ensure that your data is ready for analysis.
