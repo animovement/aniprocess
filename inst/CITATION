@@ -6,9 +6,9 @@ bibentry(bibtype = "Misc",
          title = "aniprocess: An R package for signal processing and filtering of movement data",
          author = person(given = "Mikkel",
                          family = "Roald-Arbøl",
-                         email = "aniread.fi28v@passmail.com",
+                         email = "animovement.84w1m@passmail.com",
                          comment = c(ORCID = "0000-0002-9998-0058")),
          year = "2025",
-         url = "http://www.roald-arboel.com/aniprocess/",
+         url = "http://animovement.dev/aniprocess/",
          abstract = "An R package for signal processing and filtering of movement data.",
-         version = "0.1.0")
+         version = "0.1.1")

@@ -77,7 +77,7 @@ filter_na_roi_square <- function(data, x_min, x_max, y_min, y_max) {
   if (!is.null(x_min)) {
     data <- data |>
       dplyr::mutate(
-        x = dplyr::if_else(.data$x < x_min, NA_real_, .data$x),
+        x = filter_na_range(.data$x, min = x_min),
         y = dplyr::if_else(.data$x < x_min, NA_real_, .data$y)
       )
   }
@@ -85,7 +85,7 @@ filter_na_roi_square <- function(data, x_min, x_max, y_min, y_max) {
   if (!is.null(x_max)) {
     data <- data |>
       dplyr::mutate(
-        x = dplyr::if_else(.data$x > x_max, NA_real_, .data$x),
+        x = filter_na_range(.data$x, max = x_max),
         y = dplyr::if_else(.data$x > x_max, NA_real_, .data$y)
       )
   }
@@ -94,7 +94,7 @@ filter_na_roi_square <- function(data, x_min, x_max, y_min, y_max) {
     data <- data |>
       dplyr::mutate(
         x = dplyr::if_else(.data$y < y_min, NA_real_, .data$x),
-        y = dplyr::if_else(.data$y < y_min, NA_real_, .data$y)
+        y = filter_na_range(.data$y, min = y_min)
       )
   }
 
@@ -102,7 +102,7 @@ filter_na_roi_square <- function(data, x_min, x_max, y_min, y_max) {
     data <- data |>
       dplyr::mutate(
         x = dplyr::if_else(.data$y > y_max, NA_real_, .data$x),
-        y = dplyr::if_else(.data$y > y_max, NA_real_, .data$y)
+        y = filter_na_range(.data$y, max = y_max)
       )
   }
   return(data)

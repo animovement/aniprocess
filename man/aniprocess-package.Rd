@@ -11,14 +11,14 @@ An R package for signal processing and filtering of movement data.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{http://www.roald-arboel.com/aniprocess/}
-  \item \url{https://github.com/roaldarbol/aniprocess/}
-  \item Report bugs at \url{https://github.com/roaldarbol/aniprocess/issues}
+  \item \url{http://animovement.dev/aniprocess/}
+  \item \url{https://github.com/animovement/aniprocess/}
+  \item Report bugs at \url{https://github.com/animovement/aniprocess/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: Mikkel Roald-Arbøl \email{aniprocess.fi28v@passmail.com} (\href{https://orcid.org/0000-0002-9998-0058}{ORCID})
+\strong{Maintainer}: Mikkel Roald-Arbøl \email{animovement.84w1m@passmail.com} (\href{https://orcid.org/0000-0002-9998-0058}{ORCID})
 
 }
 \keyword{internal}
