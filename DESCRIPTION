@@ -17,7 +17,7 @@ BugReports: https://github.com/animovement/aniprocess/issues
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    aniframe >= 0.2.5,
+    aniframe,
     cli,
     collapse,
     dplyr,

@@ -131,6 +131,5 @@ Proc. 1st Int. Conf. Advanced Data Analysis, Business Analytics and Intelligence
 \seealso{
 \itemize{
 \item \code{\link{find_peaks}} for finding local maxima
-\item \code{\link[pracma]{findpeaks}} in the pracma package for alternative extrema detection methods
 }
 }

@@ -91,7 +91,6 @@
 #'
 #' @seealso
 #' * \code{\link{find_troughs}} for finding local minima
-#' * \code{\link[pracma]{findpeaks}} in the pracma package for alternative peak detection methods
 #'
 #' @note
 #' * The function is optimized for use with dplyr's mutate
@@ -212,7 +211,6 @@ find_peaks <- function(
 #'
 #' @seealso
 #' * \code{\link{find_peaks}} for finding local maxima
-#' * \code{\link[pracma]{findpeaks}} in the pracma package for alternative extrema detection methods
 #'
 #' @note
 #' * The function is optimized for use with dplyr's mutate
