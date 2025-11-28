@@ -146,9 +146,6 @@ Analytics and Intelligence.
 - [`find_troughs`](http://animovement.dev/aniprocess/reference/find_troughs.md)
   for finding local minima
 
-- `findpeaks` in the pracma package for alternative peak detection
-  methods
-
 ## Examples
 
 ``` r

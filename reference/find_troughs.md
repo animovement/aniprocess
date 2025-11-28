@@ -147,9 +147,6 @@ Analytics and Intelligence.
 - [`find_peaks`](http://animovement.dev/aniprocess/reference/find_peaks.md)
   for finding local maxima
 
-- `findpeaks` in the pracma package for alternative extrema detection
-  methods
-
 ## Examples
 
 ``` r
