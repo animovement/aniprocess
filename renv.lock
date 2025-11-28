@@ -1,6 +1,6 @@
 {
   "R": {
-    "Version": "4.4.2",
+    "Version": "4.5.2",
     "Repositories": [
       {
         "Name": "CRAN",
@@ -36,7 +36,7 @@
     },
     "aniframe": {
       "Package": "aniframe",
-      "Version": "0.2.3",
+      "Version": "0.2.5",
       "Source": "Repository",
       "Repository": "https://animovement.r-universe.dev",
       "Requirements": [
@@ -46,7 +46,7 @@
         "pillar",
         "rlang"
       ],
-      "Hash": "254affcb9b4972128158d8ecfb5908ba"
+      "Hash": "92acd53d2184de25996430510384e338"
     },
     "cli": {
       "Package": "cli",
