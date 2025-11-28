@@ -131,6 +131,5 @@ Proc. 1st Int. Conf. Advanced Data Analysis, Business Analytics and Intelligence
 \seealso{
 \itemize{
 \item \code{\link{find_troughs}} for finding local minima
-\item \code{\link[pracma]{findpeaks}} in the pracma package for alternative peak detection methods
 }
 }
