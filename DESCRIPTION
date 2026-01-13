@@ -24,6 +24,7 @@ Imports:
     methods,
     rlang
 Suggests: 
+    animetric,
     knitr,
     roll,
     signal,

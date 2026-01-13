@@ -99,6 +99,9 @@ filter_sgolay <- function(
   keep_na = FALSE,
   ...
 ) {
+  # Check signal is installed
+  check_signal()
+
   # Input validation
   if (!is.numeric(x)) {
     cli::cli_abort("Data must be numeric")
