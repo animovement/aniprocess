@@ -3,13 +3,12 @@
 # - Basic filtering with default threshold (3D with z)
 # - Custom threshold values
 # - Boundary cases (0, 1, values on threshold)
-# - Preserves existing NAs in x, y, z, confidence
+# - Preserves existing NAs in spatial and confidence columns
 # - Preserves other columns in data
-# - Works without z column
-# - Works with z column
+# - Works with different coordinate systems
 # - Works when confidence is all NAs
 # - Validates data is an aniframe
-# - Validates required columns exist (x, y)
+# - Validates required columns exist (spatial variables from metadata)
 # - Validates threshold is single numeric value
 # - Validates threshold is between 0 and 1
 
@@ -38,7 +37,7 @@ test_that("filter_na_confidence filters with default threshold (3D)", {
     z = 11:15,
     confidence = c(0.5, 0.7, 0.4, 0.8, 0.9)
   ) |>
-    aniframe::as_aniframe()
+    aniframe::as_aniframe(variables_where = c("x", "y", "z"))
 
   result <- filter_na_confidence(data)
 
@@ -57,7 +56,7 @@ test_that("filter_na_confidence filters with custom threshold", {
     z = 11:15,
     confidence = c(0.5, 0.7, 0.4, 0.8, 0.9)
   ) |>
-    aniframe::as_aniframe()
+    aniframe::as_aniframe(variables_where = c("x", "y", "z"))
 
   result <- filter_na_confidence(data, threshold = 0.75)
 
@@ -148,7 +147,7 @@ test_that("filter_na_confidence preserves existing NAs in z", {
     z = c(9, NA, 11, 12),
     confidence = c(0.7, 0.8, 0.5, 0.9)
   ) |>
-    aniframe::as_aniframe()
+    aniframe::as_aniframe(variables_where = c("x", "y", "z"))
 
   result <- filter_na_confidence(data, threshold = 0.6)
 
@@ -181,11 +180,11 @@ test_that("filter_na_confidence handles all NAs in confidence", {
   data <- data.frame(
     time = 1:3,
     x = 1:3,
-    y = 4:6
+    y = 4:6,
+    confidence = c(NA_real_, NA_real_, NA_real_)
   ) |>
     aniframe::as_aniframe()
 
-  # as_aniframe creates confidence column with all NAs
   result <- filter_na_confidence(data, threshold = 0.6)
 
   # All rows should become NA since confidence is all NA
@@ -212,7 +211,7 @@ test_that("filter_na_confidence preserves other columns", {
   expect_equal(result$value, c(10, 20, 30))
 })
 
-test_that("filter_na_confidence works without z column", {
+test_that("filter_na_confidence works with 2D data", {
   data <- data.frame(
     time = 1:3,
     x = 1:3,
@@ -223,13 +222,12 @@ test_that("filter_na_confidence works without z column", {
 
   result <- filter_na_confidence(data, threshold = 0.6)
 
-  # Should work fine without z
   expect_equal(result$x, c(NA, 2, 3))
   expect_equal(result$y, c(NA, 5, 6))
   expect_false("z" %in% names(result))
 })
 
-test_that("filter_na_confidence works with z column", {
+test_that("filter_na_confidence works with 3D data", {
   data <- data.frame(
     time = 1:3,
     x = 1:3,
@@ -237,7 +235,7 @@ test_that("filter_na_confidence works with z column", {
     z = 7:9,
     confidence = c(0.5, 0.7, 0.9)
   ) |>
-    aniframe::as_aniframe()
+    aniframe::as_aniframe(variables_where = c("x", "y", "z"))
 
   result <- filter_na_confidence(data, threshold = 0.6)
 
@@ -245,6 +243,21 @@ test_that("filter_na_confidence works with z column", {
   expect_equal(result$x, c(NA, 2, 3))
   expect_equal(result$y, c(NA, 5, 6))
   expect_equal(result$z, c(NA, 8, 9))
+})
+
+test_that("filter_na_confidence works with polar coordinates", {
+  data <- data.frame(
+    time = 1:3,
+    rho = c(1, 2, 3),
+    phi = c(0.5, 1.0, 1.5),
+    confidence = c(0.5, 0.7, 0.9)
+  ) |>
+    aniframe::as_aniframe(variables_where = c("rho", "phi"))
+
+  result <- filter_na_confidence(data, threshold = 0.6)
+
+  expect_equal(result$rho, c(NA, 2, 3))
+  expect_equal(result$phi, c(NA, 1.0, 1.5))
 })
 
 test_that("filter_na_confidence validates data is an aniframe", {
@@ -269,33 +282,7 @@ test_that("filter_na_confidence validates data is an aniframe", {
 })
 
 test_that("filter_na_confidence validates required columns exist", {
-  # Missing x column
-  data <- data.frame(
-    time = 1:3,
-    y = 1:3,
-    confidence = c(0.5, 0.7, 0.9)
-  ) |>
-    aniframe::as_aniframe()
-  expect_error(
-    filter_na_confidence(data),
-    class = "rlang_error"
-  )
-
-  # Missing y column
-  data <- data.frame(
-    time = 1:3,
-    x = 1:3,
-    confidence = c(0.5, 0.7, 0.9)
-  ) |>
-    aniframe::as_aniframe()
-  expect_error(
-    filter_na_confidence(data),
-    class = "rlang_error"
-  )
-})
-
-test_that("filter_na_confidence does not require z column", {
-  # z is optional, should not error if missing
+  # Create aniframe then modify metadata to have missing spatial variable
   data <- data.frame(
     time = 1:3,
     x = 1:3,
@@ -304,7 +291,27 @@ test_that("filter_na_confidence does not require z column", {
   ) |>
     aniframe::as_aniframe()
 
-  expect_no_error(filter_na_confidence(data))
+  # Set metadata to expect z column that doesn't exist
+  data <- aniframe::set_metadata(data, variables_where = c("x", "y", "z"))
+
+  expect_error(
+    filter_na_confidence(data),
+    "missing required column"
+  )
+})
+
+test_that("filter_na_confidence validates confidence column exists", {
+  data <- data.frame(
+    time = 1:3,
+    x = 1:3,
+    y = 4:6
+  ) |>
+    aniframe::as_aniframe()
+
+  expect_error(
+    filter_na_confidence(data),
+    "missing required column.*confidence"
+  )
 })
 
 test_that("filter_na_confidence validates threshold is single numeric", {
@@ -365,11 +372,26 @@ test_that("filter_na_confidence returns an aniframe", {
     z = 7:9,
     confidence = c(0.5, 0.7, 0.9)
   ) |>
-    aniframe::as_aniframe()
+    aniframe::as_aniframe(variables_where = c("x", "y", "z"))
 
   result <- filter_na_confidence(data, threshold = 0.6)
 
   expect_s3_class(result, "aniframe")
   expect_equal(result$x, c(NA, 2, 3))
   expect_equal(result$z, c(NA, 8, 9))
+})
+
+test_that("filter_na_confidence validates confidence column is numeric", {
+  data <- data.frame(
+    time = 1:3,
+    x = 1:3,
+    y = 4:6,
+    confidence = c("low", "medium", "high")
+  ) |>
+    aniframe::as_aniframe()
+
+  expect_error(
+    filter_na_confidence(data),
+    "confidence.*must be numeric"
+  )
 })

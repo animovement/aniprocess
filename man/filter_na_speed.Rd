@@ -7,41 +7,36 @@
 filter_na_speed(data, threshold = "auto")
 }
 \arguments{
-\item{data}{A data frame containing the following required columns:
-\itemize{
-\item \code{x}: x-coordinates
-\item \code{y}: y-coordinates
-\item \code{time}: time values
-Optional column:
-\item \code{confidence}: confidence values for each observation
-}}
+\item{data}{An aniframe containing spatial coordinates and a time column.}
 
 \item{threshold}{A numeric value specifying the speed threshold, or "auto".
 \itemize{
-\item If numeric: Observations with speeds greater than this value will have their
-\code{x}, \code{y}, and \code{confidence} values replaced with \code{NA}
-\item If "auto": Sets threshold at mean speed + 3 standard deviations
+\item If numeric: Observations with speeds greater than this value will have
+their spatial and confidence values replaced with NA.
+\item If "auto": Sets threshold at mean speed + 3 standard deviations.
 }}
 }
 \value{
-A data frame with the same columns as the input \code{data}, but with
-values replaced by \code{NA} where the speed exceeds the threshold.
+An aniframe with the same structure as the input, but with spatial
+and confidence values replaced by NA where speed exceeds the threshold.
 }
 \description{
-This function filters out values in a dataset where the calculated speed exceeds
-a specified threshold. Values for \code{x}, \code{y}, and \code{confidence} are replaced with
-\code{NA} if their corresponding speed exceeds the threshold. Speed is calculated
-using the \code{calculate_kinematics} function.
+Filters out observations where the calculated speed exceeds a specified
+threshold. Spatial coordinates and confidence values are replaced with NA
+where speed is too high. Speed is calculated using numerical differentiation
+of position over time.
 }
 \details{
-The speed is calculated using the \code{calculate_kinematics} function, which
-computes translational velocity (\code{v_translation}) and other kinematic parameters.
-When using \code{threshold = "auto"}, the function calculates the threshold as the
-mean speed plus three standard deviations, which assumes normally distributed speeds.
+Speed is calculated as the magnitude of the velocity vector, computed using
+numerical differentiation via the \code{differentiate} function. For 2D data,
+speed = sqrt(v_x^2 + v_y^2). For 3D data, speed = sqrt(v_x^2 + v_y^2 + v_z^2).
+
+When using \code{threshold = "auto"}, the function calculates the threshold as
+the mean speed plus three standard deviations, which assumes approximately
+normally distributed speeds.
 }
 \examples{
-\dontrun{
-data <- dplyr::tibble(
+data <- aniframe::aniframe(
   time = 1:5,
   x = c(1, 2, 4, 7, 11),
   y = c(1, 1, 2, 3, 5),
@@ -49,10 +44,9 @@ data <- dplyr::tibble(
 )
 
 # Filter data by a speed threshold of 3
-filter_by_speed(data, threshold = 3)
+filter_na_speed(data, threshold = 3)
 
 # Use automatic threshold
-filter_by_speed(data, threshold = "auto")
-}
+filter_na_speed(data, threshold = "auto")
 
 }

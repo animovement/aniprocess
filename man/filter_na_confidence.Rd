@@ -7,21 +7,21 @@
 filter_na_confidence(data, threshold = 0.6)
 }
 \arguments{
-\item{data}{A data frame containing the columns \code{x}, \code{y}, and \code{confidence}.
-If a \code{z} column is present, it will also be filtered.}
+\item{data}{An aniframe containing a \code{confidence} column and spatial columns
+as defined in the metadata's \code{variables_where}.}
 
 \item{threshold}{A numeric value specifying the minimum confidence level to
 retain data. Must be a single value between 0 and 1. Default is 0.6.}
 }
 \value{
-A data frame with the same structure as the input, but where \code{x}, \code{y},
-\code{z} (if present), and \code{confidence} values are replaced with \code{NA} if the
-confidence is below the threshold.
+An aniframe with the same structure as the input, but where spatial
+and \code{confidence} values are replaced with \code{NA} if the confidence is below
+the threshold.
 }
 \description{
-This function replaces values in columns \code{x}, \code{y}, and optionally \code{z} with \code{NA}
-if the confidence values are below a specified threshold. The \code{confidence}
-column is also filtered.
+This function replaces spatial coordinate values with \code{NA} if the confidence
+values are below a specified threshold. The \code{confidence} column is also
+filtered.
 }
 \examples{
 # 2D example
@@ -40,7 +40,8 @@ data_3d <- aniframe::aniframe(
   x = 1:5,
   y = 6:10,
   z = 11:15,
-  confidence = c(0.5, 0.7, 0.4, 0.8, 0.9)
+  confidence = c(0.5, 0.7, 0.4, 0.8, 0.9),
+  variables_where = c("x", "y", "z")
 )
 
 filter_na_confidence(data_3d, threshold = 0.6)

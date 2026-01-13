@@ -1,6 +1,3 @@
-library(testthat)
-library(signal)
-
 test_that("filter handles basic cases correctly", {
   # Create simple sine wave
   t <- seq(0, 1, by = 1 / 60) # 60 FPS

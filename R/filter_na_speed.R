@@ -1,34 +1,31 @@
 #' Filter values by speed threshold
 #'
 #' @description
-#' This function filters out values in a dataset where the calculated speed exceeds
-#' a specified threshold. Values for `x`, `y`, and `confidence` are replaced with
-#' `NA` if their corresponding speed exceeds the threshold. Speed is calculated
-#' using the `calculate_kinematics` function.
+#' Filters out observations where the calculated speed exceeds a specified
+#' threshold. Spatial coordinates and confidence values are replaced with NA
+#' where speed is too high. Speed is calculated using numerical differentiation
+#' of position over time.
 #'
-#' @param data A data frame containing the following required columns:
-#'   - `x`: x-coordinates
-#'   - `y`: y-coordinates
-#'   - `time`: time values
-#' Optional column:
-#'   - `confidence`: confidence values for each observation
+#' @param data An aniframe containing spatial coordinates and a time column.
 #' @param threshold A numeric value specifying the speed threshold, or "auto".
-#'   - If numeric: Observations with speeds greater than this value will have their
-#'     `x`, `y`, and `confidence` values replaced with `NA`
-#'   - If "auto": Sets threshold at mean speed + 3 standard deviations
+#'   - If numeric: Observations with speeds greater than this value will have
+#'     their spatial and confidence values replaced with NA.
+#'   - If "auto": Sets threshold at mean speed + 3 standard deviations.
 #'
-#' @return A data frame with the same columns as the input `data`, but with
-#' values replaced by `NA` where the speed exceeds the threshold.
+#' @return An aniframe with the same structure as the input, but with spatial
+#'   and confidence values replaced by NA where speed exceeds the threshold.
 #'
 #' @details
-#' The speed is calculated using the `calculate_kinematics` function, which
-#' computes translational velocity (`v_translation`) and other kinematic parameters.
-#' When using `threshold = "auto"`, the function calculates the threshold as the
-#' mean speed plus three standard deviations, which assumes normally distributed speeds.
+#' Speed is calculated as the magnitude of the velocity vector, computed using
+#' numerical differentiation via the `differentiate` function. For 2D data,
+#' speed = sqrt(v_x^2 + v_y^2). For 3D data, speed = sqrt(v_x^2 + v_y^2 + v_z^2).
+#'
+#' When using `threshold = "auto"`, the function calculates the threshold as
+#' the mean speed plus three standard deviations, which assumes approximately
+#' normally distributed speeds.
 #'
 #' @examples
-#' \dontrun{
-#' data <- dplyr::tibble(
+#' data <- aniframe::aniframe(
 #'   time = 1:5,
 #'   x = c(1, 2, 4, 7, 11),
 #'   y = c(1, 1, 2, 3, 5),
@@ -36,72 +33,109 @@
 #' )
 #'
 #' # Filter data by a speed threshold of 3
-#' filter_by_speed(data, threshold = 3)
+#' filter_na_speed(data, threshold = 3)
 #'
 #' # Use automatic threshold
-#' filter_by_speed(data, threshold = "auto")
-#' }
+#' filter_na_speed(data, threshold = "auto")
 #'
 #' @export
 filter_na_speed <- function(data, threshold = "auto") {
-  # Check required columns
-  required_cols <- c("x", "y", "time")
-  missing_cols <- setdiff(required_cols, names(data))
+  aniframe::ensure_is_aniframe(data)
 
+  # Get spatial variables from metadata
+  variables_where <- aniframe::get_metadata(data, "variables_where")
+
+  # Validate required columns exist
+  required_cols <- c("time", variables_where)
+  missing_cols <- setdiff(required_cols, names(data))
   if (length(missing_cols) > 0) {
-    cli::cli_abort(c(
-      "Missing required columns in data:",
-      "x" = paste(missing_cols, collapse = ", ")
-    ))
+    cli::cli_abort(
+      c(
+        "Missing required column{?s}: {.val {missing_cols}}.",
+        "i" = "Spatial variables from metadata: {.val {variables_where}}."
+      )
+    )
   }
 
-  # Check that x, y, time are numeric
-  non_numeric_cols <- sapply(data[required_cols], function(col) {
-    !is.numeric(col)
-  })
-  if (any(non_numeric_cols)) {
-    bad_cols <- names(non_numeric_cols)[non_numeric_cols]
-    cli::cli_abort(c(
-      "The following columns must be numeric:",
-      "x" = paste(bad_cols, collapse = ", ")
-    ))
+  # Check that time and spatial columns are numeric
+  check_cols <- c("time", variables_where)
+  for (col in check_cols) {
+    if (!is.numeric(data[[col]])) {
+      cli::cli_abort("Column {.val {col}} must be numeric.")
+    }
   }
 
   # Check threshold input
   if (!identical(threshold, "auto") && !is.numeric(threshold)) {
-    cli::cli_abort("threshold must be either 'auto' or a numeric value")
+    cli::cli_abort(
+      "{.arg threshold} must be either {.val auto} or a numeric value."
+    )
   }
 
-  n_cols <- ncol(data)
-  d <- data |>
-    dplyr::mutate(
-      v_translation = calculate_speed(.data$x, .data$y, .data$time)
-    )
+  if (is.numeric(threshold) && (length(threshold) != 1 || is.na(threshold))) {
+    cli::cli_abort("{.arg threshold} must be a single numeric value.")
+  }
 
+  # Calculate speed based on dimensionality
+  has_z <- "z" %in% variables_where
+
+  if (has_z) {
+    speed <- calculate_speed_3d(data$x, data$y, data$z, data$time)
+  } else {
+    speed <- calculate_speed_2d(data$x, data$y, data$time)
+  }
+
+  # Determine threshold if auto
   if (identical(threshold, "auto")) {
-    threshold <- mean(d$v_translation, na.rm = TRUE) +
-      3 * stats::sd(d$v_translation, na.rm = TRUE)
+    threshold <- mean(speed, na.rm = TRUE) + 3 * stats::sd(speed, na.rm = TRUE)
   }
 
-  d <- d |>
-    dplyr::mutate(
-      x = dplyr::if_else(abs(.data$v_translation) > threshold, NA, .data$x),
-      y = dplyr::if_else(abs(.data$v_translation) > threshold, NA, .data$y)
-    )
+  # Create mask for exceeding threshold
+  exceeds <- abs(speed) > threshold
 
-  # Only modify confidence if it exists
-  if ("confidence" %in% names(d)) {
-    d <- d |>
-      dplyr::mutate(
-        confidence = dplyr::if_else(
-          abs(.data$v_translation) > threshold,
-          NA,
-          .data$confidence
-        )
-      )
+  # Filter spatial variables
+  for (col in variables_where) {
+    data[[col]] <- dplyr::if_else(exceeds, NA_real_, data[[col]])
   }
 
-  d <- d |> dplyr::select(dplyr::all_of(1:n_cols))
+  # Filter confidence if present
+  if ("confidence" %in% names(data)) {
+    data$confidence <- dplyr::if_else(exceeds, NA_real_, data$confidence)
+  }
 
-  return(d)
+  data
+}
+
+
+#' Calculate speed from 2D position and time
+#'
+#' @param x Numeric vector of x coordinates.
+#' @param y Numeric vector of y coordinates.
+#' @param time Numeric vector of time values.
+#'
+#' @return Numeric vector of speed values.
+#' @keywords internal
+calculate_speed_2d <- function(x, y, time) {
+  check_animetric()
+  v_x <- animetric::differentiate(x, time, order = 1)
+  v_y <- animetric::differentiate(y, time, order = 1)
+  sqrt(v_x^2 + v_y^2)
+}
+
+
+#' Calculate speed from 3D position and time
+#'
+#' @param x Numeric vector of x coordinates.
+#' @param y Numeric vector of y coordinates.
+#' @param z Numeric vector of z coordinates.
+#' @param time Numeric vector of time values.
+#'
+#' @return Numeric vector of speed values.
+#' @keywords internal
+calculate_speed_3d <- function(x, y, z, time) {
+  check_animetric()
+  v_x <- animetric::differentiate(x, time, order = 1)
+  v_y <- animetric::differentiate(y, time, order = 1)
+  v_z <- animetric::differentiate(z, time, order = 1)
+  sqrt(v_x^2 + v_y^2 + v_z^2)
 }

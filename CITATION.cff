@@ -8,8 +8,8 @@ message: 'To cite package "aniprocess" in publications use:'
 type: software
 license: MIT
 title: 'aniprocess: An R package for signal processing and filtering of movement data.'
-version: 0.1.1
-date-released: 2025-11-26
+version: 0.1.2
+date-released: 2026-01-13
 identifiers:
   - type: doi
     value: 10.5281/zenodo.17357778

@@ -10,18 +10,6 @@
 #' @export
 filter_rollmedian <- function(x, window_width = 5, min_obs = 1, ...) {
   # Check that roll is installed
-  rlang::check_installed(
-    "roll",
-    reason = "to use filter_rollmedian()",
-    action = function(...) {
-      utils::install.packages(
-        'roll',
-        repos = c(
-          'https://roaldarbol.r-universe.dev',
-          'https://cloud.r-project.org'
-        )
-      )
-    }
-  )
+  check_roll()
   roll::roll_median(x, width = window_width, min_obs = min_obs, ...)
 }

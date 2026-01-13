@@ -1,198 +1,250 @@
 # Tests for filter_na_speed
-# - Basic filtering with numeric threshold
-# - Handles outliers with numeric threshold
-# - Works with aniframes (with/without confidence)
-# - Preserves aniframe structure and attributes
-# - Handles NA values in coordinates correctly
-# - Handles consecutive NAs
-# - Handles all NAs in one column
-# - Validates required columns exist (time, x, y)
-# - Validates threshold parameter
+# - Basic filtering with numeric threshold (2D)
+# - Basic filtering with numeric threshold (3D)
+# - Automatic threshold calculation
+# - Preserves existing NAs
+# - Preserves other columns
+# - Filters confidence when present
+# - Works without confidence column
+# - Validates data is an aniframe
+# - Validates required columns exist
+# - Validates threshold input
+# - Returns an aniframe
 
-test_that("filter_na_speed handles basic numeric threshold correctly", {
-  # Create test data
-  test_data <- data.frame(
+test_that("filter_na_speed filters with numeric threshold (2D)", {
+  data <- aniframe::aniframe(
     time = 1:5,
-    x = c(1, 2, 4, 7, 11),
-    y = c(1, 1, 2, 3, 5),
-    confidence = c(0.8, 0.9, 0.7, 0.85, 0.6)
-  ) |>
-    aniframe::as_aniframe()
+    x = c(0, 1, 2, 10, 11),
+    y = c(0, 1, 2, 10, 11)
+  )
 
-  # Test with numeric threshold
-  result <- filter_na_speed(test_data, threshold = 3)
+  result <- filter_na_speed(data, threshold = 5)
 
-  # Check structure - aniframe adds individual and keypoint columns
-  expect_s3_class(result, "data.frame")
-  expect_true(all(c("time", "x", "y", "confidence") %in% names(result)))
-
-  # Check that values above threshold are NA
-  expect_true(any(is.na(result$x)))
-  expect_true(any(is.na(result$y)))
-  expect_true(any(is.na(result$confidence)))
-
-  # Check that values below threshold remain unchanged
-  expect_true(any(!is.na(result$x)))
-  expect_true(any(!is.na(result$y)))
-  expect_true(any(!is.na(result$confidence)))
+  # Points 3->4 have high speed, should be filtered
+  expect_true(is.na(result$x[4]))
+  expect_true(is.na(result$y[4]))
+  # Other points should remain
+  expect_false(is.na(result$x[1]))
+  expect_false(is.na(result$x[2]))
 })
 
-test_that("filter_na_speed handles 'auto' threshold correctly", {
-  test_data <- data.frame(
+test_that("filter_na_speed filters with numeric threshold (3D)", {
+  data <- aniframe::aniframe(
     time = 1:5,
-    x = c(1, 2, 4, 7, 200), # Last value is an outlier
-    y = c(1, 1, 2, 3, 30), # Last value is an outlier
-    confidence = c(0.8, 0.9, 0.7, 0.85, 0.6)
-  ) |>
-    aniframe::as_aniframe()
+    x = c(0, 1, 2, 10, 11),
+    y = c(0, 1, 2, 10, 11),
+    z = c(0, 1, 2, 10, 11),
+    variables_where = c("x", "y", "z")
+  )
 
-  result <- filter_na_speed(test_data, threshold = 5)
+  result <- filter_na_speed(data, threshold = 5)
 
-  # Check that at least one value (outlier) is filtered
-  expect_true(is.na(result$x[5]))
-  expect_true(is.na(result$y[5]))
-  expect_true(is.na(result$confidence[5]))
+  # Points 3 and 4 have high speed due to the jump, should be filtered
+  expect_true(is.na(result$x[3]))
+  expect_true(is.na(result$y[3]))
+  expect_true(is.na(result$z[3]))
+  expect_true(is.na(result$x[4]))
+  expect_true(is.na(result$y[4]))
+  expect_true(is.na(result$z[4]))
+  # Endpoints should remain (speed ~1.73)
+  expect_false(is.na(result$x[1]))
+  expect_false(is.na(result$x[5]))
+})
 
-  # Check that normal values remain
-  expect_false(all(is.na(result$x)))
-  expect_false(all(is.na(result$y)))
-  expect_false(all(is.na(result$confidence)))
+test_that("filter_na_speed calculates auto threshold", {
+  # Create data with one outlier
+  data <- aniframe::aniframe(
+    time = 1:100,
+    x = c(1:50, 200, 201:249),
+    y = 1:100
+  )
+
+  result <- filter_na_speed(data, threshold = "auto")
+
+  # The jump at point 50+51 should be filtered
+  expect_true(is.na(result$x[50]))
+  # Most other points should remain
+  expect_false(is.na(result$x[70]))
+})
+
+test_that("filter_na_speed preserves existing NAs", {
+  data <- aniframe::aniframe(
+    time = 1:5,
+    x = c(0, NA, 2, 3, 4),
+    y = c(0, 1, NA, 3, 4)
+  )
+
+  result <- filter_na_speed(data, threshold = 100)
+
+  # Existing NAs should remain
+  expect_true(is.na(result$x[2]))
+  expect_true(is.na(result$y[3]))
+})
+
+test_that("filter_na_speed preserves other columns", {
+  data <- aniframe::aniframe(
+    time = 1:5,
+    x = c(0, 1, 2, 3, 4),
+    y = c(0, 1, 2, 3, 4),
+    id = c("a", "b", "c", "d", "e"),
+    value = c(10, 20, 30, 40, 50)
+  )
+
+  result <- filter_na_speed(data, threshold = 100)
+
+  # Other columns should remain unchanged
+  expect_equal(result$id, c("a", "b", "c", "d", "e"))
+  expect_equal(result$value, c(10, 20, 30, 40, 50))
+})
+
+test_that("filter_na_speed filters confidence when present", {
+  data <- aniframe::aniframe(
+    time = 1:5,
+    x = c(0, 1, 2, 10, 11),
+    y = c(0, 1, 2, 10, 11),
+    confidence = c(0.9, 0.9, 0.9, 0.9, 0.9)
+  )
+
+  result <- filter_na_speed(data, threshold = 5)
+
+  # Confidence should be NA where speed exceeds threshold
+  expect_true(is.na(result$confidence[4]))
+  expect_false(is.na(result$confidence[1]))
 })
 
 test_that("filter_na_speed works without confidence column", {
-  test_data <- data.frame(
+  data <- aniframe::aniframe(
     time = 1:5,
-    x = c(1, 2, 4, 7, 11),
-    y = c(1, 1, 2, 3, 5)
-  ) |>
-    aniframe::as_aniframe()
-
-  result <- filter_na_speed(test_data, threshold = 3)
-
-  # Check structure - confidence will be added by as_aniframe
-  expect_true("confidence" %in% names(result))
-
-  # Check filtering still works
-  expect_true(any(is.na(result$x)))
-  expect_true(any(is.na(result$y)))
-})
-
-test_that("filter_na_speed errors on missing required columns", {
-  # Missing x - need to create with at least y to pass as_aniframe validation
-  test_data1 <- data.frame(
-    time = 1:5,
-    y = c(1, 1, 2, 3, 5)
-  ) |>
-    aniframe::as_aniframe()
-
-  expect_error(
-    filter_na_speed(test_data1),
-    regexp = "Missing required columns"
+    x = c(0, 1, 2, 3, 4),
+    y = c(0, 1, 2, 3, 4)
   )
 
-  # Missing y
-  test_data2 <- data.frame(
+  expect_no_error(filter_na_speed(data, threshold = 100))
+  expect_false("confidence" %in% names(filter_na_speed(data, threshold = 100)))
+})
+
+test_that("filter_na_speed validates data is an aniframe", {
+  data <- data.frame(
     time = 1:5,
-    x = c(1, 2, 4, 7, 11)
-  ) |>
-    aniframe::as_aniframe()
+    x = c(0, 1, 2, 3, 4),
+    y = c(0, 1, 2, 3, 4)
+  )
 
   expect_error(
-    filter_na_speed(test_data2),
-    regexp = "Missing required columns"
+    filter_na_speed(data, threshold = 5),
+    class = "rlang_error"
   )
 })
 
-test_that("filter_na_speed errors on invalid threshold", {
-  test_data <- data.frame(
+test_that("filter_na_speed validates required columns exist", {
+  data <- aniframe::aniframe(
     time = 1:5,
-    x = c(1, 2, 4, 7, 11),
-    y = c(1, 1, 2, 3, 5)
-  ) |>
-    aniframe::as_aniframe()
+    x = c(0, 1, 2, 3, 4),
+    y = c(0, 1, 2, 3, 4)
+  )
+
+  # Set metadata to expect z column that doesn't exist
+  data <- aniframe::set_metadata(data, variables_where = c("x", "y", "z"))
 
   expect_error(
-    filter_na_speed(test_data, threshold = "invalid"),
-    regexp = "threshold must be either 'auto' or a numeric value"
+    filter_na_speed(data, threshold = 5),
+    "Missing required column"
   )
 })
 
-test_that("filter_na_speed preserves data frame attributes", {
-  test_data <- data.frame(
+test_that("filter_na_speed validates columns are numeric", {
+  data <- aniframe::aniframe(
     time = 1:5,
-    x = c(1, 2, 4, 7, 11),
-    y = c(1, 1, 2, 3, 5)
-  ) |>
-    aniframe::as_aniframe()
+    x = c(0, 1, 2, 3, 4),
+    y = c(0, 1, 2, 3, 4)
+  )
 
-  result <- filter_na_speed(test_data, threshold = 3)
+  # Force time to character (normally wouldn't happen)
+  data$time <- as.character(data$time)
 
-  # Check that result is an aniframe
+  expect_error(
+    filter_na_speed(data, threshold = 5)
+  )
+})
+
+test_that("filter_na_speed validates threshold is auto or numeric", {
+  data <- aniframe::aniframe(
+    time = 1:5,
+    x = c(0, 1, 2, 3, 4),
+    y = c(0, 1, 2, 3, 4)
+  )
+
+  expect_error(
+    filter_na_speed(data, threshold = "high"),
+    "must be either"
+  )
+
+  expect_error(
+    filter_na_speed(data, threshold = c(1, 2)),
+    "single numeric value"
+  )
+})
+
+test_that("filter_na_speed returns an aniframe", {
+  data <- aniframe::aniframe(
+    time = 1:5,
+    x = c(0, 1, 2, 3, 4),
+    y = c(0, 1, 2, 3, 4)
+  )
+
+  result <- filter_na_speed(data, threshold = 100)
+
   expect_s3_class(result, "aniframe")
-  # Check number of rows is preserved
-  expect_equal(nrow(result), nrow(test_data))
 })
 
-test_that("filter_na_speed handles NA values correctly", {
-  # Test data with NAs in different positions and columns
-  test_data <- data.frame(
+test_that("filter_na_speed handles constant position", {
+  data <- aniframe::aniframe(
     time = 1:5,
-    x = c(1, NA, 4, 7, 11),
-    y = c(NA, 1, 2, 3, 5),
-    confidence = c(0.8, 0.9, NA, 0.85, 0.6)
-  ) |>
-    aniframe::as_aniframe()
+    x = c(5, 5, 5, 5, 5),
+    y = c(5, 5, 5, 5, 5)
+  )
 
-  # Test with numeric threshold
-  result <- filter_na_speed(test_data, threshold = 3)
+  result <- filter_na_speed(data, threshold = 1)
 
-  # Check that NAs in input are preserved in output
-  expect_true(is.na(result$x[2]))
-  expect_true(is.na(result$y[1]))
-  expect_true(is.na(result$confidence[3]))
-
-  # Test consecutive NAs
-  test_data_consecutive <- data.frame(
-    time = 1:5,
-    x = c(1, 2, NA, NA, 11),
-    y = c(1, 1, NA, NA, 5),
-    confidence = c(0.8, 0.9, NA, NA, 0.6)
-  ) |>
-    aniframe::as_aniframe()
-
-  result_consecutive <- filter_na_speed(test_data_consecutive, threshold = 3)
-
-  # Check that consecutive NAs are handled properly
-  expect_true(all(is.na(result_consecutive$x[3:4])))
-  expect_true(all(is.na(result_consecutive$y[3:4])))
-
-  # Test with all NAs in one column
-  test_data_all_na <- data.frame(
-    time = 1:5,
-    x = rep(NA_real_, 5),
-    y = c(1, 1, 2, 3, 5),
-    confidence = c(0.8, 0.9, 0.7, 0.85, 0.6)
-  ) |>
-    aniframe::as_aniframe()
-
-  result_all_na <- filter_na_speed(test_data_all_na, threshold = 3)
-
-  # Check that column with all NAs remains all NA
-  expect_true(all(is.na(result_all_na$x)))
+  # All speeds should be 0, nothing filtered
+  expect_false(any(is.na(result$x)))
+  expect_false(any(is.na(result$y)))
 })
 
-test_that("filter_na_speed handles speed calculation with gaps", {
-  # Test edge case with gaps that affect speed calculation
-  test_data_gaps <- data.frame(
-    time = c(1, 2, 5, 6, 7),
-    x = c(1, 2, 4, 7, 11),
-    y = c(1, 1, 2, 3, 5)
-  ) |>
-    aniframe::as_aniframe()
+test_that("filter_na_speed handles uneven time spacing", {
+  data <- aniframe::aniframe(
+    time = c(0, 1, 2, 2.1, 3),
+    x = c(0, 1, 2, 10, 11),
+    y = c(0, 1, 2, 10, 11)
+  )
 
-  result_gaps <- filter_na_speed(test_data_gaps, threshold = 3)
+  result <- filter_na_speed(data, threshold = 50)
 
-  # Check that filtering works despite time gaps
-  expect_s3_class(result_gaps, "aniframe")
-  expect_equal(nrow(result_gaps), nrow(test_data_gaps))
+  # The jump at time 2->2.1 has very high speed (distance 11.3 / time 0.1)
+  expect_true(is.na(result$x[4]))
+})
+
+test_that("calculate_speed_2d computes correct values", {
+  # Simple case: constant velocity of 1 in x direction
+  x <- c(0, 1, 2, 3, 4)
+  y <- c(0, 0, 0, 0, 0)
+  time <- c(0, 1, 2, 3, 4)
+
+  speed <- calculate_speed_2d(x, y, time)
+
+  # Speed should be approximately 1 everywhere
+  expect_true(all(abs(speed - 1) < 0.01))
+})
+
+test_that("calculate_speed_3d computes correct values", {
+  # Simple case: constant velocity of 1 in x direction
+  x <- c(0, 1, 2, 3, 4)
+  y <- c(0, 0, 0, 0, 0)
+  z <- c(0, 0, 0, 0, 0)
+  time <- c(0, 1, 2, 3, 4)
+
+  speed <- calculate_speed_3d(x, y, z, time)
+
+  # Speed should be approximately 1 everywhere
+  expect_true(all(abs(speed - 1) < 0.01))
 })

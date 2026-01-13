@@ -10,48 +10,63 @@ filter_na_roi(
   x_max = NULL,
   y_min = NULL,
   y_max = NULL,
+  z_min = NULL,
+  z_max = NULL,
   x_center = NULL,
   y_center = NULL,
+  z_center = NULL,
   radius = NULL
 )
 }
 \arguments{
-\item{data}{A data frame containing 'x' and 'y' coordinates}
+\item{data}{An aniframe containing spatial coordinates.}
 
-\item{x_min}{Minimum x-coordinate for rectangular ROI}
+\item{x_min, x_max}{Bounds for x-coordinate (rectangular/cuboid ROI).}
 
-\item{x_max}{Maximum x-coordinate for rectangular ROI}
+\item{y_min, y_max}{Bounds for y-coordinate (rectangular/cuboid ROI).}
 
-\item{y_min}{Minimum y-coordinate for rectangular ROI}
+\item{z_min, z_max}{Bounds for z-coordinate (cuboid ROI, 3D only).}
 
-\item{y_max}{Maximum y-coordinate for rectangular ROI}
+\item{x_center, y_center, z_center}{Center coordinates for circular/spherical
+ROI. For 3D data, provide all three; for 2D data, only x and y.}
 
-\item{x_center}{x-coordinate of circle center for circular ROI}
-
-\item{y_center}{y-coordinate of circle center for circular ROI}
-
-\item{radius}{Radius of circular ROI}
+\item{radius}{Radius of circular (2D) or spherical (3D) ROI.}
 }
 \value{
-A data frame with coordinates outside ROI set to NA
+An aniframe with coordinates outside ROI set to NA.
 }
 \description{
 Filters out coordinates that fall outside a specified region of interest by
-setting them to NA. The ROI can be either rectangular (defined by min/max
-coordinates) or circular (defined by center and radius).
+setting them to NA. The ROI can be either rectangular/cuboid (defined by
+min/max coordinates) or circular/spherical (defined by center and radius).
+Automatically handles 2D or 3D data based on the spatial variables in the
+aniframe metadata.
 }
 \examples{
-# Create sample data
-sample_data <- expand.grid(
-  x = seq(0, 100, by = 10),
-  y = seq(0, 100, by = 10)
-) |> as.data.frame()
+# Create sample 2D data
+sample_data <- aniframe::aniframe(
+  time = 1:9,
+  x = rep(c(25, 50, 75), 3),
+  y = rep(c(25, 50, 75), each = 3)
+)
 
 # Rectangular ROI example
 sample_data |>
-  filter_na_roi(x_min = 20, x_max = 80, y_min = 20, y_max = 80)
+  filter_na_roi(x_min = 20, x_max = 60, y_min = 20, y_max = 60)
 
 # Circular ROI example
 sample_data |>
-  filter_na_roi(x_center = 50, y_center = 50, radius = 25)
+  filter_na_roi(x_center = 50, y_center = 50, radius = 30)
+
+# 3D cuboid ROI example
+sample_3d <- aniframe::aniframe(
+  time = 1:8,
+  x = rep(c(25, 75), 4),
+  y = rep(c(25, 75), each = 2, times = 2),
+  z = rep(c(25, 75), each = 4),
+  variables_where = c("x", "y", "z")
+)
+
+sample_3d |>
+  filter_na_roi(x_min = 20, x_max = 60, y_min = 20, y_max = 60, z_min = 20, z_max = 60)
 }
