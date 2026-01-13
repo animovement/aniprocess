@@ -4,8 +4,11 @@
 <url><loc>http://animovement.dev/aniprocess/LICENSE.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/authors.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/index.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/news/index.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/aniprocess-package.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/calculate_speed.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/calculate_speed_2d.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/calculate_speed_3d.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_aniframe.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_highpass.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_highpass_fft.html</loc></url>
@@ -16,8 +19,8 @@
 <url><loc>http://animovement.dev/aniprocess/reference/filter_na_confidence.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_na_range.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_na_roi.html</loc></url>
-<url><loc>http://animovement.dev/aniprocess/reference/filter_na_roi_circle.html</loc></url>
-<url><loc>http://animovement.dev/aniprocess/reference/filter_na_roi_square.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/filter_na_roi_rect.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/filter_na_roi_sphere.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_na_speed.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_rollmean.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_rollmedian.html</loc></url>

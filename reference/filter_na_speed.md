@@ -1,9 +1,9 @@
 # Filter values by speed threshold
 
-This function filters out values in a dataset where the calculated speed
-exceeds a specified threshold. Values for `x`, `y`, and `confidence` are
-replaced with `NA` if their corresponding speed exceeds the threshold.
-Speed is calculated using the `calculate_kinematics` function.
+Filters out observations where the calculated speed exceeds a specified
+threshold. Spatial coordinates and confidence values are replaced with
+NA where speed is too high. Speed is calculated using numerical
+differentiation of position over time.
 
 ## Usage
 
@@ -15,43 +15,37 @@ filter_na_speed(data, threshold = "auto")
 
 - data:
 
-  A data frame containing the following required columns:
-
-  - `x`: x-coordinates
-
-  - `y`: y-coordinates
-
-  - `time`: time values Optional column:
-
-  - `confidence`: confidence values for each observation
+  An aniframe containing spatial coordinates and a time column.
 
 - threshold:
 
   A numeric value specifying the speed threshold, or "auto".
 
   - If numeric: Observations with speeds greater than this value will
-    have their `x`, `y`, and `confidence` values replaced with `NA`
+    have their spatial and confidence values replaced with NA.
 
-  - If "auto": Sets threshold at mean speed + 3 standard deviations
+  - If "auto": Sets threshold at mean speed + 3 standard deviations.
 
 ## Value
 
-A data frame with the same columns as the input `data`, but with values
-replaced by `NA` where the speed exceeds the threshold.
+An aniframe with the same structure as the input, but with spatial and
+confidence values replaced by NA where speed exceeds the threshold.
 
 ## Details
 
-The speed is calculated using the `calculate_kinematics` function, which
-computes translational velocity (`v_translation`) and other kinematic
-parameters. When using `threshold = "auto"`, the function calculates the
-threshold as the mean speed plus three standard deviations, which
-assumes normally distributed speeds.
+Speed is calculated as the magnitude of the velocity vector, computed
+using numerical differentiation via the `differentiate` function. For 2D
+data, speed = sqrt(v_x^2 + v_y^2). For 3D data, speed = sqrt(v_x^2 +
+v_y^2 + v_z^2).
+
+When using `threshold = "auto"`, the function calculates the threshold
+as the mean speed plus three standard deviations, which assumes
+approximately normally distributed speeds.
 
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-data <- dplyr::tibble(
+data <- aniframe::aniframe(
   time = 1:5,
   x = c(1, 2, 4, 7, 11),
   y = c(1, 1, 2, 3, 5),
@@ -59,9 +53,28 @@ data <- dplyr::tibble(
 )
 
 # Filter data by a speed threshold of 3
-filter_by_speed(data, threshold = 3)
+filter_na_speed(data, threshold = 3)
+#> Warning: Unknown or uninitialised column: `individual`.
+#> # Individuals:
+#> # Keypoints:   centroid
+#>   keypoint  time     x     y confidence
+#>   <fct>    <int> <dbl> <dbl>      <dbl>
+#> 1 centroid     1     1     1        0.8
+#> 2 centroid     2     2     1        0.9
+#> 3 centroid     3     4     2        0.7
+#> 4 centroid     4    NA    NA       NA  
+#> 5 centroid     5    NA    NA       NA  
 
 # Use automatic threshold
-filter_by_speed(data, threshold = "auto")
-} # }
+filter_na_speed(data, threshold = "auto")
+#> Warning: Unknown or uninitialised column: `individual`.
+#> # Individuals:
+#> # Keypoints:   centroid
+#>   keypoint  time     x     y confidence
+#>   <fct>    <int> <dbl> <dbl>      <dbl>
+#> 1 centroid     1     1     1       0.8 
+#> 2 centroid     2     2     1       0.9 
+#> 3 centroid     3     4     2       0.7 
+#> 4 centroid     4     7     3       0.85
+#> 5 centroid     5    11     5       0.6 
 ```

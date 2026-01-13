@@ -1,8 +1,8 @@
 # Filter low-confidence values in a dataset
 
-This function replaces values in columns `x`, `y`, and optionally `z`
-with `NA` if the confidence values are below a specified threshold. The
-`confidence` column is also filtered.
+This function replaces spatial coordinate values with `NA` if the
+confidence values are below a specified threshold. The `confidence`
+column is also filtered.
 
 ## Usage
 
@@ -14,8 +14,8 @@ filter_na_confidence(data, threshold = 0.6)
 
 - data:
 
-  A data frame containing the columns `x`, `y`, and `confidence`. If a
-  `z` column is present, it will also be filtered.
+  An aniframe containing a `confidence` column and spatial columns as
+  defined in the metadata's `variables_where`.
 
 - threshold:
 
@@ -24,9 +24,9 @@ filter_na_confidence(data, threshold = 0.6)
 
 ## Value
 
-A data frame with the same structure as the input, but where `x`, `y`,
-`z` (if present), and `confidence` values are replaced with `NA` if the
-confidence is below the threshold.
+An aniframe with the same structure as the input, but where spatial and
+`confidence` values are replaced with `NA` if the confidence is below
+the threshold.
 
 ## Examples
 
@@ -40,15 +40,16 @@ data <- aniframe::aniframe(
 )
 
 filter_na_confidence(data, threshold = 0.6)
-#> # Individuals: NA
-#> # Keypoints:   NA
-#>   individual keypoint  time     x     y confidence
-#>   <fct>      <fct>    <int> <dbl> <dbl>      <dbl>
-#> 1 NA         NA           1    NA    NA       NA  
-#> 2 NA         NA           2     2     7        0.7
-#> 3 NA         NA           3    NA    NA       NA  
-#> 4 NA         NA           4     4     9        0.8
-#> 5 NA         NA           5     5    10        0.9
+#> Warning: Unknown or uninitialised column: `individual`.
+#> # Individuals:
+#> # Keypoints:   centroid
+#>   keypoint  time     x     y confidence
+#>   <fct>    <int> <dbl> <dbl>      <dbl>
+#> 1 centroid     1    NA    NA       NA  
+#> 2 centroid     2     2     7        0.7
+#> 3 centroid     3    NA    NA       NA  
+#> 4 centroid     4     4     9        0.8
+#> 5 centroid     5     5    10        0.9
 
 # With z column (3D)
 data_3d <- aniframe::aniframe(
@@ -56,17 +57,19 @@ data_3d <- aniframe::aniframe(
   x = 1:5,
   y = 6:10,
   z = 11:15,
-  confidence = c(0.5, 0.7, 0.4, 0.8, 0.9)
+  confidence = c(0.5, 0.7, 0.4, 0.8, 0.9),
+  variables_where = c("x", "y", "z")
 )
 
 filter_na_confidence(data_3d, threshold = 0.6)
-#> # Individuals: NA
-#> # Keypoints:   NA
-#>   individual keypoint  time     x     y     z confidence
-#>   <fct>      <fct>    <int> <dbl> <dbl> <dbl>      <dbl>
-#> 1 NA         NA           1    NA    NA    NA       NA  
-#> 2 NA         NA           2     2     7    12        0.7
-#> 3 NA         NA           3    NA    NA    NA       NA  
-#> 4 NA         NA           4     4     9    14        0.8
-#> 5 NA         NA           5     5    10    15        0.9
+#> Warning: Unknown or uninitialised column: `individual`.
+#> # Individuals:
+#> # Keypoints:   centroid
+#>   keypoint  time     x     y     z confidence
+#>   <fct>    <int> <dbl> <dbl> <dbl>      <dbl>
+#> 1 centroid     1    NA    NA    NA       NA  
+#> 2 centroid     2     2     7    12        0.7
+#> 3 centroid     3    NA    NA    NA       NA  
+#> 4 centroid     4     4     9    14        0.8
+#> 5 centroid     5     5    10    15        0.9
 ```
