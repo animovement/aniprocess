@@ -1,3 +1,4 @@
+#' @keywords internal
 check_roll <- function() {
   rlang::check_installed(
     "roll",
@@ -14,10 +15,11 @@ check_roll <- function() {
   )
 }
 
+#' @keywords internal
 check_signal <- function() {
   rlang::check_installed(
     "signal",
-    reason = "to use the low-pass filter",
+    reason = "to use the bandwidth filters",
     action = function(...) {
       utils::install.packages(
         'signal',
@@ -30,6 +32,7 @@ check_signal <- function() {
   )
 }
 
+#' @keywords internal
 check_animetric <- function() {
   rlang::check_installed(
     "animetric",
