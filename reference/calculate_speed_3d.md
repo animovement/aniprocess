@@ -1,6 +1,6 @@
-# Calculate speed from 3D position and time
+# Calculate per-row outlier speed from 3D position and time
 
-Calculate speed from 3D position and time
+Calculate per-row outlier speed from 3D position and time
 
 ## Usage
 
@@ -28,4 +28,4 @@ calculate_speed_3d(x, y, z, time)
 
 ## Value
 
-Numeric vector of speed values.
+Numeric vector of speed values, same length as `x`.

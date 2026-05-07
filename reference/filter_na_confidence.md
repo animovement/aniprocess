@@ -40,9 +40,7 @@ data <- aniframe::aniframe(
 )
 
 filter_na_confidence(data, threshold = 0.6)
-#> Warning: Unknown or uninitialised column: `individual`.
-#> # Individuals:
-#> # Keypoints:   centroid
+#> # Keypoints: centroid
 #>   keypoint  time     x     y confidence
 #>   <fct>    <int> <dbl> <dbl>      <dbl>
 #> 1 centroid     1    NA    NA       NA  
@@ -62,9 +60,7 @@ data_3d <- aniframe::aniframe(
 )
 
 filter_na_confidence(data_3d, threshold = 0.6)
-#> Warning: Unknown or uninitialised column: `individual`.
-#> # Individuals:
-#> # Keypoints:   centroid
+#> # Keypoints: centroid
 #>   keypoint  time     x     y     z confidence
 #>   <fct>    <int> <dbl> <dbl> <dbl>      <dbl>
 #> 1 centroid     1    NA    NA    NA       NA  

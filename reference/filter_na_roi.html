@@ -15,7 +15,7 @@ aniframe metadata."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,6 +28,7 @@ aniframe metadata."></head><body>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/animovement/aniprocess/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://animovement.zulipchat.com" aria-label="Chat on Zulip"><span class="fa fa-comments"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch"><li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
@@ -118,9 +119,7 @@ ROI. For 3D data, provide all three; for 2D data, only x and y.</p></dd>
 <span class="r-in"><span><span class="co"># Rectangular ROI example</span></span></span>
 <span class="r-in"><span><span class="va">sample_data</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">filter_na_roi</span><span class="op">(</span>x_min <span class="op">=</span> <span class="fl">20</span>, x_max <span class="op">=</span> <span class="fl">60</span>, y_min <span class="op">=</span> <span class="fl">20</span>, y_max <span class="op">=</span> <span class="fl">60</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Unknown or uninitialised column: `individual`.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Individuals:</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Keypoints:   centroid</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Keypoints: centroid</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   keypoint  time     x     y</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> centroid     1    25    25</span>
@@ -136,9 +135,7 @@ ROI. For 3D data, provide all three; for 2D data, only x and y.</p></dd>
 <span class="r-in"><span><span class="co"># Circular ROI example</span></span></span>
 <span class="r-in"><span><span class="va">sample_data</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">filter_na_roi</span><span class="op">(</span>x_center <span class="op">=</span> <span class="fl">50</span>, y_center <span class="op">=</span> <span class="fl">50</span>, radius <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Unknown or uninitialised column: `individual`.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Individuals:</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Keypoints:   centroid</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Keypoints: centroid</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   keypoint  time     x     y</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> centroid     1    <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span></span>
@@ -162,9 +159,7 @@ ROI. For 3D data, provide all three; for 2D data, only x and y.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">sample_3d</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">filter_na_roi</span><span class="op">(</span>x_min <span class="op">=</span> <span class="fl">20</span>, x_max <span class="op">=</span> <span class="fl">60</span>, y_min <span class="op">=</span> <span class="fl">20</span>, y_max <span class="op">=</span> <span class="fl">60</span>, z_min <span class="op">=</span> <span class="fl">20</span>, z_max <span class="op">=</span> <span class="fl">60</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Unknown or uninitialised column: `individual`.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Individuals:</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Keypoints:   centroid</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Keypoints: centroid</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   keypoint  time     x     y     z</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> centroid     1    25    25    25</span>

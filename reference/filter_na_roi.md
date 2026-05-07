@@ -68,9 +68,7 @@ sample_data <- aniframe::aniframe(
 # Rectangular ROI example
 sample_data |>
   filter_na_roi(x_min = 20, x_max = 60, y_min = 20, y_max = 60)
-#> Warning: Unknown or uninitialised column: `individual`.
-#> # Individuals:
-#> # Keypoints:   centroid
+#> # Keypoints: centroid
 #>   keypoint  time     x     y
 #>   <fct>    <int> <dbl> <dbl>
 #> 1 centroid     1    25    25
@@ -86,9 +84,7 @@ sample_data |>
 # Circular ROI example
 sample_data |>
   filter_na_roi(x_center = 50, y_center = 50, radius = 30)
-#> Warning: Unknown or uninitialised column: `individual`.
-#> # Individuals:
-#> # Keypoints:   centroid
+#> # Keypoints: centroid
 #>   keypoint  time     x     y
 #>   <fct>    <int> <dbl> <dbl>
 #> 1 centroid     1    NA    NA
@@ -112,9 +108,7 @@ sample_3d <- aniframe::aniframe(
 
 sample_3d |>
   filter_na_roi(x_min = 20, x_max = 60, y_min = 20, y_max = 60, z_min = 20, z_max = 60)
-#> Warning: Unknown or uninitialised column: `individual`.
-#> # Individuals:
-#> # Keypoints:   centroid
+#> # Keypoints: centroid
 #>   keypoint  time     x     y     z
 #>   <fct>    <int> <dbl> <dbl> <dbl>
 #> 1 centroid     1    25    25    25

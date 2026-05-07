@@ -6,10 +6,23 @@
 <url><loc>http://animovement.dev/aniprocess/index.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/news/index.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/aniprocess-package.html</loc></url>
-<url><loc>http://animovement.dev/aniprocess/reference/calculate_speed.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/calculate_speed_2d.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/calculate_speed_3d.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/ccma_apply.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/ccma_convolve_valid.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/ccma_correct.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/ccma_cross.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/ccma_filter_one.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/ccma_kernel.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/ccma_validate_window.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/ensure_aniframe_spatial.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/ensure_replace_na_args.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/excursion_mask_joint.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/excursion_mask_per_axis.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/excursion_state_machine_1d.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_aniframe.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/filter_ccma.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/filter_gaussian.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_highpass.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_highpass_fft.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_kalman.html</loc></url>
@@ -17,6 +30,7 @@
 <url><loc>http://animovement.dev/aniprocess/reference/filter_lowpass.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_lowpass_fft.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_na_confidence.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/filter_na_excursion.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_na_range.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_na_roi.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_na_roi_rect.html</loc></url>
@@ -25,6 +39,7 @@
 <url><loc>http://animovement.dev/aniprocess/reference/filter_rollmean.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_rollmedian.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_sgolay.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/filter_triangular.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/find_peaks.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/find_troughs.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/index.html</loc></url>
@@ -34,5 +49,6 @@
 <url><loc>http://animovement.dev/aniprocess/reference/replace_na_spline.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/replace_na_stine.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/replace_na_value.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/rolling_with_min_obs.html</loc></url>
 </urlset>
 

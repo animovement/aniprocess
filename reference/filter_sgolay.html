@@ -11,7 +11,7 @@ uses zero-phase filtering to prevent temporal shifts in the data."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,6 +24,7 @@ uses zero-phase filtering to prevent temporal shifts in the data."></head><body>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/animovement/aniprocess/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://animovement.zulipchat.com" aria-label="Chat on Zulip"><span class="fa fa-comments"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch"><li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
@@ -56,7 +57,6 @@ uses zero-phase filtering to prevent temporal shifts in the data.</p>
 <span>  <span class="va">sampling_rate</span>,</span>
 <span>  window_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">ceiling</a></span><span class="op">(</span><span class="va">sampling_rate</span><span class="op">/</span><span class="fl">10</span><span class="op">)</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">+</span> <span class="fl">1</span>,</span>
 <span>  order <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  preserve_edges <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  na_action <span class="op">=</span> <span class="st">"linear"</span>,</span>
 <span>  keep_na <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -92,12 +92,6 @@ higher-order moments in the data:
 - order=5: Maximum preservation (may retain too much noise)</p></dd>
 
 
-<dt id="arg-preserve-edges">preserve_edges<a class="anchor" aria-label="anchor" href="#arg-preserve-edges"></a></dt>
-<dd><p>Logical indicating whether to use progressively smaller windows
-at the beginning and end of the signal to reduce edge effects (default = FALSE).
-Note: This only affects the signal endpoints, not internal discontinuities.</p></dd>
-
-
 <dt id="arg-na-action">na_action<a class="anchor" aria-label="anchor" href="#arg-na-action"></a></dt>
 <dd><p>Method to handle NA values before filtering. One of:
 - "linear": Linear interpolation (default)
@@ -126,11 +120,9 @@ after filtering (default = FALSE)</p></dd>
 This approach preserves higher moments of the data better than simple moving averages
 or Butterworth filters, making it particularly suitable for movement data where
 preserving features like peaks and valleys is important.</p>
-<p>Edge Handling:
-When preserve_edges = TRUE, the function uses progressively smaller windows near the
-beginning and end of the signal to reduce endpoint distortion. This only affects
-the signal endpoints - it does not detect or handle internal discontinuities or
-sharp events within the data.</p>
+<p>Edges are handled by <code><a href="https://rdrr.io/pkg/signal/man/sgolayfilt.html" class="external-link">signal::sgolayfilt()</a></code> using extrapolation from the
+nearest interior polynomial fit, which is the standard Savitzky-Golay
+edge convention.</p>
 <p>Parameter Selection Guidelines:</p><ul><li><p>window_size:</p><ul><li><p>For 60 FPS: 5-15 frames (83-250ms) for quick movements, 15-31 for slow movements</p></li>
 <li><p>For 120 FPS: 7-21 frames (58-175ms) for quick movements, 21-51 for slow movements</p></li>
 <li><p>For 500 FPS: 25-75 frames (50-150ms) for quick movements, 75-151 for slow movements

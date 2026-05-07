@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -20,6 +20,7 @@
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/animovement/aniprocess/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://animovement.zulipchat.com" aria-label="Chat on Zulip"><span class="fa fa-comments"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch"><li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
@@ -39,6 +40,54 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.0" id="aniprocess-020-development-version">aniprocess 0.2.0 (development version)<a class="anchor" aria-label="anchor" href="#aniprocess-020-development-version"></a></h2>
+<div class="section level3">
+<h3 id="new-features-0-2-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-0"></a></h3>
+<ul><li>New <code><a href="../reference/filter_ccma.html">filter_ccma()</a></code>: Curvature-Corrected Moving Average for 2D/3D Cartesian trajectories (Steinecker &amp; Wuensche, 2023). Hanning and uniform kernels; padding boundary mode (<a href="https://github.com/animovement/aniprocess/issues/11" class="external-link">#11</a>).</li>
+<li>New <code><a href="../reference/filter_na_excursion.html">filter_na_excursion()</a></code>: flags multi-frame tracking excursions using the criterion from Todd, Kain &amp; de Bivort (2017) — a jump that eventually returns counts as an outlier; a sustained shift does not (<a href="https://github.com/animovement/aniprocess/issues/13" class="external-link">#13</a>).</li>
+<li>New <code><a href="../reference/filter_gaussian.html">filter_gaussian()</a></code>: Gaussian kernel smoother with NA-aware weight renormalisation (<a href="https://github.com/animovement/aniprocess/issues/1" class="external-link">#1</a>).</li>
+<li>New <code><a href="../reference/filter_triangular.html">filter_triangular()</a></code>: triangular smoother as two passes of <code><a href="../reference/filter_rollmean.html">filter_rollmean()</a></code> (<a href="https://github.com/animovement/aniprocess/issues/1" class="external-link">#1</a>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-0-2-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-0"></a></h3>
+<ul><li>
+<code><a href="../reference/filter_lowpass_fft.html">filter_lowpass_fft()</a></code> / <code><a href="../reference/filter_highpass_fft.html">filter_highpass_fft()</a></code>: fixed an asymmetric frequency-domain mask that halved the passband amplitude. Lowpass + highpass at the same cutoff now reconstruct the input exactly.</li>
+<li>
+<code><a href="../reference/filter_na_speed.html">filter_na_speed()</a></code> now flags single-frame outliers correctly (the outlier itself is blanked, not its neighbours), and a single NA in the input no longer contaminates adjacent rows (<a href="https://github.com/animovement/aniprocess/issues/14" class="external-link">#14</a>).</li>
+<li>
+<code><a href="../reference/filter_aniframe.html">filter_aniframe()</a></code> works on aniframes without an <code>individual</code> column. Identity columns now come from <code>variables_what</code>, spatial columns from <code>variables_where</code> (<a href="https://github.com/animovement/aniprocess/issues/16" class="external-link">#16</a>).</li>
+<li>
+<code><a href="../reference/find_peaks.html">find_peaks()</a></code> / <code><a href="../reference/find_troughs.html">find_troughs()</a></code>: prominence now matches the documented topographic definition (saddle = max of left/right valley min). Previously could overestimate prominence and let peaks slip past <code>min_prominence</code>.</li>
+<li>
+<code><a href="../reference/filter_sgolay.html">filter_sgolay()</a></code>: <code>preserve_edges</code> had two bugs and is removed — <code><a href="https://rdrr.io/pkg/signal/man/sgolayfilt.html" class="external-link">signal::sgolayfilt()</a></code> already handles edges correctly.</li>
+<li>
+<code><a href="../reference/filter_kalman.html">filter_kalman()</a></code> documentation: corrected the default <code>base_Q</code> formula.</li>
+<li>
+<code><a href="../reference/replace_na_stine.html">replace_na_stine()</a></code> and the inline installer in <code>filter_bandwidth.R</code> now point at the current r-universe (<a href="https://github.com/animovement/aniprocess/issues/17" class="external-link">#17</a>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-0-2-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-2-0"></a></h3>
+<ul><li>
+<code><a href="../reference/filter_sgolay.html">filter_sgolay()</a></code>: dropped <code>preserve_edges</code>.</li>
+<li>
+<code><a href="../reference/filter_rollmean.html">filter_rollmean()</a></code> / <code><a href="../reference/filter_rollmedian.html">filter_rollmedian()</a></code>: dropped <code>...</code>, gained an explicit <code>align</code> argument (<a href="https://github.com/animovement/aniprocess/issues/7" class="external-link">#7</a>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="dependencies-0-2-0">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-0-2-0"></a></h3>
+<ul><li>
+<code>data.table (&gt;= 1.18.0)</code> promoted from <code>Suggests</code> to <code>Imports</code> (now backs the rolling filters and the LOCF interpolation step).</li>
+<li>Removed <code>roll</code>, <code>collapse</code>, and <code>animetric</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal--housekeeping-0-2-0">Internal / housekeeping<a class="anchor" aria-label="anchor" href="#internal--housekeeping-0-2-0"></a></h3>
+<ul><li>New helpers <code><a href="../reference/ensure_replace_na_args.html">ensure_replace_na_args()</a></code> and <code><a href="../reference/ensure_aniframe_spatial.html">ensure_aniframe_spatial()</a></code> replace duplicated input validation across the <code>replace_na_*()</code> and <code>filter_na_*()</code> families.</li>
+<li>
+<code>check_*()</code> helpers for optional packages consolidated, so the canonical r-universe URL lives in a single place.</li>
+<li>Three dead files removed; future work tracked in <a href="https://github.com/animovement/aniprocess/issues/29" class="external-link">#29</a> (<code>filter_by_pose</code>) and <a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a> (an across-style API).</li>
+<li>Package now at 100% line coverage; <code>covr</code> added to <code>Suggests</code>.</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.2" id="aniprocess-012">aniprocess 0.1.2<a class="anchor" aria-label="anchor" href="#aniprocess-012"></a></h2>
 <ul><li>Added a <code>NEWS.md</code> file to track changes to the package.</li>
 <li>Update to work with tidy movement logic.</li>
@@ -46,7 +95,8 @@
 <li>
 <code>filter_na_roi</code> now works with 3D ROIs.</li>
 </ul></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
