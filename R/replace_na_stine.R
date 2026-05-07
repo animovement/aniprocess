@@ -35,19 +35,7 @@
 #' @export
 replace_na_stine <- function(x, min_gap = 1, max_gap = Inf, ...) {
   # Check that stinepack is installed
-  rlang::check_installed(
-    "stinepack",
-    reason = "to use replace_na_stine()",
-    action = function(...) {
-      utils::install.packages(
-        'stinepack',
-        repos = c(
-          'https://roaldarbol.r-universe.dev',
-          'https://cloud.r-project.org'
-        )
-      )
-    }
-  )
+  check_stinepack()
   # Input validation
   if (!is.numeric(x)) {
     cli::cli_abort("Input must be numeric")
