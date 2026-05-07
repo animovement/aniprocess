@@ -1,4 +1,4 @@
-# aniprocess 0.2.0 (development version)
+# aniprocess 0.2.0
 
 ## New features
 

@@ -9,7 +9,7 @@ type: software
 license: MIT
 title: 'aniprocess: An R package for signal processing and filtering of movement data.'
 version: 0.2.0
-date-released: 2026-01-13
+date-released: 2026-05-07
 identifiers:
   - type: doi
     value: 10.5281/zenodo.17357778
