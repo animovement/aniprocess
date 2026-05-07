@@ -1,5 +1,12 @@
 # aniprocess 0.2.0 (development version)
 
+* New filter `filter_ccma()`: Curvature-Corrected Moving Average
+  (Steinecker & Wuensche, 2023). Smooths a 2D or 3D trajectory while
+  undoing the inward "corner-cutting" bias that a plain moving average
+  introduces on curved paths. Operates on the spatial coordinates
+  jointly (rather than per column) and respects the aniframe's existing
+  grouping. Hanning and uniform kernels supported in this release;
+  padding boundary mode (#11).
 * `filter_aniframe()` now reads identity columns from the `variables_what`
   metadata field and spatial columns from `variables_where`, instead of
   hard-coding `individual` / `keypoint` / `x` / `y` / `z`. Identity columns

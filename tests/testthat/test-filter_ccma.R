@@ -1,0 +1,193 @@
+# Tests for filter_ccma
+# - Recovers a noiseless circle's radius better than plain MA (corner-cutting)
+# - cc_mode = FALSE returns the moving-average path only
+# - Output preserves input length and aniframe class
+# - Works in 2D and 3D
+# - Handles NA via na_action; restores NAs with keep_na
+# - Errors on NA when na_action = "error"
+# - Per-group: each track is filtered independently
+# - Validates window widths, kernel, and dimension count
+
+test_that("filter_ccma reduces radius shrinkage on a noiseless circle", {
+  n <- 100
+  t <- seq(0, 2 * pi, length.out = n)
+  d <- aniframe::aniframe(
+    time = seq_len(n),
+    x = cos(t),
+    y = sin(t),
+    variables_what = character(0)
+  )
+
+  res_ma <- filter_ccma(
+    d,
+    window_width_ma = 21,
+    window_width_cc = 15,
+    cc_mode = FALSE
+  )
+  res_cc <- filter_ccma(d, window_width_ma = 21, window_width_cc = 15)
+
+  ma_r <- mean(sqrt(res_ma$x^2 + res_ma$y^2))
+  cc_r <- mean(sqrt(res_cc$x^2 + res_cc$y^2))
+
+  # Plain MA shrinks the radius noticeably
+  expect_lt(ma_r, 0.99)
+  # CCMA recovers it to within 1%
+  expect_gt(cc_r, 0.99)
+  expect_lt(cc_r, 1.01)
+})
+
+test_that("filter_ccma cc_mode = FALSE returns only the moving-average result", {
+  n <- 50
+  t <- seq(0, 2 * pi, length.out = n)
+  d <- aniframe::aniframe(
+    time = seq_len(n),
+    x = cos(t),
+    y = sin(t),
+    variables_what = character(0)
+  )
+  res_ma <- filter_ccma(d, cc_mode = FALSE)
+  # MA-only path on a circle should have radius < 1 (corner cutting present)
+  expect_lt(mean(sqrt(res_ma$x^2 + res_ma$y^2)), 1)
+})
+
+test_that("filter_ccma preserves input length and aniframe class", {
+  n <- 60
+  d <- aniframe::aniframe(
+    time = seq_len(n),
+    x = rnorm(n),
+    y = rnorm(n),
+    variables_what = character(0)
+  )
+  res <- filter_ccma(d)
+  expect_equal(nrow(res), n)
+  expect_s3_class(res, "aniframe")
+})
+
+test_that("filter_ccma works in 3D", {
+  n <- 60
+  t <- seq(0, 4 * pi, length.out = n)
+  d <- aniframe::aniframe(
+    time = seq_len(n),
+    x = cos(t),
+    y = sin(t),
+    z = t / (4 * pi), # helix
+    variables_where = c("x", "y", "z"),
+    variables_what = character(0)
+  )
+  res <- filter_ccma(d, window_width_ma = 7, window_width_cc = 5)
+  expect_equal(nrow(res), n)
+  expect_false(any(is.na(res$x)))
+  expect_false(any(is.na(res$z)))
+})
+
+test_that("filter_ccma fills NAs by default and restores them with keep_na", {
+  n <- 60
+  t <- seq(0, 2 * pi, length.out = n)
+  x <- cos(t)
+  y <- sin(t)
+  x[c(10, 30)] <- NA
+  d <- aniframe::aniframe(
+    time = seq_len(n),
+    x = x,
+    y = y,
+    variables_what = character(0)
+  )
+
+  res_filled <- filter_ccma(d)
+  expect_false(any(is.na(res_filled$x)))
+
+  res_kept <- filter_ccma(d, keep_na = TRUE)
+  expect_true(is.na(res_kept$x[10]))
+  expect_true(is.na(res_kept$x[30]))
+  # y was clean — should still be clean
+  expect_false(any(is.na(res_kept$y)))
+})
+
+test_that("filter_ccma errors when na_action = 'error' and NAs are present", {
+  d <- aniframe::aniframe(
+    time = 1:10,
+    x = c(rnorm(9), NA),
+    y = rnorm(10),
+    variables_what = character(0)
+  )
+  expect_error(filter_ccma(d, na_action = "error"), "NA")
+})
+
+test_that("filter_ccma operates per group", {
+  # Two tracks, second one has different curvature
+  n <- 60
+  t <- seq(0, 2 * pi, length.out = n)
+  d <- aniframe::aniframe(
+    track = rep(c("a", "b"), each = n),
+    time = rep(seq_len(n), 2),
+    x = c(cos(t), 2 * cos(t)),
+    y = c(sin(t), 2 * sin(t)),
+    variables_what = "track"
+  )
+
+  res <- filter_ccma(d, window_width_ma = 11, window_width_cc = 7)
+
+  res_a <- res[res$track == "a", ]
+  res_b <- res[res$track == "b", ]
+
+  # Each track recovers its own radius
+  expect_equal(mean(sqrt(res_a$x^2 + res_a$y^2)), 1, tolerance = 0.05)
+  expect_equal(mean(sqrt(res_b$x^2 + res_b$y^2)), 2, tolerance = 0.05)
+})
+
+test_that("filter_ccma rejects 1-D variables_where", {
+  d <- aniframe::aniframe(
+    time = 1:10,
+    x = rnorm(10),
+    variables_where = "x",
+    variables_what = character(0)
+  )
+  expect_error(filter_ccma(d), "2 or 3 spatial coordinates")
+})
+
+test_that("filter_ccma validates window widths", {
+  d <- aniframe::aniframe(
+    time = 1:20,
+    x = rnorm(20),
+    y = rnorm(20),
+    variables_what = character(0)
+  )
+  expect_error(filter_ccma(d, window_width_ma = 0))
+  expect_error(filter_ccma(d, window_width_cc = -1))
+  expect_error(filter_ccma(d, window_width_ma = c(11, 13)))
+})
+
+test_that("filter_ccma rounds even window widths up to odd", {
+  # Run with even width and confirm it produces the same result as the
+  # next odd width up (i.e. the rounding actually happens).
+  n <- 60
+  t <- seq(0, 2 * pi, length.out = n)
+  d <- aniframe::aniframe(
+    time = seq_len(n),
+    x = cos(t),
+    y = sin(t),
+    variables_what = character(0)
+  )
+  res_even <- filter_ccma(d, window_width_ma = 10, window_width_cc = 6)
+  res_odd <- filter_ccma(d, window_width_ma = 11, window_width_cc = 7)
+  expect_equal(res_even$x, res_odd$x)
+})
+
+test_that("filter_ccma uniform kernel runs and returns expected length", {
+  n <- 60
+  t <- seq(0, 2 * pi, length.out = n)
+  d <- aniframe::aniframe(
+    time = seq_len(n),
+    x = cos(t),
+    y = sin(t),
+    variables_what = character(0)
+  )
+  res <- filter_ccma(d, kernel = "uniform")
+  expect_equal(nrow(res), n)
+  expect_false(any(is.na(res$x)))
+})
+
+test_that("filter_ccma rejects non-aniframe input", {
+  d <- data.frame(time = 1:5, x = 1:5, y = 1:5)
+  expect_error(filter_ccma(d), class = "rlang_error")
+})
