@@ -8,6 +8,54 @@ generate_sine_data <- function(n = 100, freq = 0.1, noise_sd = 0.1) {
   return(list(time = t, measurements = measurements, true_signal = true_signal))
 }
 
+test_that("First update matches the standard scalar Kalman equations", {
+  # x_hat=0, P=1, base_Q*dt=Q=0.1, R=0.5, z=2.
+  # P_minus = 1 + 0.1 = 1.1
+  # K = 1.1 / (1.1 + 0.5) = 0.6875
+  # x_hat = 0 + 0.6875 * (2 - 0) = 1.375
+  out <- filter_kalman(
+    measurements = 2,
+    sampling_rate = 10,
+    base_Q = 1.0,
+    R = 0.5,
+    initial_state = 0,
+    initial_P = 1
+  )
+  expect_equal(out[1], 1.375)
+})
+
+test_that("Huge R makes the filter ignore measurements", {
+  out <- filter_kalman(
+    measurements = c(10, 20, 30, 40, 50),
+    sampling_rate = 10,
+    base_Q = 0,
+    R = 1e12,
+    initial_state = 0,
+    initial_P = 1
+  )
+  # Initial state held throughout (gain ~ 0).
+  expect_true(all(abs(out) < 1e-9))
+})
+
+test_that("Tiny R makes the filter track measurements", {
+  out <- filter_kalman(
+    measurements = c(1, 2, 3, 4, 5),
+    sampling_rate = 10,
+    base_Q = 0.5,
+    R = 1e-8
+  )
+  expect_equal(out, c(1, 2, 3, 4, 5), tolerance = 1e-4)
+})
+
+test_that("Filter converges toward a constant truth", {
+  set.seed(1)
+  true_state <- 5
+  n <- 1000
+  meas <- rnorm(n, true_state, 0.5)
+  out <- filter_kalman(meas, sampling_rate = 10)
+  expect_equal(mean(out[(n - 99):n]), true_state, tolerance = 0.05)
+})
+
 test_that("Basic functionality - regular sampling", {
   # Basic filtering
   data <- c(1, 1.1, 0.9, 1.2, 0.8, 1.1)
@@ -136,6 +184,34 @@ test_that("Parameter validation", {
   expect_error(filter_kalman_irregular(data, times = "0"))
   expect_error(filter_kalman_irregular(data, times = NA))
   expect_error(filter_kalman_irregular(data, times = Inf))
+
+  # Same-length but non-numeric / non-finite times reach their own checks.
+  expect_error(
+    filter_kalman_irregular(data, times = as.character(seq_along(data))),
+    "times must be numeric"
+  )
+  expect_error(
+    filter_kalman_irregular(data, times = c(0, 0.1, NA, 0.35, 0.5, 0.8)),
+    "finite"
+  )
+  expect_error(
+    filter_kalman_irregular(data, times = c(0, 0.1, Inf, 0.35, 0.5, 0.8)),
+    "finite"
+  )
+
+  # resample = TRUE without resample_freq.
+  expect_error(
+    filter_kalman_irregular(data, times, resample = TRUE),
+    "resample_freq"
+  )
+})
+
+test_that("filter_kalman_irregular accepts an explicit initial_state", {
+  data <- c(1, 1.1, 0.9, 1.2)
+  times <- c(0, 0.1, 0.2, 0.3)
+  out <- filter_kalman_irregular(data, times, initial_state = 0)
+  expect_equal(length(out), length(data))
+  expect_true(all(is.finite(out)))
 })
 
 # test_that("Signal tracking accuracy", {

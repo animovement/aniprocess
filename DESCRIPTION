@@ -24,6 +24,7 @@ Imports:
     methods,
     rlang
 Suggests:
+    covr,
     knitr,
     signal,
     stinepack,
