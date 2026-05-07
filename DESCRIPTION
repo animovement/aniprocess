@@ -23,10 +23,10 @@ Imports:
     dplyr,
     methods,
     rlang
-Suggests: 
+Suggests:
     animetric,
+    data.table (>= 1.18.0),
     knitr,
-    roll,
     signal,
     stinepack,
     testthat (>= 3.0.0)
