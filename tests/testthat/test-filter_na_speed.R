@@ -1,14 +1,17 @@
 # Tests for filter_na_speed
 # - Flags single-frame outliers (2D and 3D)
-# - Leaves legitimate step changes alone
+# - Leaves legitimate step changes alone (sustained moves to a new region)
 # - Does not contaminate neighbors of NA inputs
 # - Automatic threshold calculation
 # - Preserves existing NAs
 # - Preserves other columns
 # - Filters confidence when present
 # - Works without confidence column
-# - Validates inputs
+# - Validates inputs (aniframe class, required columns, numeric types, threshold)
 # - Returns an aniframe
+# - Handles constant position and uneven time spacing
+# - Speed helpers: correct values for constant velocity (2D and 3D)
+# - Speed helpers: one-sided fallback at endpoints
 
 test_that("filter_na_speed flags a single-frame outlier (2D)", {
   # Smooth motion with one position outlier at index 5
