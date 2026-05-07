@@ -33,13 +33,13 @@ check_signal <- function() {
 }
 
 #' @keywords internal
-check_animetric <- function() {
+check_stinepack <- function() {
   rlang::check_installed(
-    "animetric",
-    reason = "to calculate speed",
+    "stinepack",
+    reason = "to use Stineman interpolation",
     action = function(...) {
       utils::install.packages(
-        'animetric',
+        'stinepack',
         repos = c(
           'https://animovement.r-universe.dev',
           'https://cloud.r-project.org'

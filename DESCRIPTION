@@ -24,7 +24,6 @@ Imports:
     methods,
     rlang
 Suggests:
-    animetric,
     data.table (>= 1.18.0),
     knitr,
     signal,

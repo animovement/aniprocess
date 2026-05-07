@@ -2,7 +2,7 @@
 % Please edit documentation in R/filter_na_speed.R
 \name{calculate_speed_2d}
 \alias{calculate_speed_2d}
-\title{Calculate speed from 2D position and time}
+\title{Calculate per-row outlier speed from 2D position and time}
 \usage{
 calculate_speed_2d(x, y, time)
 }
@@ -14,9 +14,11 @@ calculate_speed_2d(x, y, time)
 \item{time}{Numeric vector of time values.}
 }
 \value{
-Numeric vector of speed values.
+Numeric vector of speed values, same length as \code{x}.
 }
 \description{
-Calculate speed from 2D position and time
+Returns the minimum of the backward and forward step speeds at each row.
+Endpoints fall back to the one available side; if either side is NA, the
+other is used (\code{pmin} with \code{na.rm = TRUE}).
 }
 \keyword{internal}

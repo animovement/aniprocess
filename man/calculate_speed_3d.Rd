@@ -2,7 +2,7 @@
 % Please edit documentation in R/filter_na_speed.R
 \name{calculate_speed_3d}
 \alias{calculate_speed_3d}
-\title{Calculate speed from 3D position and time}
+\title{Calculate per-row outlier speed from 3D position and time}
 \usage{
 calculate_speed_3d(x, y, z, time)
 }
@@ -16,9 +16,9 @@ calculate_speed_3d(x, y, z, time)
 \item{time}{Numeric vector of time values.}
 }
 \value{
-Numeric vector of speed values.
+Numeric vector of speed values, same length as \code{x}.
 }
 \description{
-Calculate speed from 3D position and time
+Calculate per-row outlier speed from 3D position and time
 }
 \keyword{internal}
