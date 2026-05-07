@@ -23,8 +23,7 @@ Imports:
     dplyr,
     methods,
     rlang
-Suggests: 
-    animetric,
+Suggests:
     knitr,
     roll,
     signal,
