@@ -1,5 +1,16 @@
 # aniprocess 0.2.0 (development version)
 
+* New filter `filter_ccma()`: Curvature-Corrected Moving Average
+  (Steinecker & Wuensche, 2023). Smooths a 2D or 3D Cartesian
+  trajectory while undoing the inward "corner-cutting" bias that a
+  plain moving average introduces on curved paths. Operates on the
+  spatial coordinates jointly (rather than per column) and respects
+  the aniframe's existing grouping. Rejects polar / cylindrical /
+  spherical (and `unknown`) aniframes by checking the
+  `coordinate_system` metadata directly, since the underlying
+  curvature math (cross product, Euclidean norm, circumradius) is
+  Cartesian-specific. Hanning and uniform kernels supported in this
+  release; padding boundary mode (#11).
 * New filter `filter_na_excursion()`: flags multi-frame tracking
   excursions — jumps that eventually return to where they started, or
   to the typical resting position. Implements Todd, Kain & de Bivort
