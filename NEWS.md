@@ -1,3 +1,5 @@
+# aniprocess 0.2.0 (development version)
+
 # aniprocess 0.1.2
 
 * Added a `NEWS.md` file to track changes to the package.
