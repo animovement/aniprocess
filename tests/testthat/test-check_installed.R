@@ -71,4 +71,3 @@ test_that("check_signal works and calls correct functions", {
     c('https://animovement.r-universe.dev', 'https://cloud.r-project.org')
   )
 })
-
