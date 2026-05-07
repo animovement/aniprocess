@@ -1,5 +1,16 @@
 # aniprocess 0.2.0 (development version)
 
+* `filter_lowpass_fft()` / `filter_highpass_fft()`: fixed a Hermitian-
+  symmetry bug in the frequency-domain mask construction. The previous
+  code overwrote both spectral halves with a recycled-and-mirrored
+  version of itself due to a length mismatch, producing an asymmetric
+  mask. After `Re()` of the inverse FFT, this dropped half of the
+  passband signal energy — a 2 Hz sinusoid passed through a 5 Hz
+  low-pass came out at half its input amplitude. Now passband signals
+  are preserved (`out_RMS ≈ in_RMS`), and `filter_lowpass_fft + filter_highpass_fft`
+  at the same cutoff exactly reconstructs the input. Added a dedicated
+  test file for the FFT filters with passband / stopband / complementary-
+  pair / NA / `keep_na` / validation tests.
 * `find_peaks()` / `find_troughs()`: prominence is now computed
   according to the standard topographic definition documented in the
   function help — `peak − max(min(left_valley), min(right_valley))` —
