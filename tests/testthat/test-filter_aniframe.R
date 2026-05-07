@@ -1,11 +1,12 @@
 # Tests for filter_aniframe
 # - Default example_aniframe (groups by individual + keypoint)
 # - Custom variables_what (e.g. single "track" column)
-# - No grouping when no variables_what columns exist in the data (#16)
-# - Validates aniframe input
+# - Single-track data with no identity columns at all (#16 repro)
+# - Robustness when variables_what metadata names a column not in the data
 # - Errors when a variables_where column is missing
-# - Filters z when present in variables_where
-# - use_derivatives branch
+# - Filters z when listed in variables_where
+# - use_derivatives branch (derive -> filter -> integrate)
+# - Rejects non-aniframe input
 # - Returns an aniframe
 
 test_that("filter_aniframe works with default example_aniframe", {
