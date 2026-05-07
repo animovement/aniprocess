@@ -9,7 +9,6 @@ filter_sgolay(
   sampling_rate,
   window_size = ceiling(sampling_rate/10) * 2 + 1,
   order = 3,
-  preserve_edges = FALSE,
   na_action = "linear",
   keep_na = FALSE,
   ...
@@ -32,10 +31,6 @@ higher-order moments in the data:
 - order=3: Also preserves acceleration (good for most movement data)
 - order=4: Also preserves jerk (good for quick movements)
 - order=5: Maximum preservation (may retain too much noise)}
-
-\item{preserve_edges}{Logical indicating whether to use progressively smaller windows
-at the beginning and end of the signal to reduce edge effects (default = FALSE).
-Note: This only affects the signal endpoints, not internal discontinuities.}
 
 \item{na_action}{Method to handle NA values before filtering. One of:
 - "linear": Linear interpolation (default)
@@ -63,11 +58,9 @@ This approach preserves higher moments of the data better than simple moving ave
 or Butterworth filters, making it particularly suitable for movement data where
 preserving features like peaks and valleys is important.
 
-Edge Handling:
-When preserve_edges = TRUE, the function uses progressively smaller windows near the
-beginning and end of the signal to reduce endpoint distortion. This only affects
-the signal endpoints - it does not detect or handle internal discontinuities or
-sharp events within the data.
+Edges are handled by \code{\link[signal:sgolayfilt]{signal::sgolayfilt()}} using extrapolation from the
+nearest interior polynomial fit, which is the standard Savitzky-Golay
+edge convention.
 
 Parameter Selection Guidelines:
 \itemize{

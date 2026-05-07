@@ -1,21 +1,4 @@
 #' @keywords internal
-check_roll <- function() {
-  rlang::check_installed(
-    "roll",
-    reason = "to use rolling filters",
-    action = function(...) {
-      utils::install.packages(
-        'roll',
-        repos = c(
-          'https://animovement.r-universe.dev',
-          'https://cloud.r-project.org'
-        )
-      )
-    }
-  )
-}
-
-#' @keywords internal
 check_signal <- function() {
   rlang::check_installed(
     "signal",
@@ -33,13 +16,13 @@ check_signal <- function() {
 }
 
 #' @keywords internal
-check_animetric <- function() {
+check_stinepack <- function() {
   rlang::check_installed(
-    "animetric",
-    reason = "to calculate speed",
+    "stinepack",
+    reason = "to use Stineman interpolation",
     action = function(...) {
       utils::install.packages(
-        'animetric',
+        'stinepack',
         repos = c(
           'https://animovement.r-universe.dev',
           'https://cloud.r-project.org'

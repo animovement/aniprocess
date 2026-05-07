@@ -93,9 +93,14 @@ test_that("stine interpolation works correctly", {
   result <- replace_na(simple_vec, method = "stine", min_gap = 3)
   expect_true(is.na(result[2])) # Single NA should remain
 
-  # Should handle edge cases
-  # result <- replace_na(edge_nas, method = "stine")
-  # expect_false(any(is.na(result)))
+  # Trailing NAs cannot be extrapolated by stinterp; they should be
+  # carried forward (LOCF) so the output ends at the last known value.
+  # Leading NAs stay NA because there is nothing to carry forward.
+  trailing <- c(NA, NA, 1, 2, 3, 4, 5, NA, NA)
+  result <- replace_na(trailing, method = "stine")
+  expect_true(all(is.na(result[1:2])))
+  expect_equal(result[3:7], c(1, 2, 3, 4, 5))
+  expect_equal(result[8:9], c(5, 5))
 })
 
 test_that("locf works correctly", {
@@ -164,4 +169,36 @@ test_that("min_gap and max_gap work together correctly", {
   expect_true(!is.na(result[2])) # Single NA
   expect_true(all(is.na(result[6:8]))) # Triple NA
   expect_equal(result[2:3], c(0, 0)) # Double NA
+})
+
+# Direct replace_na_*() calls — the public functions are reachable on
+# their own (not just via replace_na()), so the early-return paths and
+# the < 2 non-NA warning are their responsibility to cover.
+
+test_that("replace_na_locf returns input unchanged when no NAs are present", {
+  expect_identical(replace_na_locf(c(1, 2, 3)), c(1, 2, 3))
+})
+
+test_that("replace_na_stine returns input unchanged when no NAs are present", {
+  skip_if_not_installed("stinepack")
+  expect_identical(replace_na_stine(c(1, 2, 3)), c(1, 2, 3))
+})
+
+test_that("replace_na_stine warns and returns when < 2 non-NA values", {
+  skip_if_not_installed("stinepack")
+  expect_warning(
+    out <- replace_na_stine(c(NA_real_, NA_real_, 1, NA_real_, NA_real_)[1:2]),
+    "2 non-NA"
+  )
+  expect_equal(length(out), 2)
+})
+
+test_that("replace_na_linear honours an explicit rule argument", {
+  # When `rule` is passed via ..., the function takes the alternate
+  # stats::approx() branch (no rule = 2 default).
+  out <- replace_na_linear(c(NA, 1, 2, 3, NA), rule = 1)
+  # rule = 1 leaves out-of-range NAs as NA.
+  expect_true(is.na(out[1]))
+  expect_true(is.na(out[5]))
+  expect_equal(out[2:4], c(1, 2, 3))
 })

@@ -31,18 +31,7 @@
 #'
 #' @export
 replace_na_locf <- function(x, min_gap = 1, max_gap = Inf) {
-  # Input validation
-  if (!is.numeric(x)) {
-    cli::cli_abort("Input must be numeric")
-  }
-
-  if (min_gap < 1) {
-    cli::cli_abort("min_gap must be >= 1")
-  }
-
-  if (max_gap < min_gap) {
-    cli::cli_abort("max_gap must be >= min_gap")
-  }
+  ensure_replace_na_args(x, min_gap, max_gap)
 
   if (!anyNA(x)) {
     return(x)
@@ -66,13 +55,13 @@ replace_na_locf <- function(x, min_gap = 1, max_gap = Inf) {
     temp <- x
 
     # Perform LOCF
-    filled <- collapse::na_locf(temp)
+    filled <- data.table::nafill(temp, type = "locf")
 
     # Re-fill invalid gaps with NA
     filled[gaps] <- NA # Only fill valid gaps
   } else {
     # If no gap filtering, perform LOCF on all NAs
-    filled <- collapse::na_locf(x)
+    filled <- data.table::nafill(x, type = "locf")
   }
 
   return(filled)

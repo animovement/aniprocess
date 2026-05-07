@@ -31,18 +31,7 @@
 #' }
 #' @export
 replace_na_linear <- function(x, min_gap = 1, max_gap = Inf, ...) {
-  # Input validation
-  if (!is.numeric(x)) {
-    cli::cli_abort("Input must be numeric")
-  }
-
-  if (min_gap < 1) {
-    cli::cli_abort("min_gap must be >= 1")
-  }
-
-  if (max_gap < min_gap) {
-    cli::cli_abort("max_gap must be >= min_gap")
-  }
+  ensure_replace_na_args(x, min_gap, max_gap)
 
   if (!anyNA(x)) {
     return(x)

@@ -19,16 +19,23 @@ navbar:
     right:
       - search
       - github
+      - zulip
       - lightswitch
+  components:
+    zulip:
+      icon: fa-comments
+      href: https://animovement.zulipchat.com
+      aria-label: Chat on Zulip
 
 reference:
 - title: "Remove observations of poor quality"
   desc: These functions ensure that your data is ready for analysis.
   contents:
   - filter_na_confidence
-  - filter_na_speed
-  - filter_na_roi
+  - filter_na_excursion
   - filter_na_range
+  - filter_na_roi
+  - filter_na_speed
 
 - title: "Interpolate over missing values"
   desc: These functions ensure that your data is ready for analysis.
@@ -38,22 +45,24 @@ reference:
   - replace_na_locf
   - replace_na_spline
   - replace_na_stine
-  - replace_na_locf
   - replace_na_value
 
 - title: "Smoothing/filtering functions"
   desc: These functions ensure that your data is ready for analysis.
   contents:
   - filter_aniframe
-  - filter_lowpass
+  - filter_ccma
+  - filter_gaussian
   - filter_highpass
-  - filter_lowpass_fft
   - filter_highpass_fft
   - filter_kalman
   - filter_kalman_irregular
+  - filter_lowpass
+  - filter_lowpass_fft
   - filter_rollmean
   - filter_rollmedian
   - filter_sgolay
+  - filter_triangular
 
 - title: "Other functions"
   desc: These functions ensure that your data is ready for analysis.

@@ -34,32 +34,8 @@
 #' }
 #' @export
 replace_na_stine <- function(x, min_gap = 1, max_gap = Inf, ...) {
-  # Check that stinepack is installed
-  rlang::check_installed(
-    "stinepack",
-    reason = "to use replace_na_stine()",
-    action = function(...) {
-      utils::install.packages(
-        'stinepack',
-        repos = c(
-          'https://roaldarbol.r-universe.dev',
-          'https://cloud.r-project.org'
-        )
-      )
-    }
-  )
-  # Input validation
-  if (!is.numeric(x)) {
-    cli::cli_abort("Input must be numeric")
-  }
-
-  if (min_gap < 1) {
-    cli::cli_abort("min_gap must be >= 1")
-  }
-
-  if (max_gap < min_gap) {
-    cli::cli_abort("max_gap must be >= min_gap")
-  }
+  check_stinepack()
+  ensure_replace_na_args(x, min_gap, max_gap)
 
   if (!anyNA(x)) {
     return(x)
@@ -81,7 +57,7 @@ replace_na_stine <- function(x, min_gap = 1, max_gap = Inf, ...) {
 
   # Handle any edge NAs like approx does
   if (any(is.na(interp))) {
-    interp <- collapse::na_locf(interp)
+    interp <- data.table::nafill(interp, type = "locf")
   }
 
   # Apply gap filtering

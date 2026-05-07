@@ -1,7 +1,7 @@
 Package: aniprocess
 Type: Package
 Title: An R package for signal processing and filtering of movement data
-Version: 0.1.2
+Version: 0.2.0
 Authors@R: 
     person(
       "Mikkel", 
@@ -16,17 +16,16 @@ URL: http://animovement.dev/aniprocess/, https://github.com/animovement/aniproce
 BugReports: https://github.com/animovement/aniprocess/issues
 Encoding: UTF-8
 LazyData: true
-Imports: 
+Imports:
     aniframe,
     cli,
-    collapse,
+    data.table (>= 1.18.0),
     dplyr,
     methods,
     rlang
-Suggests: 
-    animetric,
+Suggests:
+    covr,
     knitr,
-    roll,
     signal,
     stinepack,
     testthat (>= 3.0.0)

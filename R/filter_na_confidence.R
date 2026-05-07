@@ -38,21 +38,11 @@
 #'
 #' @export
 filter_na_confidence <- function(data, threshold = 0.6) {
-  aniframe::ensure_is_aniframe(data)
-
-  # Get spatial variables from metadata
+  ensure_aniframe_spatial(data)
   variables_where <- aniframe::get_metadata(data, "variables_where")
 
-  # Validate required columns exist
-  required_cols <- c(variables_where, "confidence")
-  missing_cols <- setdiff(required_cols, names(data))
-  if (length(missing_cols) > 0) {
-    cli::cli_abort(
-      c(
-        "{.arg data} is missing required column{?s}: {.val {missing_cols}}.",
-        "i" = "Spatial variables from metadata: {.val {variables_where}}."
-      )
-    )
+  if (!"confidence" %in% names(data)) {
+    cli::cli_abort("Missing required column: {.val confidence}.")
   }
 
   # Validate threshold

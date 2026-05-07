@@ -6,24 +6,19 @@
 \usage{
 filter_aniframe(
   data,
-  method = c("rollmedian", "rollmean", "kalman", "sgolay", "lowpass", "highpass",
-    "lowpass_fft", "highpass_fft"),
+  method = c("rollmedian", "rollmean", "triangular", "gaussian", "kalman", "sgolay",
+    "lowpass", "highpass", "lowpass_fft", "highpass_fft"),
   use_derivatives = FALSE,
   ...
 )
 }
 \arguments{
-\item{data}{A data frame containing movement tracking data with the following
-required columns:
-\itemize{
-\item \code{individual}: Identifier for each tracked subject
-\item \code{keypoint}: Identifier for each tracked point
-\item \code{x}: x-coordinates
-\item \code{y}: y-coordinates
-\item \code{time}: Time values
-Optional columns:
-\item \code{z}: z-coordinates
-}}
+\item{data}{An aniframe. Spatial columns to filter are taken from the
+metadata field \code{variables_where} (e.g. \code{c("x", "y")} or \code{c("x", "y", "z")}).
+Filtering is applied within the aniframe's existing grouping, which is
+driven by \code{variables_what} (e.g. \code{c("individual", "keypoint")}, \code{"track"},
+or \code{character(0)} for a single trajectory). Single-track data without an
+\code{individual} column is supported.}
 
 \item{method}{Character string specifying the smoothing method. Options:
 \itemize{
@@ -35,6 +30,8 @@ Optional columns:
 \item \code{"highpass_fft"}: FFT-based high-pass filter (see \code{\link[=filter_highpass_fft]{filter_highpass_fft()}})
 \item \code{"rollmean"}: Rolling mean filter (see \code{\link[=filter_rollmean]{filter_rollmean()}})
 \item \code{"rollmedian"}: Rolling median filter (see \code{\link[=filter_rollmedian]{filter_rollmedian()}})
+\item \code{"triangular"}: Triangular filter (see \code{\link[=filter_triangular]{filter_triangular()}})
+\item \code{"gaussian"}: Gaussian kernel smoother (see \code{\link[=filter_gaussian]{filter_gaussian()}})
 }}
 
 \item{use_derivatives}{Filter on the derivative values instead of coordinates
@@ -43,8 +40,8 @@ Optional columns:
 \item{...}{Additional arguments passed to the specific filter function}
 }
 \value{
-A data frame with the same structure as the input, but with smoothed
-coordinates.
+An aniframe with the same structure as the input, but with smoothed
+spatial coordinates.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -52,9 +49,10 @@ coordinates.
 Applies smoothing filters to movement tracking data to reduce noise.
 }
 \details{
-This function is a wrapper that applies various filtering methods to x and y
-(and z if present) coordinates. Each filtering method has its own specific
-parameters - see the documentation of individual filter functions for details:
+This function is a wrapper that applies the chosen filter to every spatial
+coordinate listed in \code{variables_where}, respecting the aniframe's existing
+grouping. Each filtering method has its own specific parameters - see the
+documentation of the individual filter functions for details:
 \itemize{
 \item \code{\link[=filter_kalman]{filter_kalman()}}: Kalman filter parameters
 \item \code{\link[=filter_sgolay]{filter_sgolay()}}: Savitzky-Golay filter parameters
@@ -64,6 +62,8 @@ parameters - see the documentation of individual filter functions for details:
 \item \code{\link[=filter_highpass_fft]{filter_highpass_fft()}}: FFT-based high-pass filter parameters
 \item \code{\link[=filter_rollmean]{filter_rollmean()}}: Rolling mean parameters (window_width, min_obs)
 \item \code{\link[=filter_rollmedian]{filter_rollmedian()}}: Rolling median parameters (window_width, min_obs)
+\item \code{\link[=filter_triangular]{filter_triangular()}}: Triangular filter parameters (window_width, min_obs)
+\item \code{\link[=filter_gaussian]{filter_gaussian()}}: Gaussian kernel parameters (sigma, window_width)
 }
 }
 \examples{
@@ -83,5 +83,7 @@ filter_aniframe(tracking_data, "rollmedian", window_width = 5, min_obs = 1)
 \item \code{\link[=filter_highpass_fft]{filter_highpass_fft()}}
 \item \code{\link[=filter_rollmean]{filter_rollmean()}}
 \item \code{\link[=filter_rollmedian]{filter_rollmedian()}}
+\item \code{\link[=filter_triangular]{filter_triangular()}}
+\item \code{\link[=filter_gaussian]{filter_gaussian()}}
 }
 }

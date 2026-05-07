@@ -5,15 +5,12 @@
 #'
 #' Applies smoothing filters to movement tracking data to reduce noise.
 #'
-#' @param data A data frame containing movement tracking data with the following
-#'   required columns:
-#'   - `individual`: Identifier for each tracked subject
-#'   - `keypoint`: Identifier for each tracked point
-#'   - `x`: x-coordinates
-#'   - `y`: y-coordinates
-#'   - `time`: Time values
-#'   Optional columns:
-#'   - `z`: z-coordinates
+#' @param data An aniframe. Spatial columns to filter are taken from the
+#'   metadata field `variables_where` (e.g. `c("x", "y")` or `c("x", "y", "z")`).
+#'   Filtering is applied within the aniframe's existing grouping, which is
+#'   driven by `variables_what` (e.g. `c("individual", "keypoint")`, `"track"`,
+#'   or `character(0)` for a single trajectory). Single-track data without an
+#'   `individual` column is supported.
 #' @param method Character string specifying the smoothing method. Options:
 #'   - `"kalman"`: Kalman filter (see [filter_kalman()])
 #'   - `"sgolay"`: Savitzky-Golay filter (see [filter_sgolay()])
@@ -23,14 +20,17 @@
 #'   - `"highpass_fft"`: FFT-based high-pass filter (see [filter_highpass_fft()])
 #'   - `"rollmean"`: Rolling mean filter (see [filter_rollmean()])
 #'   - `"rollmedian"`: Rolling median filter (see [filter_rollmedian()])
+#'   - `"triangular"`: Triangular filter (see [filter_triangular()])
+#'   - `"gaussian"`: Gaussian kernel smoother (see [filter_gaussian()])
 #' @param use_derivatives Filter on the derivative values instead of coordinates
 #'   (important for e.g. trackball or accelerometer data)
 #' @param ... Additional arguments passed to the specific filter function
 #'
 #' @details
-#' This function is a wrapper that applies various filtering methods to x and y
-#' (and z if present) coordinates. Each filtering method has its own specific
-#' parameters - see the documentation of individual filter functions for details:
+#' This function is a wrapper that applies the chosen filter to every spatial
+#' coordinate listed in `variables_where`, respecting the aniframe's existing
+#' grouping. Each filtering method has its own specific parameters - see the
+#' documentation of the individual filter functions for details:
 #'
 #' * [filter_kalman()]: Kalman filter parameters
 #' * [filter_sgolay()]: Savitzky-Golay filter parameters
@@ -40,9 +40,11 @@
 #' * [filter_highpass_fft()]: FFT-based high-pass filter parameters
 #' * [filter_rollmean()]: Rolling mean parameters (window_width, min_obs)
 #' * [filter_rollmedian()]: Rolling median parameters (window_width, min_obs)
+#' * [filter_triangular()]: Triangular filter parameters (window_width, min_obs)
+#' * [filter_gaussian()]: Gaussian kernel parameters (sigma, window_width)
 #'
-#' @return A data frame with the same structure as the input, but with smoothed
-#'   coordinates.
+#' @return An aniframe with the same structure as the input, but with smoothed
+#'   spatial coordinates.
 #'
 #' @examples
 #' \dontrun{
@@ -59,6 +61,8 @@
 #' * [filter_highpass_fft()]
 #' * [filter_rollmean()]
 #' * [filter_rollmedian()]
+#' * [filter_triangular()]
+#' * [filter_gaussian()]
 #'
 #' @export
 filter_aniframe <- function(
@@ -66,6 +70,8 @@ filter_aniframe <- function(
   method = c(
     "rollmedian",
     "rollmean",
+    "triangular",
+    "gaussian",
     "kalman",
     "sgolay",
     "lowpass",
@@ -78,16 +84,26 @@ filter_aniframe <- function(
 ) {
   method <- match.arg(method)
 
-  # Input validation
-  if (!aniframe::is_aniframe(data)) {
-    cli::cli_abort("Data is not an aniframe.")
+  aniframe::ensure_is_aniframe(data)
+
+  variables_where <- aniframe::get_metadata(data, "variables_where")
+
+  missing_where <- setdiff(variables_where, names(data))
+  if (length(missing_where) > 0) {
+    cli::cli_abort(
+      c(
+        "Missing spatial column{?s}: {.val {missing_where}}.",
+        "i" = "Spatial variables from metadata: {.val {variables_where}}."
+      )
+    )
   }
 
-  # Select appropriate filter function
   filter_fn <- switch(
     method,
     rollmean = filter_rollmean,
     rollmedian = filter_rollmedian,
+    triangular = filter_triangular,
+    gaussian = filter_gaussian,
     kalman = filter_kalman,
     sgolay = filter_sgolay,
     lowpass = filter_lowpass,
@@ -97,55 +113,24 @@ filter_aniframe <- function(
     cli::cli_abort("Invalid method: {method}")
   )
 
+  # Materialise dots so per-column lambdas don't depend on tidyeval `...`
+  extra_args <- rlang::list2(...)
+  apply_filter <- function(col) do.call(filter_fn, c(list(col), extra_args))
+
   if (isFALSE(use_derivatives)) {
-    # Apply filter to coordinates
-    data <- data |>
-      dplyr::group_by(.data$individual, .data$keypoint) |>
-      dplyr::mutate(
-        x = filter_fn(.data$x, ...),
-        y = filter_fn(.data$y, ...)
-      )
-
-    # If z coordinate exists, filter it too
-    if ("z" %in% names(data)) {
-      data <- data |>
-        dplyr::mutate(
-          z = filter_fn(.data$z, ...)
-        )
-    }
+    dplyr::mutate(
+      data,
+      dplyr::across(dplyr::all_of(variables_where), apply_filter)
+    )
   } else {
-    # Apply filter to derivatives
-    data <- data |>
-      dplyr::group_by(.data$individual, .data$keypoint) |>
-      dplyr::mutate(
-        dx = .data$x - dplyr::lag(.data$x),
-        dy = .data$y - dplyr::lag(.data$y)
-      ) |>
-      dplyr::mutate(
-        dx = filter_fn(.data$dx, ...),
-        dy = filter_fn(.data$dy, ...)
-      ) |>
-      dplyr::mutate(
-        x = cumsum(dplyr::coalesce(.data$dx, 0)) + .data$dx * 0,
-        y = cumsum(dplyr::coalesce(.data$dy, 0)) + .data$dy * 0
-      ) |>
-      dplyr::select(-"dx", -"dy")
-
-    # If z coordinate exists, filter it too
-    if ("z" %in% names(data)) {
-      data <- data |>
-        dplyr::mutate(
-          dz = .data$z - dplyr::lag(.data$z)
-        ) |>
-        dplyr::mutate(
-          dz = filter_fn(.data$dz, ...)
-        ) |>
-        dplyr::mutate(
-          z = cumsum(dplyr::coalesce(.data$dz, 0)) + .data$dz * 0
-        ) |>
-        dplyr::select(-"dz")
+    integrate_filtered <- function(col) {
+      d <- col - dplyr::lag(col)
+      d <- apply_filter(d)
+      cumsum(dplyr::coalesce(d, 0)) + d * 0
     }
+    dplyr::mutate(
+      data,
+      dplyr::across(dplyr::all_of(variables_where), integrate_filtered)
+    )
   }
-
-  data
 }

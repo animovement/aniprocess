@@ -256,19 +256,7 @@ filter_highpass <- function(
   ...
 ) {
   # Check that signal is installed
-  rlang::check_installed(
-    "signal",
-    reason = "to use the high-pass filter",
-    action = function(...) {
-      utils::install.packages(
-        'signal',
-        repos = c(
-          'https://roaldarbol.r-universe.dev',
-          'https://cloud.r-project.org'
-        )
-      )
-    }
-  )
+  check_signal()
 
   # Input validation
   if (!is.numeric(x)) {

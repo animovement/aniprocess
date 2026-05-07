@@ -1,15 +1,29 @@
 #' Apply Rolling Median Filter
 #'
-#' Applies a rolling median filter to a numeric vector using the roll package.
+#' Applies a rolling median filter to a numeric vector using
+#' [data.table::frollmedian()].
 #'
 #' @inheritParams filter_rollmean
-#' @param ... Additional parameters to be passed to `roll::roll_median`
 #'
-#' @return Filtered numeric vector
+#' @details
+#' Edge handling matches [filter_rollmean()]: partial windows at the edges
+#' for `align = "right"`/`"left"`; `NA` at the edges for `align = "center"`.
+#'
+#' @return Filtered numeric vector, same length as `x`.
 #'
 #' @export
-filter_rollmedian <- function(x, window_width = 5, min_obs = 1, ...) {
-  # Check that roll is installed
-  check_roll()
-  roll::roll_median(x, width = window_width, min_obs = min_obs, ...)
+filter_rollmedian <- function(
+  x,
+  window_width = 5,
+  min_obs = 1,
+  align = c("right", "left", "center")
+) {
+  align <- match.arg(align)
+  rolling_with_min_obs(
+    x,
+    fn = data.table::frollmedian,
+    window_width = window_width,
+    min_obs = min_obs,
+    align = align
+  )
 }

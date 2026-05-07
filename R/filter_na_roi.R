@@ -58,9 +58,7 @@ filter_na_roi <- function(
   z_center = NULL,
   radius = NULL
 ) {
-  aniframe::ensure_is_aniframe(data)
-
-  # Get spatial variables from metadata
+  ensure_aniframe_spatial(data)
   variables_where <- aniframe::get_metadata(data, "variables_where")
   has_z <- "z" %in% variables_where
 
