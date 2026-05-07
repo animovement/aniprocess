@@ -296,7 +296,7 @@ test_that("filter_na_confidence validates required columns exist", {
 
   expect_error(
     filter_na_confidence(data),
-    "missing required column"
+    "Missing spatial column"
   )
 })
 
@@ -310,7 +310,7 @@ test_that("filter_na_confidence validates confidence column exists", {
 
   expect_error(
     filter_na_confidence(data),
-    "missing required column.*confidence"
+    "Missing required column.*confidence"
   )
 })
 

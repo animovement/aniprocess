@@ -152,6 +152,59 @@ test_that("multiple plateaus are handled correctly", {
   expect_equal(first_peaks, c(2, 6))
 })
 
+test_that("prominence uses the standard topographic definition (saddle = max of left/right valley min)", {
+  # Regression test for a bug where prominence was computed as
+  # peak - min(everything in surrounding valley) instead of
+  # peak - max(min_left_valley, min_right_valley). The two definitions
+  # disagree when the left and right valley minima differ; the buggy
+  # version overestimated prominence.
+  #
+  # x = c(1, 5, 2, 8, 3, 1):
+  #   Peak at idx 2 (val 5) is between the start (val 1) and a higher
+  #   peak at idx 4 (val 8). Left valley min = 1, right valley min = 2.
+  #   Standard prominence = 5 - max(1, 2) = 3.
+  #   Buggy "base elevation" prominence would be 5 - 1 = 4.
+  x <- c(1, 5, 2, 8, 3, 1)
+
+  # min_prominence = 3.5: standard prominence (3) is below threshold,
+  # so idx 2 must be excluded. The buggy version would keep it.
+  expect_false(find_peaks(x, min_prominence = 3.5)[2])
+
+  # min_prominence = 2.5: standard prominence (3) is above, so kept.
+  expect_true(find_peaks(x, min_prominence = 2.5)[2])
+
+  # Symmetric check on troughs.
+  y <- c(9, 5, 8, 2, 7, 9)
+  expect_false(find_troughs(y, min_prominence = 3.5)[2])
+  expect_true(find_troughs(y, min_prominence = 2.5)[2])
+})
+
+test_that("plateaus below the height threshold are not flagged", {
+  # Plateau at value 2 with min_height = 5 — value fails the height
+  # check inside handle_plateau and the plateau is not flagged.
+  x <- c(1, 2, 2, 2, 1)
+  out <- find_peaks(x, min_height = 5, plateau_handling = "all")
+  expect_false(any(out, na.rm = TRUE))
+})
+
+test_that("plateau adjacent to NA is marked NA", {
+  # Plateau at idx 2:4 with NA immediately after. handle_plateau cannot
+  # determine extremum status (NA in extended window) and returns
+  # is_na = TRUE; the plateau positions are set to NA in the output.
+  x <- c(1, 5, 5, 5, NA, 1)
+  out <- find_peaks(x, plateau_handling = "all")
+  expect_true(all(is.na(out[2:4])))
+})
+
+test_that("prominence calculation marks NA when the boundary walk hits NA", {
+  # Peak at idx 3 (val 5). The left-walk decrements until x[1] = NA,
+  # which terminates the loop with x[left_idx] = NA -> is_extremum
+  # becomes NA, not TRUE.
+  x <- c(NA, 0, 5, 1, 6, 2, NA)
+  out <- find_peaks(x, min_prominence = 1)
+  expect_true(is.na(out[3]))
+})
+
 test_that("prominence works with plateaus", {
   x <- c(1, 3, 3, 3, 2, 5, 5, 1)
 

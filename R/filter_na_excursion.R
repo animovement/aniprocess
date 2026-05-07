@@ -70,24 +70,8 @@ filter_na_excursion <- function(
   return_sd = 1,
   by_axis = TRUE
 ) {
-  aniframe::ensure_is_aniframe(data)
-
+  ensure_aniframe_spatial(data)
   variables_where <- aniframe::get_metadata(data, "variables_where")
-
-  missing_where <- setdiff(variables_where, names(data))
-  if (length(missing_where) > 0L) {
-    cli::cli_abort(
-      c(
-        "Missing spatial column{?s}: {.val {missing_where}}.",
-        "i" = "Spatial variables from metadata: {.val {variables_where}}."
-      )
-    )
-  }
-  for (col in variables_where) {
-    if (!is.numeric(data[[col]])) {
-      cli::cli_abort("Column {.val {col}} must be numeric.")
-    }
-  }
 
   for (sd_arg in c("outlier_sd", "return_sd")) {
     val <- get(sd_arg)

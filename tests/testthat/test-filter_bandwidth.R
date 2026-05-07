@@ -285,3 +285,84 @@ test_that("FFT filters handle NA values consistently", {
     "Signal contains NA values"
   )
 })
+
+# Additional tests targeting filter_highpass-specific paths and the
+# very-low-cutoff numerical-stability branch shared by both filters.
+
+test_that("filter_highpass rejects out-of-range cutoff frequencies", {
+  x <- rnorm(100)
+  expect_error(filter_highpass(x, cutoff_freq = 0, sampling_rate = 1000))
+  expect_error(filter_highpass(x, cutoff_freq = 501, sampling_rate = 1000))
+})
+
+test_that("filter_highpass rejects out-of-range filter order", {
+  x <- rnorm(100)
+  expect_error(
+    filter_highpass(x, cutoff_freq = 20, sampling_rate = 1000, order = 0),
+    "between 1 and 8"
+  )
+  expect_error(
+    filter_highpass(x, cutoff_freq = 20, sampling_rate = 1000, order = 9),
+    "between 1 and 8"
+  )
+})
+
+test_that("filter_highpass handles NA values via na_action", {
+  set.seed(1)
+  t <- seq(0, 1, by = 1 / 1000)
+  x <- sin(2 * pi * 2 * t) + 0.5 * sin(2 * pi * 50 * t)
+  x_with_na <- x
+  x_with_na[c(50, 100, 200)] <- NA
+
+  for (method in c("linear", "spline", "stine", "locf")) {
+    if (method == "stine") {
+      next
+    } # stine optional; covered separately
+    filtered <- filter_highpass(
+      x_with_na,
+      cutoff_freq = 20,
+      sampling_rate = 1000,
+      na_action = method
+    )
+    expect_equal(length(filtered), length(x_with_na))
+    expect_false(any(is.na(filtered)))
+  }
+
+  expect_error(
+    filter_highpass(
+      x_with_na,
+      cutoff_freq = 20,
+      sampling_rate = 1000,
+      na_action = "error"
+    ),
+    "Signal contains NA values"
+  )
+})
+
+test_that("filter_highpass keep_na restores NAs at original positions", {
+  set.seed(2)
+  x <- sin(2 * pi * 2 * seq(0, 1, by = 1 / 1000))
+  na_pos <- c(10, 50, 100)
+  x[na_pos] <- NA
+  filtered <- filter_highpass(
+    x,
+    cutoff_freq = 20,
+    sampling_rate = 1000,
+    keep_na = TRUE
+  )
+  expect_true(all(is.na(filtered[na_pos])))
+})
+
+test_that("very low cutoff frequency triggers order reduction warning", {
+  # normalized_cutoff = cutoff / (sampling/2). For < 0.001, with
+  # sampling = 1000, cutoff < 0.5 Hz suffices.
+  x <- rnorm(2000)
+  expect_warning(
+    filter_lowpass(x, cutoff_freq = 0.4, sampling_rate = 1000, order = 4),
+    "Very low cutoff frequency"
+  )
+  expect_warning(
+    filter_highpass(x, cutoff_freq = 0.4, sampling_rate = 1000, order = 4),
+    "Very low cutoff frequency"
+  )
+})

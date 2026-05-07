@@ -122,9 +122,17 @@ filter_lowpass_fft <- function(
     by = sampling_rate / N_padded
   )
 
-  # Create filter mask
+  # Create filter mask. The freq vector treats wraparound positions as
+  # large positive frequencies, so the second half of the mask is
+  # initially FALSE. We then enforce Hermitian symmetry — mask[k] must
+  # equal mask[N - k + 2] for k = 2..N — so each conjugate pair gets
+  # the same treatment. Without this, the inverse FFT's Re() drops
+  # half the signal energy.
   mask <- freq <= cutoff_freq
-  mask[N_padded:2] <- rev(mask[2:(N_padded / 2 + 1)]) # Mirror for negative frequencies
+  if (N_padded >= 3) {
+    half <- ceiling(N_padded / 2)
+    mask[(N_padded - half + 2):N_padded] <- rev(mask[2:half])
+  }
 
   # Apply filter
   X_filtered <- X * mask
@@ -274,9 +282,16 @@ filter_highpass_fft <- function(
     by = sampling_rate / N_padded
   )
 
-  # Create filter mask
+  # Create filter mask, then enforce Hermitian symmetry. The
+  # wraparound positions in `freq` are spuriously large positive
+  # values that pass the `>= cutoff_freq` check; mirroring overwrites
+  # them with the correct values for the negative-frequency pairs of
+  # the (correctly handled) positive-frequency half.
   mask <- freq >= cutoff_freq
-  mask[N_padded:2] <- rev(mask[2:(N_padded / 2 + 1)]) # Mirror for negative frequencies
+  if (N_padded >= 3) {
+    half <- ceiling(N_padded / 2)
+    mask[(N_padded - half + 2):N_padded] <- rev(mask[2:half])
+  }
 
   # Apply filter
   X_filtered <- X * mask

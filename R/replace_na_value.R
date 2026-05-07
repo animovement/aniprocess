@@ -32,21 +32,9 @@
 #'
 #' @export
 replace_na_value <- function(x, value, min_gap = 1, max_gap = Inf) {
-  # Input validation
-  if (!is.numeric(x)) {
-    cli::cli_abort("Input must be numeric")
-  }
-
+  ensure_replace_na_args(x, min_gap, max_gap)
   if (!is.numeric(value) || length(value) != 1) {
     cli::cli_abort("value must be a single numeric value")
-  }
-
-  if (min_gap < 1) {
-    cli::cli_abort("min_gap must be >= 1")
-  }
-
-  if (max_gap < min_gap) {
-    cli::cli_abort("max_gap must be >= min_gap")
   }
 
   if (!anyNA(x)) {

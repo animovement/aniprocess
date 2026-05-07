@@ -177,7 +177,7 @@ test_that("filter_na_speed validates required columns exist", {
 
   expect_error(
     filter_na_speed(data, threshold = 5),
-    "Missing required column"
+    "Missing spatial column"
   )
 })
 
@@ -286,4 +286,15 @@ test_that("calculate_speed_2d uses one-sided fallback at endpoints", {
   # Endpoints should fall back to the one-sided step (no NA)
   expect_false(is.na(speed[1]))
   expect_false(is.na(speed[length(speed)]))
+})
+
+test_that("filter_na_speed errors when time column is missing", {
+  data <- aniframe::aniframe(
+    time = 1:5,
+    x = 1:5,
+    y = 1:5,
+    variables_what = character(0)
+  )
+  data$time <- NULL
+  expect_error(filter_na_speed(data), "Missing required column.*time")
 })

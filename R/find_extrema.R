@@ -277,12 +277,9 @@ find_extrema <- function(
     function(value) value < height_threshold
   }
 
-  # Function to check if point is extremum within window
+  # Function to check if point is extremum within window. The caller
+  # filters NA at idx before calling, so x[idx] is non-NA here.
   is_window_extremum <- function(idx) {
-    if (is.na(x[idx])) {
-      return(NA)
-    }
-
     # First check height threshold
     if (!meets_height_threshold(x[idx])) {
       return(FALSE)
@@ -384,13 +381,10 @@ find_extrema <- function(
     }
   }
 
-  # Apply prominence filter if specified
+  # Apply prominence filter if specified. which() returns only TRUE
+  # indices (NAs are dropped), so is_extremum[i] is TRUE here.
   if (min_prominence > 0) {
     for (i in which(is_extremum)) {
-      if (is.na(is_extremum[i])) {
-        next
-      }
-
       # Calculate prominence using window_size for initial search
       left_idx <- max(1, i - half_window)
       right_idx <- min(n, i + half_window)
@@ -420,21 +414,28 @@ find_extrema <- function(
         next
       }
 
-      extremum_value <- if (type == "peak") {
-        min(x[c(left_idx:i, i:right_idx)], na.rm = TRUE)
+      # Standard topographic prominence: the saddle is the *higher* of
+      # the two valley minima (peak case) — the lowest contour line
+      # that surrounds this peak without including a higher one.
+      # Equivalently for troughs: the lower of the two valley maxima.
+      # x[left_idx] and x[right_idx] are non-NA (line above), and the
+      # window around i is NA-free (otherwise is_extremum[i] would have
+      # been NA, not TRUE). The walk stops at any NA in between, so the
+      # slice is fully non-NA — saddle is finite.
+      if (type == "peak") {
+        left_saddle <- min(x[left_idx:i], na.rm = TRUE)
+        right_saddle <- min(x[i:right_idx], na.rm = TRUE)
+        saddle <- max(left_saddle, right_saddle)
       } else {
-        max(x[c(left_idx:i, i:right_idx)], na.rm = TRUE)
-      }
-
-      if (is.na(extremum_value)) {
-        is_extremum[i] <- NA
-        next
+        left_saddle <- max(x[left_idx:i], na.rm = TRUE)
+        right_saddle <- max(x[i:right_idx], na.rm = TRUE)
+        saddle <- min(left_saddle, right_saddle)
       }
 
       prominence <- if (type == "peak") {
-        x[i] - extremum_value
+        x[i] - saddle
       } else {
-        extremum_value - x[i]
+        saddle - x[i]
       }
 
       if (prominence < min_prominence) {
