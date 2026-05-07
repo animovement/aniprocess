@@ -20,6 +20,8 @@
 #'   - `"highpass_fft"`: FFT-based high-pass filter (see [filter_highpass_fft()])
 #'   - `"rollmean"`: Rolling mean filter (see [filter_rollmean()])
 #'   - `"rollmedian"`: Rolling median filter (see [filter_rollmedian()])
+#'   - `"triangular"`: Triangular filter (see [filter_triangular()])
+#'   - `"gaussian"`: Gaussian kernel smoother (see [filter_gaussian()])
 #' @param use_derivatives Filter on the derivative values instead of coordinates
 #'   (important for e.g. trackball or accelerometer data)
 #' @param ... Additional arguments passed to the specific filter function
@@ -38,6 +40,8 @@
 #' * [filter_highpass_fft()]: FFT-based high-pass filter parameters
 #' * [filter_rollmean()]: Rolling mean parameters (window_width, min_obs)
 #' * [filter_rollmedian()]: Rolling median parameters (window_width, min_obs)
+#' * [filter_triangular()]: Triangular filter parameters (window_width, min_obs)
+#' * [filter_gaussian()]: Gaussian kernel parameters (sigma, window_width)
 #'
 #' @return An aniframe with the same structure as the input, but with smoothed
 #'   spatial coordinates.
@@ -57,6 +61,8 @@
 #' * [filter_highpass_fft()]
 #' * [filter_rollmean()]
 #' * [filter_rollmedian()]
+#' * [filter_triangular()]
+#' * [filter_gaussian()]
 #'
 #' @export
 filter_aniframe <- function(
@@ -64,6 +70,8 @@ filter_aniframe <- function(
   method = c(
     "rollmedian",
     "rollmean",
+    "triangular",
+    "gaussian",
     "kalman",
     "sgolay",
     "lowpass",
@@ -94,6 +102,8 @@ filter_aniframe <- function(
     method,
     rollmean = filter_rollmean,
     rollmedian = filter_rollmedian,
+    triangular = filter_triangular,
+    gaussian = filter_gaussian,
     kalman = filter_kalman,
     sgolay = filter_sgolay,
     lowpass = filter_lowpass,
