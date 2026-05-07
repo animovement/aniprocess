@@ -263,7 +263,7 @@ filter_highpass <- function(
       utils::install.packages(
         'signal',
         repos = c(
-          'https://roaldarbol.r-universe.dev',
+          'https://animovement.r-universe.dev',
           'https://cloud.r-project.org'
         )
       )

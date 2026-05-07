@@ -42,7 +42,7 @@ replace_na_stine <- function(x, min_gap = 1, max_gap = Inf, ...) {
       utils::install.packages(
         'stinepack',
         repos = c(
-          'https://roaldarbol.r-universe.dev',
+          'https://animovement.r-universe.dev',
           'https://cloud.r-project.org'
         )
       )
