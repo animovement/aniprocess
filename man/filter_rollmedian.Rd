@@ -4,20 +4,33 @@
 \alias{filter_rollmedian}
 \title{Apply Rolling Median Filter}
 \usage{
-filter_rollmedian(x, window_width = 5, min_obs = 1, ...)
+filter_rollmedian(
+  x,
+  window_width = 5,
+  min_obs = 1,
+  align = c("right", "left", "center")
+)
 }
 \arguments{
-\item{x}{Numeric vector to filter}
+\item{x}{Numeric vector to filter.}
 
-\item{window_width}{Integer specifying window size for rolling calculation}
+\item{window_width}{Integer specifying window size for the rolling
+calculation.}
 
-\item{min_obs}{Minimum number of non-NA values required (default: 1)}
+\item{min_obs}{Minimum number of non-NA values required in the window.
+Positions with fewer non-NA values return \code{NA}. Defaults to \code{1}.}
 
-\item{...}{Additional parameters to be passed to \code{roll::roll_median}}
+\item{align}{Window alignment. One of \code{"right"} (default), \code{"left"}, or
+\code{"center"}.}
 }
 \value{
-Filtered numeric vector
+Filtered numeric vector, same length as \code{x}.
 }
 \description{
-Applies a rolling median filter to a numeric vector using the roll package.
+Applies a rolling median filter to a numeric vector using
+\code{\link[data.table:froll]{data.table::frollmedian()}}.
+}
+\details{
+Edge handling matches \code{\link[=filter_rollmean]{filter_rollmean()}}: partial windows at the edges
+for \code{align = "right"}/\code{"left"}; \code{NA} at the edges for \code{align = "center"}.
 }

@@ -24,8 +24,8 @@ Imports:
     methods,
     rlang
 Suggests:
+    data.table (>= 1.18.0),
     knitr,
-    roll,
     signal,
     stinepack,
     testthat (>= 3.0.0)

@@ -1,11 +1,11 @@
 #' @keywords internal
-check_roll <- function() {
+check_data_table <- function() {
   rlang::check_installed(
-    "roll",
+    "data.table (>= 1.18.0)",
     reason = "to use rolling filters",
     action = function(...) {
       utils::install.packages(
-        'roll',
+        'data.table',
         repos = c(
           'https://animovement.r-universe.dev',
           'https://cloud.r-project.org'
