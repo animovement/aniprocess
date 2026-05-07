@@ -22,9 +22,13 @@
 #' When parameters are not explicitly provided, they are automatically configured based
 #' on the sampling rate:
 #'
-#' * base_Q scales inversely with sampling rate (base_Q ≈ 0.15/sampling_rate)
-#' * R defaults to 0.1 (assuming moderate measurement noise)
-#' * initial_P scales with sampling rate uncertainty
+#' * `base_Q` defaults to `var(measurements) / sampling_rate` (so the
+#'   per-step process noise `Q = base_Q / sampling_rate` shrinks at higher
+#'   sampling rates, where consecutive samples are closer together).
+#' * `R` defaults to `min(mean(diff(x)^2) / 2, var(x) / 4)` if there are
+#'   enough observations, else `0.1`.
+#' * `initial_P` defaults to `var(measurements)` if there are enough
+#'   observations, else `1`.
 #'
 #' Missing values (NA) are handled by relying on the prediction step without measurement updates.
 #'

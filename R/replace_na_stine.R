@@ -69,7 +69,7 @@ replace_na_stine <- function(x, min_gap = 1, max_gap = Inf, ...) {
 
   # Handle any edge NAs like approx does
   if (any(is.na(interp))) {
-    interp <- collapse::na_locf(interp)
+    interp <- data.table::nafill(interp, type = "locf")
   }
 
   # Apply gap filtering

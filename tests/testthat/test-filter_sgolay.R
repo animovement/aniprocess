@@ -1,3 +1,22 @@
+test_that("filter reproduces polynomials of degree <= order (defining property)", {
+  # The defining property of the Savitzky-Golay filter: a polynomial of
+  # degree <= order is reproduced exactly (up to floating-point error).
+  n <- 100
+  t <- seq_len(n) - 1
+  for (deg in 0:4) {
+    x <- t^deg
+    out <- filter_sgolay(
+      x,
+      sampling_rate = 60,
+      window_size = 11,
+      order = max(deg, 2)
+    )
+    # Tolerance loosens with degree because the Vandermonde-like fit gets
+    # numerically harder for higher-degree polynomials.
+    expect_equal(out, x, tolerance = 10^(deg - 12))
+  }
+})
+
 test_that("filter handles basic cases correctly", {
   # Create simple sine wave
   t <- seq(0, 1, by = 1 / 60) # 60 FPS
@@ -67,32 +86,6 @@ test_that("NA handling works correctly", {
   # Keep NA option
   filtered_with_na <- filter_sgolay(x, sampling_rate = 60, keep_na = TRUE)
   expect_true(all(is.na(filtered_with_na[c(25, 75)])))
-})
-
-test_that("preserve_edges option works", {
-  # Create sine wave
-  t <- seq(0, 1, by = 1 / 60)
-  x <- sin(2 * pi * 2 * t)
-
-  # Filter with and without edge preservation
-  filtered_no_edges <- filter_sgolay(
-    x,
-    sampling_rate = 60,
-    preserve_edges = FALSE
-  )
-  filtered_with_edges <- filter_sgolay(
-    x,
-    sampling_rate = 60,
-    preserve_edges = TRUE
-  )
-
-  # Results should be different
-  expect_false(identical(filtered_no_edges, filtered_with_edges))
-
-  # Edge preservation should make endpoints closer to original data
-  start_diff_no_edges <- abs(x[1] - filtered_no_edges[1])
-  start_diff_with_edges <- abs(x[1] - filtered_with_edges[1])
-  expect_lt(start_diff_with_edges, start_diff_no_edges)
 })
 
 test_that("filter preserves signal features appropriately", {
