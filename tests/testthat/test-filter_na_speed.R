@@ -1,68 +1,83 @@
 # Tests for filter_na_speed
-# - Basic filtering with numeric threshold (2D)
-# - Basic filtering with numeric threshold (3D)
+# - Flags single-frame outliers (2D and 3D)
+# - Leaves legitimate step changes alone (sustained moves to a new region)
+# - Does not contaminate neighbors of NA inputs
 # - Automatic threshold calculation
 # - Preserves existing NAs
 # - Preserves other columns
 # - Filters confidence when present
 # - Works without confidence column
-# - Validates data is an aniframe
-# - Validates required columns exist
-# - Validates threshold input
+# - Validates inputs (aniframe class, required columns, numeric types, threshold)
 # - Returns an aniframe
+# - Handles constant position and uneven time spacing
+# - Speed helpers: correct values for constant velocity (2D and 3D)
+# - Speed helpers: one-sided fallback at endpoints
 
-test_that("filter_na_speed filters with numeric threshold (2D)", {
+test_that("filter_na_speed flags a single-frame outlier (2D)", {
+  # Smooth motion with one position outlier at index 5
   data <- aniframe::aniframe(
-    time = 1:5,
-    x = c(0, 1, 2, 10, 11),
-    y = c(0, 1, 2, 10, 11)
+    time = 1:9,
+    x = c(1, 2, 3, 4, 100, 6, 7, 8, 9),
+    y = c(1, 2, 3, 4, 100, 6, 7, 8, 9)
   )
 
-  result <- filter_na_speed(data, threshold = 5)
+  result <- filter_na_speed(data, threshold = 20)
 
-  # Points 3->4 have high speed, should be filtered
-  expect_true(is.na(result$x[4]))
-  expect_true(is.na(result$y[4]))
-  # Other points should remain
-  expect_false(is.na(result$x[1]))
-  expect_false(is.na(result$x[2]))
+  # The outlier itself is flagged
+  expect_true(is.na(result$x[5]))
+  expect_true(is.na(result$y[5]))
+  # Innocent neighbors are not
+  expect_false(is.na(result$x[4]))
+  expect_false(is.na(result$x[6]))
+  expect_false(is.na(result$y[4]))
+  expect_false(is.na(result$y[6]))
 })
 
-test_that("filter_na_speed filters with numeric threshold (3D)", {
+test_that("filter_na_speed flags a single-frame outlier (3D)", {
   data <- aniframe::aniframe(
-    time = 1:5,
-    x = c(0, 1, 2, 10, 11),
-    y = c(0, 1, 2, 10, 11),
-    z = c(0, 1, 2, 10, 11),
+    time = 1:9,
+    x = c(1, 2, 3, 4, 100, 6, 7, 8, 9),
+    y = c(1, 2, 3, 4, 100, 6, 7, 8, 9),
+    z = c(1, 2, 3, 4, 100, 6, 7, 8, 9),
     variables_where = c("x", "y", "z")
   )
 
-  result <- filter_na_speed(data, threshold = 5)
+  result <- filter_na_speed(data, threshold = 20)
 
-  # Points 3 and 4 have high speed due to the jump, should be filtered
-  expect_true(is.na(result$x[3]))
-  expect_true(is.na(result$y[3]))
-  expect_true(is.na(result$z[3]))
-  expect_true(is.na(result$x[4]))
-  expect_true(is.na(result$y[4]))
-  expect_true(is.na(result$z[4]))
-  # Endpoints should remain (speed ~1.73)
-  expect_false(is.na(result$x[1]))
-  expect_false(is.na(result$x[5]))
+  expect_true(is.na(result$x[5]))
+  expect_true(is.na(result$y[5]))
+  expect_true(is.na(result$z[5]))
+  expect_false(is.na(result$x[4]))
+  expect_false(is.na(result$x[6]))
+})
+
+test_that("filter_na_speed leaves legitimate step changes alone", {
+  # Sustained move to a new region (not an outlier)
+  data <- aniframe::aniframe(
+    time = 1:8,
+    x = c(1, 2, 3, 100, 101, 102, 103, 104),
+    y = c(1, 2, 3, 100, 101, 102, 103, 104)
+  )
+
+  result <- filter_na_speed(data, threshold = 20)
+
+  # Nothing should be flagged - this is a state change, not an outlier
+  expect_false(any(is.na(result$x)))
+  expect_false(any(is.na(result$y)))
 })
 
 test_that("filter_na_speed calculates auto threshold", {
-  # Create data with one outlier
+  # Data with one single-frame outlier at index 51
   data <- aniframe::aniframe(
     time = 1:100,
-    x = c(1:50, 200, 201:249),
+    x = c(1:50, 500, 51:99),
     y = 1:100
   )
 
   result <- filter_na_speed(data, threshold = "auto")
 
-  # The jump at point 50+51 should be filtered
-  expect_true(is.na(result$x[50]))
+  # The outlier at 51 should be flagged
+  expect_true(is.na(result$x[51]))
   # Most other points should remain
   expect_false(is.na(result$x[70]))
 })
@@ -81,6 +96,23 @@ test_that("filter_na_speed preserves existing NAs", {
   expect_true(is.na(result$y[3]))
 })
 
+test_that("filter_na_speed does not contaminate neighbors of NA inputs", {
+  # Single NA in x at row 3 of an otherwise clean series
+  data <- aniframe::aniframe(
+    time = 1:7,
+    x = c(1, 2, NA, 4, 5, 6, 7),
+    y = c(1, 2, 3, 4, 5, 6, 7)
+  )
+
+  result <- filter_na_speed(data, threshold = 100)
+
+  # Neighbors of the NA row remain clean
+  expect_false(is.na(result$x[2]))
+  expect_false(is.na(result$x[4]))
+  expect_false(is.na(result$y[2]))
+  expect_false(is.na(result$y[4]))
+})
+
 test_that("filter_na_speed preserves other columns", {
   data <- aniframe::aniframe(
     time = 1:5,
@@ -92,22 +124,20 @@ test_that("filter_na_speed preserves other columns", {
 
   result <- filter_na_speed(data, threshold = 100)
 
-  # Other columns should remain unchanged
   expect_equal(result$id, c("a", "b", "c", "d", "e"))
   expect_equal(result$value, c(10, 20, 30, 40, 50))
 })
 
 test_that("filter_na_speed filters confidence when present", {
   data <- aniframe::aniframe(
-    time = 1:5,
-    x = c(0, 1, 2, 10, 11),
-    y = c(0, 1, 2, 10, 11),
-    confidence = c(0.9, 0.9, 0.9, 0.9, 0.9)
+    time = 1:7,
+    x = c(1, 2, 3, 100, 5, 6, 7),
+    y = c(1, 2, 3, 100, 5, 6, 7),
+    confidence = rep(0.9, 7)
   )
 
-  result <- filter_na_speed(data, threshold = 5)
+  result <- filter_na_speed(data, threshold = 20)
 
-  # Confidence should be NA where speed exceeds threshold
   expect_true(is.na(result$confidence[4]))
   expect_false(is.na(result$confidence[1]))
 })
@@ -143,7 +173,6 @@ test_that("filter_na_speed validates required columns exist", {
     y = c(0, 1, 2, 3, 4)
   )
 
-  # Set metadata to expect z column that doesn't exist
   data <- aniframe::set_metadata(data, variables_where = c("x", "y", "z"))
 
   expect_error(
@@ -159,7 +188,6 @@ test_that("filter_na_speed validates columns are numeric", {
     y = c(0, 1, 2, 3, 4)
   )
 
-  # Force time to character (normally wouldn't happen)
   data$time <- as.character(data$time)
 
   expect_error(
@@ -212,32 +240,31 @@ test_that("filter_na_speed handles constant position", {
 })
 
 test_that("filter_na_speed handles uneven time spacing", {
+  # Single-frame outlier on an uneven time grid
   data <- aniframe::aniframe(
-    time = c(0, 1, 2, 2.1, 3),
-    x = c(0, 1, 2, 10, 11),
-    y = c(0, 1, 2, 10, 11)
+    time = c(0, 1, 2, 2.1, 2.2, 3, 4),
+    x = c(0, 1, 2, 100, 4, 5, 6),
+    y = c(0, 1, 2, 100, 4, 5, 6)
   )
 
   result <- filter_na_speed(data, threshold = 50)
 
-  # The jump at time 2->2.1 has very high speed (distance 11.3 / time 0.1)
+  # The outlier at index 4 should be flagged
   expect_true(is.na(result$x[4]))
 })
 
 test_that("calculate_speed_2d computes correct values", {
-  # Simple case: constant velocity of 1 in x direction
+  # Constant velocity of 1 in x direction
   x <- c(0, 1, 2, 3, 4)
   y <- c(0, 0, 0, 0, 0)
   time <- c(0, 1, 2, 3, 4)
 
   speed <- calculate_speed_2d(x, y, time)
 
-  # Speed should be approximately 1 everywhere
-  expect_true(all(abs(speed - 1) < 0.01))
+  expect_true(all(abs(speed - 1) < 1e-9))
 })
 
 test_that("calculate_speed_3d computes correct values", {
-  # Simple case: constant velocity of 1 in x direction
   x <- c(0, 1, 2, 3, 4)
   y <- c(0, 0, 0, 0, 0)
   z <- c(0, 0, 0, 0, 0)
@@ -245,6 +272,18 @@ test_that("calculate_speed_3d computes correct values", {
 
   speed <- calculate_speed_3d(x, y, z, time)
 
-  # Speed should be approximately 1 everywhere
-  expect_true(all(abs(speed - 1) < 0.01))
+  expect_true(all(abs(speed - 1) < 1e-9))
+})
+
+test_that("calculate_speed_2d uses one-sided fallback at endpoints", {
+  # Step speeds: 1, 1, 1, 1
+  x <- c(0, 1, 2, 3, 4)
+  y <- c(0, 0, 0, 0, 0)
+  time <- c(0, 1, 2, 3, 4)
+
+  speed <- calculate_speed_2d(x, y, time)
+
+  # Endpoints should fall back to the one-sided step (no NA)
+  expect_false(is.na(speed[1]))
+  expect_false(is.na(speed[length(speed)]))
 })

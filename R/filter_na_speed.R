@@ -1,28 +1,34 @@
 #' Filter values by speed threshold
 #'
 #' @description
-#' Filters out observations where the calculated speed exceeds a specified
-#' threshold. Spatial coordinates and confidence values are replaced with NA
-#' where speed is too high. Speed is calculated using numerical differentiation
-#' of position over time.
+#' Filters out single-frame outliers based on movement speed. Spatial
+#' coordinates and confidence values at flagged rows are replaced with NA.
 #'
 #' @param data An aniframe containing spatial coordinates and a time column.
 #' @param threshold A numeric value specifying the speed threshold, or "auto".
-#'   - If numeric: Observations with speeds greater than this value will have
-#'     their spatial and confidence values replaced with NA.
+#'   - If numeric: Rows whose speed exceeds this value have their spatial and
+#'     confidence values replaced with NA.
 #'   - If "auto": Sets threshold at mean speed + 3 standard deviations.
 #'
 #' @return An aniframe with the same structure as the input, but with spatial
 #'   and confidence values replaced by NA where speed exceeds the threshold.
 #'
 #' @details
-#' Speed is calculated as the magnitude of the velocity vector, computed using
-#' numerical differentiation via the `differentiate` function. For 2D data,
-#' speed = sqrt(v_x^2 + v_y^2). For 3D data, speed = sqrt(v_x^2 + v_y^2 + v_z^2).
+#' For each row, two step speeds are computed: the backward step (from the
+#' previous row to this one) and the forward step (from this row to the next),
+#' each as the magnitude of the position change divided by the time step.
+#' The row's speed is the **minimum** of the two — so a row is only flagged
+#' when both the step in *and* the step out are fast. This isolates
+#' single-frame outliers (a position that jumps away and comes back) from
+#' legitimate state changes (a sustained move to a new region), which only
+#' have one fast step.
 #'
-#' When using `threshold = "auto"`, the function calculates the threshold as
-#' the mean speed plus three standard deviations, which assumes approximately
-#' normally distributed speeds.
+#' Endpoints have only one neighbor; their speed falls back to the available
+#' one-sided step. NAs in inputs do not contaminate adjacent rows: a missing
+#' coordinate at row `i` only affects row `i`'s speed estimate.
+#'
+#' When using `threshold = "auto"`, the threshold is set to the mean speed
+#' plus three standard deviations.
 #'
 #' @examples
 #' data <- aniframe::aniframe(
@@ -91,7 +97,7 @@ filter_na_speed <- function(data, threshold = "auto") {
   }
 
   # Create mask for exceeding threshold
-  exceeds <- abs(speed) > threshold
+  exceeds <- speed > threshold
 
   # Filter spatial variables
   for (col in variables_where) {
@@ -107,35 +113,38 @@ filter_na_speed <- function(data, threshold = "auto") {
 }
 
 
-#' Calculate speed from 2D position and time
+#' Calculate per-row outlier speed from 2D position and time
+#'
+#' Returns the minimum of the backward and forward step speeds at each row.
+#' Endpoints fall back to the one available side; if either side is NA, the
+#' other is used (`pmin` with `na.rm = TRUE`).
 #'
 #' @param x Numeric vector of x coordinates.
 #' @param y Numeric vector of y coordinates.
 #' @param time Numeric vector of time values.
 #'
-#' @return Numeric vector of speed values.
+#' @return Numeric vector of speed values, same length as `x`.
 #' @keywords internal
 calculate_speed_2d <- function(x, y, time) {
-  check_animetric()
-  v_x <- animetric::differentiate(x, time, order = 1)
-  v_y <- animetric::differentiate(y, time, order = 1)
-  sqrt(v_x^2 + v_y^2)
+  step_speed <- sqrt(diff(x)^2 + diff(y)^2) / diff(time)
+  back <- c(NA_real_, step_speed)
+  fwd <- c(step_speed, NA_real_)
+  pmin(back, fwd, na.rm = TRUE)
 }
 
 
-#' Calculate speed from 3D position and time
+#' Calculate per-row outlier speed from 3D position and time
 #'
 #' @param x Numeric vector of x coordinates.
 #' @param y Numeric vector of y coordinates.
 #' @param z Numeric vector of z coordinates.
 #' @param time Numeric vector of time values.
 #'
-#' @return Numeric vector of speed values.
+#' @return Numeric vector of speed values, same length as `x`.
 #' @keywords internal
 calculate_speed_3d <- function(x, y, z, time) {
-  check_animetric()
-  v_x <- animetric::differentiate(x, time, order = 1)
-  v_y <- animetric::differentiate(y, time, order = 1)
-  v_z <- animetric::differentiate(z, time, order = 1)
-  sqrt(v_x^2 + v_y^2 + v_z^2)
+  step_speed <- sqrt(diff(x)^2 + diff(y)^2 + diff(z)^2) / diff(time)
+  back <- c(NA_real_, step_speed)
+  fwd <- c(step_speed, NA_real_)
+  pmin(back, fwd, na.rm = TRUE)
 }

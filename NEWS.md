@@ -6,6 +6,14 @@
   named in metadata but absent from the data are silently skipped, so the
   function works on single-track data (e.g. Octron) without an `individual`
   column (#16).
+* `filter_na_speed()` now flags single-frame outliers correctly. Speed at each
+  row is the minimum of the backward and forward step speeds, so a row is only
+  flagged when both the step in and the step out are fast (#14). The previous
+  central-difference implementation read the slope through neighbors and
+  therefore left the outlier itself untouched while blanking its neighbors.
+* NA contamination is now limited: a missing coordinate at row `i` no longer
+  affects the speed estimate at neighboring rows.
+* Removed dependency on `animetric` (was only used by `filter_na_speed()`).
 
 # aniprocess 0.1.2
 
