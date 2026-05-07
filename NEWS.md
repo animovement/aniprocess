@@ -1,5 +1,24 @@
 # aniprocess 0.2.0 (development version)
 
+* `find_peaks()` / `find_troughs()`: prominence is now computed
+  according to the standard topographic definition documented in the
+  function help — `peak − max(min(left_valley), min(right_valley))` —
+  instead of `peak − min(everything in the surrounding valley)`. The
+  two definitions only diverge when the left and right valley minima
+  differ; in that case the previous implementation overestimated
+  prominence, so a peak that should have been excluded by
+  `min_prominence` could slip through. Behaviour now matches
+  `pracma::findpeaks` and SciPy's `find_peaks`.
+* Two internal validation helpers added: `ensure_replace_na_args()`
+  consolidates the checks shared across the `replace_na_*()` family;
+  `ensure_aniframe_spatial()` consolidates the ensure-is-aniframe +
+  variables_where-present + numeric checks shared across the
+  aniframe-aware filters.
+* Removed three dead files (`R/calculate_speed.R`,
+  `R/filter_na_poses.R`, `R/replace_na_aniframe.R`) and several dead
+  branches in `R/find_extrema.R`. Future work tracked in #29
+  (`filter_by_pose`) and #30 (across-style API).
+
 * New filter `filter_ccma()`: Curvature-Corrected Moving Average
   (Steinecker & Wuensche, 2023). Smooths a 2D or 3D Cartesian
   trajectory while undoing the inward "corner-cutting" bias that a
