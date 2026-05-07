@@ -1,5 +1,19 @@
 # aniprocess 0.2.0 (development version)
 
+* `filter_sgolay()`: removed the `preserve_edges` argument. The
+  hand-rolled edge handling had two bugs (positions 1 and 2 were left
+  as raw input, and the right-edge slice was off-by-one), and the
+  default behaviour from `signal::sgolayfilt()` already handles edges
+  correctly via extrapolation from the nearest interior polynomial fit
+  — the standard Savitzky-Golay convention. Added a polynomial-
+  reproduction test that locks in the SG defining property.
+* `filter_kalman()`: the documentation incorrectly stated that the
+  default `base_Q ≈ 0.15 / sampling_rate`. The actual default has
+  always been `var(measurements) / sampling_rate`; the docstring is now
+  rewritten to match. Added correctness tests covering the
+  hand-computed first update, limit behaviours (`R → ∞` ignores
+  measurements; `R → 0` tracks them), and convergence to a constant
+  truth.
 * New filter `filter_gaussian()`: Gaussian kernel smoother. Native
   implementation (no extra dependency) with NA-aware weight
   renormalisation at edges and around isolated `NA`s. Parameterised by

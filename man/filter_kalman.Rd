@@ -41,9 +41,13 @@ The function implements a simple Kalman filter with a constant position model.
 When parameters are not explicitly provided, they are automatically configured based
 on the sampling rate:
 \itemize{
-\item base_Q scales inversely with sampling rate (base_Q ≈ 0.15/sampling_rate)
-\item R defaults to 0.1 (assuming moderate measurement noise)
-\item initial_P scales with sampling rate uncertainty
+\item \code{base_Q} defaults to \code{var(measurements) / sampling_rate} (so the
+per-step process noise \code{Q = base_Q / sampling_rate} shrinks at higher
+sampling rates, where consecutive samples are closer together).
+\item \code{R} defaults to \code{min(mean(diff(x)^2) / 2, var(x) / 4)} if there are
+enough observations, else \code{0.1}.
+\item \code{initial_P} defaults to \code{var(measurements)} if there are enough
+observations, else \code{1}.
 }
 
 Missing values (NA) are handled by relying on the prediction step without measurement updates.
