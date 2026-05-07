@@ -1,5 +1,11 @@
 # aniprocess 0.2.0 (development version)
 
+* `filter_aniframe()` now reads identity columns from the `variables_what`
+  metadata field and spatial columns from `variables_where`, instead of
+  hard-coding `individual` / `keypoint` / `x` / `y` / `z`. Identity columns
+  named in metadata but absent from the data are silently skipped, so the
+  function works on single-track data (e.g. Octron) without an `individual`
+  column (#16).
 * `filter_na_speed()` now flags single-frame outliers correctly. Speed at each
   row is the minimum of the backward and forward step speeds, so a row is only
   flagged when both the step in and the step out are fast (#14). The previous
