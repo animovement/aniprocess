@@ -17,9 +17,6 @@
 #'        - order=3: Also preserves acceleration (good for most movement data)
 #'        - order=4: Also preserves jerk (good for quick movements)
 #'        - order=5: Maximum preservation (may retain too much noise)
-#' @param preserve_edges Logical indicating whether to use progressively smaller windows
-#'        at the beginning and end of the signal to reduce edge effects (default = FALSE).
-#'        Note: This only affects the signal endpoints, not internal discontinuities.
 #' @param na_action Method to handle NA values before filtering. One of:
 #'        - "linear": Linear interpolation (default)
 #'        - "spline": Spline interpolation for smoother curves
@@ -36,11 +33,9 @@
 #' or Butterworth filters, making it particularly suitable for movement data where
 #' preserving features like peaks and valleys is important.
 #'
-#' Edge Handling:
-#' When preserve_edges = TRUE, the function uses progressively smaller windows near the
-#' beginning and end of the signal to reduce endpoint distortion. This only affects
-#' the signal endpoints - it does not detect or handle internal discontinuities or
-#' sharp events within the data.
+#' Edges are handled by [signal::sgolayfilt()] using extrapolation from the
+#' nearest interior polynomial fit, which is the standard Savitzky-Golay
+#' edge convention.
 #'
 #' Parameter Selection Guidelines:
 #' * window_size:
@@ -94,7 +89,6 @@ filter_sgolay <- function(
   sampling_rate,
   window_size = ceiling(sampling_rate / 10) * 2 + 1,
   order = 3,
-  preserve_edges = FALSE,
   na_action = "linear",
   keep_na = FALSE,
   ...
@@ -128,46 +122,7 @@ filter_sgolay <- function(
     x <- replace_na(x, method = na_action, ...)
   }
 
-  if (preserve_edges) {
-    # Handle edges with progressively smaller windows
-    result <- x
-    half_window <- (window_size - 1) / 2
-
-    # Center portion
-    result[(half_window + 1):(length(x) - half_window)] <-
-      signal::sgolayfilt(x, p = order, n = window_size)[
-        (half_window + 1):(length(x) - half_window)
-      ]
-
-    # Edges
-    for (i in 1:half_window) {
-      edge_window <- 2 * i + 1
-      edge_order <- min(order, max(2, i - 1))
-
-      # Left edge
-      if (i >= 3) {
-        # Need at least 5 points for meaningful smoothing
-        result[i] <- signal::sgolayfilt(
-          x[1:(2 * i + 1)],
-          p = edge_order,
-          n = edge_window
-        )[i]
-      }
-
-      # Right edge
-      if (i >= 3) {
-        right_idx <- length(x) - i + 1
-        result[right_idx] <- signal::sgolayfilt(
-          x[(length(x) - 2 * i):length(x)],
-          p = edge_order,
-          n = edge_window
-        )[i + 1]
-      }
-    }
-  } else {
-    # Standard Savitzky-Golay filter
-    result <- signal::sgolayfilt(x, p = order, n = window_size)
-  }
+  result <- signal::sgolayfilt(x, p = order, n = window_size)
 
   # Restore NAs if requested
   if (keep_na && any(na_positions)) {

@@ -24,6 +24,7 @@ Imports:
     methods,
     rlang
 Suggests:
+    covr,
     data.table (>= 1.18.0),
     knitr,
     signal,
