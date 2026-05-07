@@ -1,5 +1,15 @@
 # aniprocess 0.2.0 (development version)
 
+* New filter `filter_na_excursion()`: flags multi-frame tracking
+  excursions — jumps that eventually return to where they started, or
+  to the typical resting position. Implements Todd, Kain & de Bivort
+  (2017): a frame-to-frame jump greater than `outlier_sd` standard
+  deviations starts an excursion, which is rejected only if the
+  trajectory returns within `outlier_sd σ` of the pre-excursion
+  position or `return_sd σ` of the overall median position. Defaults
+  match the paper (`outlier_sd = 5`, `return_sd = 1`). Per-axis by
+  default (Todd's literal behaviour); `by_axis = FALSE` gives a joint-
+  Euclidean variant consistent with `filter_na_speed()` (#13).
 * `filter_sgolay()`: removed the `preserve_edges` argument. The
   hand-rolled edge handling had two bugs (positions 1 and 2 were left
   as raw input, and the right-edge slice was off-by-one), and the
