@@ -52,6 +52,13 @@
   and drop the `...` passthrough — only the wrapper's documented
   parameters are accepted now.
 * `roll` is no longer a dependency.
+* `replace_na_locf()` and `replace_na_stine()` now use
+  `data.table::nafill(type = "locf")` for the LOCF step instead of
+  `collapse::na_locf()`. `data.table` was already needed for the rolling
+  filters; consolidating on it lets us drop `collapse` as a dependency.
+  Same behaviour, comparable performance. `data.table` is now in
+  `Imports` rather than `Suggests` since it backs four functions in the
+  package, and `check_data_table()` is no longer needed.
 
 # aniprocess 0.1.2
 

@@ -1,40 +1,7 @@
-# Testing check_data_table(), check_signal(), and check_stinepack()
+# Testing check_signal() and check_stinepack()
 # - Functions call rlang::check_installed with correct arguments
 # - Custom action installs from correct repositories
 # - Correct reason messages are provided
-
-test_that("check_data_table works and calls correct functions", {
-  captured_args <- NULL
-
-  local_mocked_bindings(
-    check_installed = function(pkg, reason, action) {
-      captured_args <<- list(pkg = pkg, reason = reason, action = action)
-      # Actually execute the action to get coverage
-      action()
-    },
-    .package = "rlang"
-  )
-
-  install_args <- NULL
-  local_mocked_bindings(
-    install.packages = function(pkgs, repos, ...) {
-      install_args <<- list(pkgs = pkgs, repos = repos)
-    },
-    .package = "utils"
-  )
-
-  check_data_table()
-
-  expect_equal(captured_args$pkg, "data.table (>= 1.18.0)")
-  expect_match(captured_args$reason, "to use rolling filters")
-  expect_type(captured_args$action, "closure")
-
-  expect_equal(install_args$pkgs, "data.table")
-  expect_equal(
-    install_args$repos,
-    c('https://animovement.r-universe.dev', 'https://cloud.r-project.org')
-  )
-})
 
 test_that("check_signal works and calls correct functions", {
   captured_args <- NULL

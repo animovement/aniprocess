@@ -28,7 +28,6 @@ filter_rollmean <- function(
   min_obs = 1,
   align = c("right", "left", "center")
 ) {
-  check_data_table()
   align <- match.arg(align)
   rolling_with_min_obs(
     x,

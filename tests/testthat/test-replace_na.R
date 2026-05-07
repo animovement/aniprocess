@@ -93,9 +93,14 @@ test_that("stine interpolation works correctly", {
   result <- replace_na(simple_vec, method = "stine", min_gap = 3)
   expect_true(is.na(result[2])) # Single NA should remain
 
-  # Should handle edge cases
-  # result <- replace_na(edge_nas, method = "stine")
-  # expect_false(any(is.na(result)))
+  # Trailing NAs cannot be extrapolated by stinterp; they should be
+  # carried forward (LOCF) so the output ends at the last known value.
+  # Leading NAs stay NA because there is nothing to carry forward.
+  trailing <- c(NA, NA, 1, 2, 3, 4, 5, NA, NA)
+  result <- replace_na(trailing, method = "stine")
+  expect_true(all(is.na(result[1:2])))
+  expect_equal(result[3:7], c(1, 2, 3, 4, 5))
+  expect_equal(result[8:9], c(5, 5))
 })
 
 test_that("locf works correctly", {
