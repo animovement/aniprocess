@@ -6,8 +6,8 @@
 \usage{
 filter_aniframe(
   data,
-  method = c("rollmedian", "rollmean", "kalman", "sgolay", "lowpass", "highpass",
-    "lowpass_fft", "highpass_fft"),
+  method = c("rollmedian", "rollmean", "triangular", "gaussian", "kalman", "sgolay",
+    "lowpass", "highpass", "lowpass_fft", "highpass_fft"),
   use_derivatives = FALSE,
   ...
 )
@@ -30,6 +30,8 @@ or \code{character(0)} for a single trajectory). Single-track data without an
 \item \code{"highpass_fft"}: FFT-based high-pass filter (see \code{\link[=filter_highpass_fft]{filter_highpass_fft()}})
 \item \code{"rollmean"}: Rolling mean filter (see \code{\link[=filter_rollmean]{filter_rollmean()}})
 \item \code{"rollmedian"}: Rolling median filter (see \code{\link[=filter_rollmedian]{filter_rollmedian()}})
+\item \code{"triangular"}: Triangular filter (see \code{\link[=filter_triangular]{filter_triangular()}})
+\item \code{"gaussian"}: Gaussian kernel smoother (see \code{\link[=filter_gaussian]{filter_gaussian()}})
 }}
 
 \item{use_derivatives}{Filter on the derivative values instead of coordinates
@@ -60,6 +62,8 @@ documentation of the individual filter functions for details:
 \item \code{\link[=filter_highpass_fft]{filter_highpass_fft()}}: FFT-based high-pass filter parameters
 \item \code{\link[=filter_rollmean]{filter_rollmean()}}: Rolling mean parameters (window_width, min_obs)
 \item \code{\link[=filter_rollmedian]{filter_rollmedian()}}: Rolling median parameters (window_width, min_obs)
+\item \code{\link[=filter_triangular]{filter_triangular()}}: Triangular filter parameters (window_width, min_obs)
+\item \code{\link[=filter_gaussian]{filter_gaussian()}}: Gaussian kernel parameters (sigma, window_width)
 }
 }
 \examples{
@@ -79,5 +83,7 @@ filter_aniframe(tracking_data, "rollmedian", window_width = 5, min_obs = 1)
 \item \code{\link[=filter_highpass_fft]{filter_highpass_fft()}}
 \item \code{\link[=filter_rollmean]{filter_rollmean()}}
 \item \code{\link[=filter_rollmedian]{filter_rollmedian()}}
+\item \code{\link[=filter_triangular]{filter_triangular()}}
+\item \code{\link[=filter_gaussian]{filter_gaussian()}}
 }
 }

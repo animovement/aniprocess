@@ -14,6 +14,15 @@
   hand-computed first update, limit behaviours (`R → ∞` ignores
   measurements; `R → 0` tracks them), and convergence to a constant
   truth.
+* New filter `filter_gaussian()`: Gaussian kernel smoother. Native
+  implementation (no extra dependency) with NA-aware weight
+  renormalisation at edges and around isolated `NA`s. Parameterised by
+  `sigma` (in samples); `window_width` is derived from `sigma` by
+  default. Wired into `filter_aniframe(method = "gaussian")` (#1).
+* New filter `filter_triangular()`: triangular smoother implemented as
+  two passes of `filter_rollmean()`. Effective kernel width is
+  `2 * window_width - 1`. Wired into
+  `filter_aniframe(method = "triangular")` (#1).
 * `filter_aniframe()` now reads identity columns from the `variables_what`
   metadata field and spatial columns from `variables_where`, instead of
   hard-coding `individual` / `keypoint` / `x` / `y` / `z`. Identity columns

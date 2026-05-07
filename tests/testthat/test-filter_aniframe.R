@@ -6,6 +6,7 @@
 # - Errors when a variables_where column is missing
 # - Filters z when listed in variables_where
 # - use_derivatives branch (derive -> filter -> integrate)
+# - triangular and gaussian methods dispatch correctly
 # - Rejects non-aniframe input
 # - Returns an aniframe
 
@@ -93,6 +94,23 @@ test_that("filter_aniframe handles use_derivatives", {
       use_derivatives = TRUE
     )
   )
+})
+
+test_that("filter_aniframe dispatches to triangular and gaussian", {
+  n <- 30
+  d <- aniframe::aniframe(
+    time = 1:n,
+    x = cumsum(rnorm(n)),
+    y = cumsum(rnorm(n)),
+    variables_what = character(0)
+  )
+  expect_no_error(
+    filter_aniframe(d, "triangular", window_width = 3, align = "right")
+  )
+  expect_no_error(filter_aniframe(d, "gaussian", sigma = 1))
+  # Gaussian smoothing actually changes the data
+  result <- filter_aniframe(d, "gaussian", sigma = 1)
+  expect_false(identical(result$x, d$x))
 })
 
 test_that("filter_aniframe rejects non-aniframe input", {
