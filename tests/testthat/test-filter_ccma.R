@@ -191,3 +191,91 @@ test_that("filter_ccma rejects non-aniframe input", {
   d <- data.frame(time = 1:5, x = 1:5, y = 1:5)
   expect_error(filter_ccma(d), class = "rlang_error")
 })
+
+test_that("filter_ccma errors when a variables_where column is missing", {
+  d <- aniframe::aniframe(
+    time = 1:10,
+    x = rnorm(10),
+    y = rnorm(10),
+    variables_what = character(0)
+  )
+  d <- aniframe::set_metadata(d, variables_where = c("x", "y", "z"))
+  expect_error(filter_ccma(d), "Missing spatial column")
+})
+
+test_that("filter_ccma errors when a spatial column is non-numeric", {
+  d <- aniframe::aniframe(
+    time = 1:10,
+    x = rnorm(10),
+    y = rnorm(10),
+    variables_what = character(0)
+  )
+  d$x <- as.character(d$x)
+  expect_error(filter_ccma(d), "must be numeric")
+})
+
+test_that("filter_ccma returns the input when NAs cannot be filled", {
+  # An all-NA column triggers the can't-interpolate fallback.
+  n <- 30
+  t <- seq(0, 2 * pi, length.out = n)
+  d <- aniframe::aniframe(
+    time = seq_len(n),
+    x = rep(NA_real_, n),
+    y = sin(t),
+    variables_what = character(0)
+  )
+  suppressWarnings(out <- filter_ccma(d))
+  expect_true(all(is.na(out$x)))
+})
+
+test_that("filter_ccma passes through trajectories shorter than 3 points", {
+  d <- aniframe::aniframe(
+    time = 1:2,
+    x = c(0, 1),
+    y = c(0, 1),
+    variables_what = character(0)
+  )
+  out <- filter_ccma(d)
+  expect_equal(out$x, c(0, 1))
+  expect_equal(out$y, c(0, 1))
+})
+
+test_that("filter_ccma handles straight-line trajectories (zero curvature)", {
+  # Curvature is zero everywhere, so the curvature-correction loop hits
+  # the `next` branch for every position. A constant column is preserved
+  # under both MA and the (zero) curvature shift, and the interior of a
+  # linear column is reproduced exactly.
+  n <- 30
+  d <- aniframe::aniframe(
+    time = seq_len(n),
+    x = seq_len(n) * 1.0,
+    y = rep(0, n),
+    variables_what = character(0)
+  )
+  out <- filter_ccma(d, window_width_ma = 5, window_width_cc = 3)
+  expect_equal(out$y, rep(0, n), tolerance = 1e-9)
+  # Interior of x is fully supported by the MA window (no padding bleed).
+  interior <- 6:25
+  expect_equal(out$x[interior], as.numeric(interior), tolerance = 1e-9)
+})
+
+test_that("ccma_kernel rejects unknown kernel types", {
+  expect_error(ccma_kernel(5, "made_up_kernel"), "Unknown kernel type")
+})
+
+test_that("filter_ccma rejects non-Cartesian coordinate systems", {
+  d <- aniframe::aniframe(
+    time = 1:10,
+    x = rnorm(10),
+    y = rnorm(10),
+    variables_what = character(0)
+  )
+  cs_levels <- levels(aniframe::get_metadata(d, "coordinate_system"))
+  for (cs in c("polar", "cylindrical", "spherical", "unknown")) {
+    bad <- aniframe::set_metadata(
+      d,
+      coordinate_system = factor(cs, levels = cs_levels)
+    )
+    expect_error(filter_ccma(bad), "Cartesian coordinate system")
+  }
+})

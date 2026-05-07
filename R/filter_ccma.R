@@ -31,8 +31,11 @@
 #' by `variables_what`), so each individual / track / keypoint is
 #' smoothed as its own trajectory.
 #'
-#' @param data An aniframe with 2 or 3 spatial columns (set via the
-#'   `variables_where` metadata field).
+#' @param data An aniframe in Cartesian coordinates with 2 or 3 spatial
+#'   columns (set via the `variables_where` metadata field). The
+#'   curvature math is Cartesian-specific (cross products, Euclidean
+#'   norms, circumradius), so polar / cylindrical / spherical aniframes
+#'   are rejected.
 #' @param window_width_ma Integer width of the moving-average kernel
 #'   (must be odd; even values are rounded up). Larger = more smoothing.
 #'   Default `11`.
@@ -84,6 +87,18 @@ filter_ccma <- function(
   ...
 ) {
   aniframe::ensure_is_aniframe(data)
+
+  coord_system <- as.character(
+    aniframe::get_metadata(data, "coordinate_system")
+  )
+  if (!startsWith(coord_system, "cartesian")) {
+    cli::cli_abort(
+      c(
+        "CCMA requires a Cartesian coordinate system; got {.val {coord_system}}.",
+        "i" = "The curvature math (cross product, Euclidean norm, circumradius) is Cartesian-specific."
+      )
+    )
+  }
 
   variables_where <- aniframe::get_metadata(data, "variables_where")
   d <- length(variables_where)

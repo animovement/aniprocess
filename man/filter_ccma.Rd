@@ -17,8 +17,11 @@ filter_ccma(
 )
 }
 \arguments{
-\item{data}{An aniframe with 2 or 3 spatial columns (set via the
-\code{variables_where} metadata field).}
+\item{data}{An aniframe in Cartesian coordinates with 2 or 3 spatial
+columns (set via the \code{variables_where} metadata field). The
+curvature math is Cartesian-specific (cross products, Euclidean
+norms, circumradius), so polar / cylindrical / spherical aniframes
+are rejected.}
 
 \item{window_width_ma}{Integer width of the moving-average kernel
 (must be odd; even values are rounded up). Larger = more smoothing.
