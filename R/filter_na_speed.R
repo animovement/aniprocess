@@ -46,29 +46,14 @@
 #'
 #' @export
 filter_na_speed <- function(data, threshold = "auto") {
-  aniframe::ensure_is_aniframe(data)
-
-  # Get spatial variables from metadata
+  ensure_aniframe_spatial(data)
   variables_where <- aniframe::get_metadata(data, "variables_where")
 
-  # Validate required columns exist
-  required_cols <- c("time", variables_where)
-  missing_cols <- setdiff(required_cols, names(data))
-  if (length(missing_cols) > 0) {
-    cli::cli_abort(
-      c(
-        "Missing required column{?s}: {.val {missing_cols}}.",
-        "i" = "Spatial variables from metadata: {.val {variables_where}}."
-      )
-    )
+  if (!"time" %in% names(data)) {
+    cli::cli_abort("Missing required column: {.val time}.")
   }
-
-  # Check that time and spatial columns are numeric
-  check_cols <- c("time", variables_where)
-  for (col in check_cols) {
-    if (!is.numeric(data[[col]])) {
-      cli::cli_abort("Column {.val {col}} must be numeric.")
-    }
+  if (!is.numeric(data$time)) {
+    cli::cli_abort("Column {.val time} must be numeric.")
   }
 
   # Check threshold input

@@ -86,7 +86,7 @@ filter_ccma <- function(
   keep_na = FALSE,
   ...
 ) {
-  aniframe::ensure_is_aniframe(data)
+  ensure_aniframe_spatial(data)
 
   coord_system <- as.character(
     aniframe::get_metadata(data, "coordinate_system")
@@ -106,18 +106,6 @@ filter_ccma <- function(
     cli::cli_abort(
       "CCMA requires 2 or 3 spatial coordinates; got {.val {d}} from {.field variables_where}."
     )
-  }
-
-  missing_where <- setdiff(variables_where, names(data))
-  if (length(missing_where) > 0L) {
-    cli::cli_abort(
-      "Missing spatial column{?s}: {.val {missing_where}}."
-    )
-  }
-  for (col in variables_where) {
-    if (!is.numeric(data[[col]])) {
-      cli::cli_abort("Column {.val {col}} must be numeric.")
-    }
   }
 
   window_width_ma <- ccma_validate_window("window_width_ma", window_width_ma)

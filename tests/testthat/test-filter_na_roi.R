@@ -541,3 +541,15 @@ test_that("filter_na_roi works with grid data", {
   expect_equal(non_na_rows$x, 5)
   expect_equal(non_na_rows$y, 5)
 })
+
+test_that("filter_na_roi errors when no ROI parameters are given (3D)", {
+  data <- aniframe::aniframe(
+    time = 1:5,
+    x = 1:5,
+    y = 1:5,
+    z = 1:5,
+    variables_where = c("x", "y", "z"),
+    variables_what = character(0)
+  )
+  expect_error(filter_na_roi(data), "No ROI parameters provided")
+})
