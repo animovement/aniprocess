@@ -1,5 +1,9 @@
 # aniprocess (development version)
 
+## Bug fixes
+
+* The `data.table (>= 1.18.0)` requirement is now enforced when the package loads, not only when it is installed. Because the rolling filters reached `data.table` solely via `data.table::`, R had no namespace import to version-check, so an older `data.table` arriving after installation (conda, a stale `renv` lockfile, a manual downgrade) failed with `unused argument (partial = use_partial)` from inside `filter_rollmean()` rather than a version error naming `data.table` (#33).
+
 # aniprocess 0.2.0
 
 ## New features
