@@ -26,5 +26,8 @@ export(replace_na_locf)
 export(replace_na_spline)
 export(replace_na_stine)
 export(replace_na_value)
-importFrom(rlang,":=")
-importFrom(rlang,.data)
+importFrom(data.table,frollmean)
+importFrom(rlang,
+  ":=",
+  .data
+)

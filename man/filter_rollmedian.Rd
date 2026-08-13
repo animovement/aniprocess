@@ -28,7 +28,7 @@ Filtered numeric vector, same length as \code{x}.
 }
 \description{
 Applies a rolling median filter to a numeric vector using
-\code{\link[data.table:froll]{data.table::frollmedian()}}.
+\code{\link[data.table:frollmedian]{data.table::frollmedian()}}.
 }
 \details{
 Edge handling matches \code{\link[=filter_rollmean]{filter_rollmean()}}: partial windows at the edges

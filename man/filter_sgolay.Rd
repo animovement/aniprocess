@@ -27,17 +27,21 @@ sampling_rate/10 (rounded up to nearest odd number).}
 
 \item{order}{Polynomial order (default = 3). Controls how well the filter preserves
 higher-order moments in the data:
-- order=2: Preserves position, velocity (good for smooth movements)
-- order=3: Also preserves acceleration (good for most movement data)
-- order=4: Also preserves jerk (good for quick movements)
-- order=5: Maximum preservation (may retain too much noise)}
+\itemize{
+\item order=2: Preserves position, velocity (good for smooth movements)
+\item order=3: Also preserves acceleration (good for most movement data)
+\item order=4: Also preserves jerk (good for quick movements)
+\item order=5: Maximum preservation (may retain too much noise)
+}}
 
 \item{na_action}{Method to handle NA values before filtering. One of:
-- "linear": Linear interpolation (default)
-- "spline": Spline interpolation for smoother curves
-- "locf": Last observation carried forward
-- "value": Replace with a constant value
-- "error": Raise an error if NAs are present}
+\itemize{
+\item "linear": Linear interpolation (default)
+\item "spline": Spline interpolation for smoother curves
+\item "locf": Last observation carried forward
+\item "value": Replace with a constant value
+\item "error": Raise an error if NAs are present
+}}
 
 \item{keep_na}{Logical indicating whether to restore NAs to their original positions
 after filtering (default = FALSE)}

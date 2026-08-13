@@ -28,7 +28,7 @@ Filtered numeric vector, same length as \code{x}.
 }
 \description{
 Applies a rolling mean filter to a numeric vector using
-\code{\link[data.table:froll]{data.table::frollmean()}}.
+\code{\link[data.table:frollmean]{data.table::frollmean()}}.
 }
 \details{
 For \code{align = "right"} or \code{"left"}, partial windows at the edges of the
@@ -36,5 +36,5 @@ series are computed (so position 1 with a width-5 right-aligned window
 returns the value at position 1, not \code{NA}). For \code{align = "center"},
 edges are not partial: the first and last \code{(window_width - 1) \%/\% 2}
 positions return \code{NA}. This is a limitation of the underlying
-\code{\link[data.table:froll]{data.table::frollmean()}} implementation.
+\code{\link[data.table:frollmean]{data.table::frollmean()}} implementation.
 }

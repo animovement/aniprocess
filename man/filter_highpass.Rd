@@ -24,26 +24,32 @@ while frequencies below are attenuated. Should be between 0 and sampling_rate/2.
 least twice the highest frequency component in the signal (Nyquist criterion).}
 
 \item{order}{Filter order (default = 4). Controls the steepness of frequency rolloff:
-- Higher orders give sharper cutoffs but may introduce more ringing
-- Lower orders give smoother transitions but less steep rolloff
-- Common values in practice are 2-8
-- Values above 8 are rarely used due to numerical instability}
+\itemize{
+\item Higher orders give sharper cutoffs but may introduce more ringing
+\item Lower orders give smoother transitions but less steep rolloff
+\item Common values in practice are 2-8
+\item Values above 8 are rarely used due to numerical instability
+}}
 
 \item{na_action}{Method to handle NA values before filtering. One of:
-- "linear": Linear interpolation (default)
-- "spline": Spline interpolation for smoother curves
-- "stine": Stineman interpolation preserving data shape
-- "locf": Last observation carried forward
-- "value": Replace with a constant value
-- "error": Raise an error if NAs are present}
+\itemize{
+\item "linear": Linear interpolation (default)
+\item "spline": Spline interpolation for smoother curves
+\item "stine": Stineman interpolation preserving data shape
+\item "locf": Last observation carried forward
+\item "value": Replace with a constant value
+\item "error": Raise an error if NAs are present
+}}
 
 \item{keep_na}{Logical indicating whether to restore NAs to their original positions
 after filtering (default = FALSE)}
 
 \item{...}{Additional arguments passed to replace_na(). Common options include:
-- value: Numeric value for replacement when na_action = "value"
-- min_gap: Minimum gap size to interpolate/fill
-- max_gap: Maximum gap size to interpolate/fill}
+\itemize{
+\item value: Numeric value for replacement when na_action = "value"
+\item min_gap: Minimum gap size to interpolate/fill
+\item max_gap: Maximum gap size to interpolate/fill
+}}
 }
 \value{
 Numeric vector containing the filtered signal

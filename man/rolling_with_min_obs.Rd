@@ -22,7 +22,7 @@ rolling_with_min_obs(x, fn, window_width, min_obs, align)
 Numeric vector of the same length as \code{x}.
 }
 \description{
-Wraps \code{\link[data.table:froll]{data.table::frollmean()}} / \code{\link[data.table:froll]{data.table::frollmedian()}} (or any
+Wraps \code{\link[data.table:frollmean]{data.table::frollmean()}} / \code{\link[data.table:frollmedian]{data.table::frollmedian()}} (or any
 compatible \code{frollX} function) and masks results where the window contains
 fewer than \code{min_obs} non-NA values.
 }
