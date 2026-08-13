@@ -23,20 +23,24 @@ while frequencies below are attenuated. Should be between 0 and sampling_rate/2.
 least twice the highest frequency component in the signal (Nyquist criterion).}
 
 \item{na_action}{Method to handle NA values before filtering. One of:
-- "linear": Linear interpolation (default)
-- "spline": Spline interpolation for smoother curves
-- "stine": Stineman interpolation preserving data shape
-- "locf": Last observation carried forward
-- "value": Replace with a constant value
-- "error": Raise an error if NAs are present}
+\itemize{
+\item "linear": Linear interpolation (default)
+\item "spline": Spline interpolation for smoother curves
+\item "stine": Stineman interpolation preserving data shape
+\item "locf": Last observation carried forward
+\item "value": Replace with a constant value
+\item "error": Raise an error if NAs are present
+}}
 
 \item{keep_na}{Logical indicating whether to restore NAs to their original positions
 after filtering (default = FALSE)}
 
 \item{...}{Additional arguments passed to replace_na(). Common options include:
-- value: Numeric value for replacement when na_action = "value"
-- min_gap: Minimum gap size to interpolate/fill
-- max_gap: Maximum gap size to interpolate/fill}
+\itemize{
+\item value: Numeric value for replacement when na_action = "value"
+\item min_gap: Minimum gap size to interpolate/fill
+\item max_gap: Maximum gap size to interpolate/fill
+}}
 }
 \value{
 Numeric vector containing the filtered signal
