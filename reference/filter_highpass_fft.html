@@ -9,7 +9,7 @@ It provides a sharp frequency cutoff but may introduce ringing artifacts (Gibbs 
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -89,13 +89,13 @@ least twice the highest frequency component in the signal (Nyquist criterion).</
 
 
 <dt id="arg-na-action">na_action<a class="anchor" aria-label="anchor" href="#arg-na-action"></a></dt>
-<dd><p>Method to handle NA values before filtering. One of:
-- "linear": Linear interpolation (default)
-- "spline": Spline interpolation for smoother curves
-- "stine": Stineman interpolation preserving data shape
-- "locf": Last observation carried forward
-- "value": Replace with a constant value
-- "error": Raise an error if NAs are present</p></dd>
+<dd><p>Method to handle NA values before filtering. One of:</p><ul><li><p>"linear": Linear interpolation (default)</p></li>
+<li><p>"spline": Spline interpolation for smoother curves</p></li>
+<li><p>"stine": Stineman interpolation preserving data shape</p></li>
+<li><p>"locf": Last observation carried forward</p></li>
+<li><p>"value": Replace with a constant value</p></li>
+<li><p>"error": Raise an error if NAs are present</p></li>
+</ul></dd>
 
 
 <dt id="arg-keep-na">keep_na<a class="anchor" aria-label="anchor" href="#arg-keep-na"></a></dt>
@@ -104,10 +104,10 @@ after filtering (default = FALSE)</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments passed to replace_na(). Common options include:
-- value: Numeric value for replacement when na_action = "value"
-- min_gap: Minimum gap size to interpolate/fill
-- max_gap: Maximum gap size to interpolate/fill</p></dd>
+<dd><p>Additional arguments passed to replace_na(). Common options include:</p><ul><li><p>value: Numeric value for replacement when na_action = "value"</p></li>
+<li><p>min_gap: Minimum gap size to interpolate/fill</p></li>
+<li><p>max_gap: Maximum gap size to interpolate/fill</p></li>
+</ul></dd>
 
 </dl></div>
     <div class="section level2">
@@ -178,7 +178,7 @@ restored to their original positions after filtering using keep_na = TRUE.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

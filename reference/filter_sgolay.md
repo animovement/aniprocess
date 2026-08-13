@@ -40,19 +40,29 @@ filter_sgolay(
 - order:
 
   Polynomial order (default = 3). Controls how well the filter preserves
-  higher-order moments in the data: - order=2: Preserves position,
-  velocity (good for smooth movements) - order=3: Also preserves
-  acceleration (good for most movement data) - order=4: Also preserves
-  jerk (good for quick movements) - order=5: Maximum preservation (may
-  retain too much noise)
+  higher-order moments in the data:
+
+  - order=2: Preserves position, velocity (good for smooth movements)
+
+  - order=3: Also preserves acceleration (good for most movement data)
+
+  - order=4: Also preserves jerk (good for quick movements)
+
+  - order=5: Maximum preservation (may retain too much noise)
 
 - na_action:
 
-  Method to handle NA values before filtering. One of: - "linear":
-  Linear interpolation (default) - "spline": Spline interpolation for
-  smoother curves - "locf": Last observation carried forward - "value":
-  Replace with a constant value - "error": Raise an error if NAs are
-  present
+  Method to handle NA values before filtering. One of:
+
+  - "linear": Linear interpolation (default)
+
+  - "spline": Spline interpolation for smoother curves
+
+  - "locf": Last observation carried forward
+
+  - "value": Replace with a constant value
+
+  - "error": Raise an error if NAs are present
 
 - keep_na:
 

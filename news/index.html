@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,6 +50,13 @@
       <small>Source: <a href="https://github.com/animovement/aniprocess/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="development version" id="aniprocess-development-version">aniprocess (development version)<a class="anchor" aria-label="anchor" href="#aniprocess-development-version"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
+<ul><li>The <code>data.table (&gt;= 1.18.0)</code> requirement is now enforced when the package loads, not only when it is installed. Because the rolling filters reached <code>data.table</code> solely via <code>data.table::</code>, R had no namespace import to version-check, so an older <code>data.table</code> arriving after installation (conda, a stale <code>renv</code> lockfile, a manual downgrade) failed with <code>unused argument (partial = use_partial)</code> from inside <code><a href="../reference/filter_rollmean.html">filter_rollmean()</a></code> rather than a version error naming <code>data.table</code> (<a href="https://github.com/animovement/aniprocess/issues/33" class="external-link">#33</a>).</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.0" id="aniprocess-020">aniprocess 0.2.0<a class="anchor" aria-label="anchor" href="#aniprocess-020"></a></h2>
 <div class="section level3">
@@ -115,7 +122,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

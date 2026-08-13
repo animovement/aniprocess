@@ -39,18 +39,31 @@ filter_highpass(
 - order:
 
   Filter order (default = 4). Controls the steepness of frequency
-  rolloff: - Higher orders give sharper cutoffs but may introduce more
-  ringing - Lower orders give smoother transitions but less steep
-  rolloff - Common values in practice are 2-8 - Values above 8 are
-  rarely used due to numerical instability
+  rolloff:
+
+  - Higher orders give sharper cutoffs but may introduce more ringing
+
+  - Lower orders give smoother transitions but less steep rolloff
+
+  - Common values in practice are 2-8
+
+  - Values above 8 are rarely used due to numerical instability
 
 - na_action:
 
-  Method to handle NA values before filtering. One of: - "linear":
-  Linear interpolation (default) - "spline": Spline interpolation for
-  smoother curves - "stine": Stineman interpolation preserving data
-  shape - "locf": Last observation carried forward - "value": Replace
-  with a constant value - "error": Raise an error if NAs are present
+  Method to handle NA values before filtering. One of:
+
+  - "linear": Linear interpolation (default)
+
+  - "spline": Spline interpolation for smoother curves
+
+  - "stine": Stineman interpolation preserving data shape
+
+  - "locf": Last observation carried forward
+
+  - "value": Replace with a constant value
+
+  - "error": Raise an error if NAs are present
 
 - keep_na:
 
@@ -59,10 +72,13 @@ filter_highpass(
 
 - ...:
 
-  Additional arguments passed to replace_na(). Common options include: -
-  value: Numeric value for replacement when na_action = "value" -
-  min_gap: Minimum gap size to interpolate/fill - max_gap: Maximum gap
-  size to interpolate/fill
+  Additional arguments passed to replace_na(). Common options include:
+
+  - value: Numeric value for replacement when na_action = "value"
+
+  - min_gap: Minimum gap size to interpolate/fill
+
+  - max_gap: Maximum gap size to interpolate/fill
 
 ## Value
 

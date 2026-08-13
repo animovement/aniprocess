@@ -11,7 +11,7 @@ uses zero-phase filtering to prevent temporal shifts in the data."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,20 +96,20 @@ sampling_rate/10 (rounded up to nearest odd number).</p></dd>
 
 <dt id="arg-order">order<a class="anchor" aria-label="anchor" href="#arg-order"></a></dt>
 <dd><p>Polynomial order (default = 3). Controls how well the filter preserves
-higher-order moments in the data:
-- order=2: Preserves position, velocity (good for smooth movements)
-- order=3: Also preserves acceleration (good for most movement data)
-- order=4: Also preserves jerk (good for quick movements)
-- order=5: Maximum preservation (may retain too much noise)</p></dd>
+higher-order moments in the data:</p><ul><li><p>order=2: Preserves position, velocity (good for smooth movements)</p></li>
+<li><p>order=3: Also preserves acceleration (good for most movement data)</p></li>
+<li><p>order=4: Also preserves jerk (good for quick movements)</p></li>
+<li><p>order=5: Maximum preservation (may retain too much noise)</p></li>
+</ul></dd>
 
 
 <dt id="arg-na-action">na_action<a class="anchor" aria-label="anchor" href="#arg-na-action"></a></dt>
-<dd><p>Method to handle NA values before filtering. One of:
-- "linear": Linear interpolation (default)
-- "spline": Spline interpolation for smoother curves
-- "locf": Last observation carried forward
-- "value": Replace with a constant value
-- "error": Raise an error if NAs are present</p></dd>
+<dd><p>Method to handle NA values before filtering. One of:</p><ul><li><p>"linear": Linear interpolation (default)</p></li>
+<li><p>"spline": Spline interpolation for smoother curves</p></li>
+<li><p>"locf": Last observation carried forward</p></li>
+<li><p>"value": Replace with a constant value</p></li>
+<li><p>"error": Raise an error if NAs are present</p></li>
+</ul></dd>
 
 
 <dt id="arg-keep-na">keep_na<a class="anchor" aria-label="anchor" href="#arg-keep-na"></a></dt>
@@ -189,7 +189,7 @@ Simplified Least Squares Procedures. Analytical Chemistry, 36(8), 1627-1639.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

@@ -36,11 +36,19 @@ filter_lowpass_fft(
 
 - na_action:
 
-  Method to handle NA values before filtering. One of: - "linear":
-  Linear interpolation (default) - "spline": Spline interpolation for
-  smoother curves - "stine": Stineman interpolation preserving data
-  shape - "locf": Last observation carried forward - "value": Replace
-  with a constant value - "error": Raise an error if NAs are present
+  Method to handle NA values before filtering. One of:
+
+  - "linear": Linear interpolation (default)
+
+  - "spline": Spline interpolation for smoother curves
+
+  - "stine": Stineman interpolation preserving data shape
+
+  - "locf": Last observation carried forward
+
+  - "value": Replace with a constant value
+
+  - "error": Raise an error if NAs are present
 
 - keep_na:
 
@@ -49,10 +57,13 @@ filter_lowpass_fft(
 
 - ...:
 
-  Additional arguments passed to replace_na(). Common options include: -
-  value: Numeric value for replacement when na_action = "value" -
-  min_gap: Minimum gap size to interpolate/fill - max_gap: Maximum gap
-  size to interpolate/fill
+  Additional arguments passed to replace_na(). Common options include:
+
+  - value: Numeric value for replacement when na_action = "value"
+
+  - min_gap: Minimum gap size to interpolate/fill
+
+  - max_gap: Maximum gap size to interpolate/fill
 
 ## Value
 
