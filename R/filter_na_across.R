@@ -28,6 +28,11 @@
 #'   to the `variables_where` metadata field.
 #' @param ... Arguments passed to the underlying function.
 #'
+#'   For `"speed"`, `threshold` additionally accepts `"pooled"`: `"auto"`
+#'   estimates a threshold separately for each group, so every track is
+#'   judged against its own noise; `"pooled"` estimates one threshold from
+#'   all groups at once, which is steadier when tracks are short.
+#'
 #' @return An aniframe of the same shape, with failing values replaced by
 #'   `NA`.
 #'
@@ -92,12 +97,10 @@ filter_na_across <- function(
   fn <- filter_na_method_fn(method)
   needed <- unique(c(variables, unlist(helpers, use.names = FALSE)))
 
-  # An "auto" speed threshold is pooled across groups. Handing the job to
-  # filter_na_speed() per group would give each track its own threshold,
-  # estimated from however few speeds that track happens to have -- a short
-  # track's mean + 3 sd can sit above its own outlier. So the speeds are
-  # computed first, pooled, and passed down as a number.
-  if (method == "speed" && identical(args$threshold %||% "auto", "auto")) {
+  # "auto" is resolved per group by filter_na_speed(), which sees one
+  # group at a time. "pooled" is resolved here instead, from every group's
+  # speeds at once, and passed down as a number.
+  if (method == "speed" && identical(args$threshold, "pooled")) {
     speeds <- dplyr::mutate(
       data,
       .aniprocess_speed = calculate_step_speed(

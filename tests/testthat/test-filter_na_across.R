@@ -146,10 +146,10 @@ test_that("filter_na_across returns an aniframe and preserves grouping", {
   expect_equal(dplyr::group_vars(out), "individual")
 })
 
-test_that("filter_na_across pools the auto speed threshold across groups", {
-  # Two tracks, one outlier in the first. Per-group thresholds would be
-  # estimated from 10 speeds each -- mean + 3 sd then sits above the very
-  # outlier we want caught. Pooling over both tracks catches it.
+test_that("auto estimates a threshold per group, pooled estimates one overall", {
+  # Ten rows per track is too few for mean + 3 sd to catch this outlier
+  # within its own track, but enough when both tracks are pooled. The two
+  # settings therefore disagree, which is what makes them distinguishable.
   d <- aniframe::aniframe(
     time = rep(1:10, 2),
     individual = rep(c("a", "b"), each = 10),
@@ -159,11 +159,39 @@ test_that("filter_na_across pools the auto speed threshold across groups", {
   ) |>
     dplyr::group_by(individual)
 
-  expect_equal(which(is.na(filter_na_across(d, "speed")$x)), 5L)
+  expect_length(which(is.na(filter_na_across(d, "speed")$x)), 0)
+  expect_equal(
+    which(is.na(filter_na_across(d, "speed", threshold = "pooled")$x)),
+    5L
+  )
 
   # An explicit threshold is passed through untouched
   expect_equal(
     which(is.na(filter_na_across(d, "speed", threshold = 100)$x)),
     5L
   )
+})
+
+test_that("a per-group auto threshold judges each track on its own noise", {
+  # Track a is noisy, track b is smooth; each has one outlier of the same
+  # size. A pooled threshold is dominated by a's noise and misses b's.
+  set.seed(17)
+  np <- 40
+  xa <- cumsum(rnorm(np, sd = 20))
+  xa[10] <- xa[10] + 3000
+  xb <- cumsum(rnorm(np, sd = 0.1)) + 1e5
+  xb[10] <- xb[10] + 3000
+
+  d <- aniframe::aniframe(
+    time = rep(seq_len(np), 2),
+    individual = rep(c("a", "b"), each = np),
+    x = c(xa, xb),
+    y = rep(0, 2 * np),
+    variables_what = "individual"
+  ) |>
+    dplyr::group_by(individual)
+
+  per_group <- which(is.na(filter_na_across(d, "speed")$x))
+  expect_true(10L %in% per_group)
+  expect_true((np + 10L) %in% per_group)
 })

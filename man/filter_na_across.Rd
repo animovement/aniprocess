@@ -20,7 +20,12 @@ filter_na_across(
 \item{variables}{Columns to mask, as a tidyselect expression. Defaults
 to the \code{variables_where} metadata field.}
 
-\item{...}{Arguments passed to the underlying function.}
+\item{...}{Arguments passed to the underlying function.
+
+For \code{"speed"}, \code{threshold} additionally accepts \code{"pooled"}: \code{"auto"}
+estimates a threshold separately for each group, so every track is
+judged against its own noise; \code{"pooled"} estimates one threshold from
+all groups at once, which is steadier when tracks are short.}
 }
 \value{
 An aniframe of the same shape, with failing values replaced by

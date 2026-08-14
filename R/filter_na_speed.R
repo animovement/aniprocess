@@ -48,7 +48,10 @@
 #' so a step is never formed across a track boundary.
 #'
 #' When using `threshold = "auto"`, the threshold is the mean speed plus
-#' three standard deviations.
+#' three standard deviations of the rows given. Called through
+#' [filter_na_across()] that means one threshold per group; pass
+#' `threshold = "pooled"` there to estimate a single threshold from every
+#' group at once instead.
 #'
 #' @examples
 #' coords <- data.frame(x = c(1, 2, 4, 7, 11), y = c(1, 1, 2, 3, 5))
@@ -79,6 +82,13 @@ filter_na_speed <- function(data, threshold = "auto", time = NULL) {
   }
 
   # Check threshold input
+  if (identical(threshold, "pooled")) {
+    cli::cli_abort(c(
+      "{.arg threshold} cannot be {.val pooled} here.",
+      "i" = "Pooling estimates one threshold across groups, and this function sees only the rows it was given.",
+      "i" = "Use {.fn filter_na_across} for a whole aniframe."
+    ))
+  }
   if (!identical(threshold, "auto") && !is.numeric(threshold)) {
     cli::cli_abort(
       "{.arg threshold} must be either {.val auto} or a numeric value."

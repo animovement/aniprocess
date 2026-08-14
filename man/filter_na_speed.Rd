@@ -48,7 +48,10 @@ between each consecutive pair. Called via \code{\link[=filter_na_across]{filter_
 so a step is never formed across a track boundary.
 
 When using \code{threshold = "auto"}, the threshold is the mean speed plus
-three standard deviations.
+three standard deviations of the rows given. Called through
+\code{\link[=filter_na_across]{filter_na_across()}} that means one threshold per group; pass
+\code{threshold = "pooled"} there to estimate a single threshold from every
+group at once instead.
 }
 \section{Input shape}{
 

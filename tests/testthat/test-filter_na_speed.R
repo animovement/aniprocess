@@ -324,12 +324,12 @@ test_that("filter_na_speed errors when time column is missing", {
 
 # Two individuals stacked in one aniframe, `sep` units apart, time restarting
 # per individual. Individual "a" has one genuine single-frame outlier.
-speed_fixture <- function(sep) {
+speed_fixture <- function(sep, np = 30) {
   aniframe::aniframe(
-    time = rep(1:10, 2),
-    individual = rep(c("a", "b"), each = 10),
-    x = c(c(0:3, 500, 5:9), (0:9) + sep),
-    y = rep(0, 20),
+    time = rep(seq_len(np), 2),
+    individual = rep(c("a", "b"), each = np),
+    x = c(c(0:3, 500, 5:(np - 1)), (0:(np - 1)) + sep),
+    y = rep(0, 2 * np),
     variables_what = "individual"
   ) |>
     dplyr::group_by(individual)
@@ -492,4 +492,16 @@ test_that("filter_na_speed computes an auto threshold on a coordinate frame", {
   out <- filter_na_speed(coords, threshold = "auto", time = seq_len(20))
 
   expect_equal(which(is.na(out$x)), 10L)
+})
+
+test_that("filter_na_speed rejects a pooled threshold", {
+  # Pooling needs groups; this function only ever sees the rows it was given.
+  expect_error(
+    filter_na_speed(
+      data.frame(x = 1:5, y = rep(0, 5)),
+      threshold = "pooled",
+      time = 1:5
+    ),
+    "cannot be"
+  )
 })
