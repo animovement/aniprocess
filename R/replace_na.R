@@ -4,7 +4,7 @@
 #' `r lifecycle::badge('deprecated')`
 #'
 #' Use [replace_na_with()] instead. This name collides with
-#' [tidyr::replace_na()], which does something different — it replaces `NA`
+#' `tidyr::replace_na()`, which does something different — it replaces `NA`
 #' with a fixed value per column, rather than interpolating gaps.
 #'
 #' @param x A vector containing numeric data with missing values (NAs)

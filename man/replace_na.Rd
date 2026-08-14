@@ -36,7 +36,7 @@ where gap length criteria are met.
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
 Use \code{\link[=replace_na_with]{replace_na_with()}} instead. This name collides with
-\code{\link[tidyr:replace_na]{tidyr::replace_na()}}, which does something different — it replaces \code{NA}
+\code{tidyr::replace_na()}, which does something different — it replaces \code{NA}
 with a fixed value per column, rather than interpolating gaps.
 }
 \examples{
