@@ -1,6 +1,6 @@
 url: http://animovement.dev/aniprocess/
 home:
-  title: "aniprocess – An R toolbox for reading and writing movement data"
+  title: "aniprocess – signal processing and filtering for movement data"
 
 # Shared navbar (incl. the animovement dropdown + Zulip), theme, and author
 # details are inherited from animovementtemplate.
@@ -9,8 +9,8 @@ template:
   package: animovementtemplate
 
 reference:
-- title: "Remove observations of poor quality"
-  desc: These functions ensure that your data is ready for analysis.
+- title: "Mask unreliable observations"
+  desc: Replace values that fail a quality criterion with `NA`.
   contents:
   - filter_na_across
   - filter_na_with
@@ -20,8 +20,8 @@ reference:
   - filter_na_roi
   - filter_na_speed
 
-- title: "Interpolate over missing values"
-  desc: These functions ensure that your data is ready for analysis.
+- title: "Fill missing values"
+  desc: Fill gaps by interpolation, carrying forward, or a constant.
   contents:
   - replace_na_across
   - replace_na_with
@@ -31,8 +31,8 @@ reference:
   - replace_na_stine
   - replace_na_value
 
-- title: "Smoothing/filtering functions"
-  desc: These functions ensure that your data is ready for analysis.
+- title: "Smooth and filter signals"
+  desc: Suppress noise while preserving the movement you care about.
   contents:
   - filter_across
   - filter_with
@@ -49,8 +49,8 @@ reference:
   - filter_sgolay
   - filter_triangular
 
-- title: "Other functions"
-  desc: These functions ensure that your data is ready for analysis.
+- title: "Find peaks and troughs"
+  desc: Locate local extrema by height, prominence and plateau handling.
   contents:
   - find_peaks
   - find_troughs
