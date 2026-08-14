@@ -7,8 +7,9 @@
 filter_na_speed(data, threshold = "auto", time = NULL)
 }
 \arguments{
-\item{data}{An aniframe containing spatial coordinates and a time column,
-or a data frame of numeric coordinate columns.}
+\item{data}{A data frame of numeric coordinate columns — typically supplied
+by \code{\link[dplyr:pick]{dplyr::pick()}} inside \code{\link[dplyr:mutate]{dplyr::mutate()}}. To filter a whole aniframe,
+use \code{\link[=filter_na_across]{filter_na_across()}}.}
 
 \item{threshold}{A numeric value specifying the speed threshold, or "auto".
 \itemize{
@@ -17,14 +18,11 @@ confidence values replaced with NA.
 \item If "auto": Sets threshold at mean speed + 3 standard deviations.
 }}
 
-\item{time}{Numeric vector of time values, one per row. Required when
-\code{data} is a coordinate frame. When \code{data} is an aniframe this defaults
-to its \code{time} column.}
+\item{time}{Numeric vector of time values, one per row.}
 }
 \value{
-The same shape as the input, with spatial values replaced by NA
-where speed exceeds the threshold. For an aniframe, \code{confidence} is
-blanked at those rows too.
+\code{data}, with coordinates replaced by \code{NA} where speed exceeds the
+threshold.
 }
 \description{
 Filters out single-frame outliers based on movement speed. Spatial
@@ -44,46 +42,34 @@ Endpoints have only one neighbor; their speed falls back to the available
 one-sided step. NAs in inputs do not contaminate adjacent rows: a missing
 coordinate at row \code{i} only affects row \code{i}'s speed estimate.
 
-Speed is computed \strong{within each group} of a grouped aniframe, so a step
-is never formed between the last row of one track and the first row of
-the next. Each group's first and last rows are treated as endpoints. On
-ungrouped data the whole frame is a single track.
+Every row of \code{data} is treated as one continuous track: a step is formed
+between each consecutive pair. Called via \code{\link[=filter_na_across]{filter_na_across()}} or with
+\code{\link[dplyr:pick]{dplyr::pick()}} inside a grouped \code{\link[dplyr:mutate]{dplyr::mutate()}}, that means one group,
+so a step is never formed across a track boundary.
 
-When using \code{threshold = "auto"}, the threshold is set to the mean speed
-plus three standard deviations, pooled across groups. Because no
-cross-track step is ever formed, the estimate uses within-track speeds
-only.
+When using \code{threshold = "auto"}, the threshold is the mean speed plus
+three standard deviations of the rows given. Called through
+\code{\link[=filter_na_across]{filter_na_across()}} that means one threshold per group; pass
+\code{threshold = "pooled"} there to estimate a single threshold from every
+group at once instead.
 }
 \section{Input shape}{
 
-Returns the same shape it is given.
-\itemize{
-\item Given an \strong{aniframe}, the columns named by \code{variables_where} are
-masked, along with \code{confidence} if present.
-\item Given a \strong{data frame of coordinate columns}, that frame is masked and
-returned — the form to use inside \code{\link[dplyr:mutate]{dplyr::mutate()}}:
-}
+Takes and returns a frame of coordinate columns, so it composes inside
+\code{\link[dplyr:mutate]{dplyr::mutate()}}:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{data |> mutate(filter_na_speed(pick(all_of(c("x", "y"))), time = time))
 }\if{html}{\out{</div>}}
 
 Speed depends on all coordinates jointly, so this cannot be used with
-\code{\link[dplyr:across]{dplyr::across()}}. \code{confidence} is not a coordinate, so it can only be
-masked via the aniframe form.
+\code{\link[dplyr:across]{dplyr::across()}}. \code{confidence} is not a coordinate and so is never
+modified here; \code{\link[=filter_na_across]{filter_na_across()}} blanks it on masked rows.
 }
 
 \examples{
-data <- aniframe::aniframe(
-  time = 1:5,
-  x = c(1, 2, 4, 7, 11),
-  y = c(1, 1, 2, 3, 5),
-  confidence = c(0.8, 0.9, 0.7, 0.85, 0.6)
-)
+coords <- data.frame(x = c(1, 2, 4, 7, 11), y = c(1, 1, 2, 3, 5))
 
-# Filter data by a speed threshold of 3
-filter_na_speed(data, threshold = 3)
-
-# Use automatic threshold
-filter_na_speed(data, threshold = "auto")
+filter_na_speed(coords, threshold = 3, time = 1:5)
+filter_na_speed(coords, threshold = "auto", time = 1:5)
 
 }

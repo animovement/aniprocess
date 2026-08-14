@@ -18,13 +18,14 @@ test_that("filter_ccma reduces radius shrinkage on a noiseless circle", {
     variables_what = character(0)
   )
 
-  res_ma <- filter_ccma(
+  res_ma <- filter_across(
     d,
+    "ccma",
     window_width_ma = 21,
     window_width_cc = 15,
     cc_mode = FALSE
   )
-  res_cc <- filter_ccma(d, window_width_ma = 21, window_width_cc = 15)
+  res_cc <- filter_across(d, "ccma", window_width_ma = 21, window_width_cc = 15)
 
   ma_r <- mean(sqrt(res_ma$x^2 + res_ma$y^2))
   cc_r <- mean(sqrt(res_cc$x^2 + res_cc$y^2))
@@ -45,7 +46,7 @@ test_that("filter_ccma cc_mode = FALSE returns only the moving-average result", 
     y = sin(t),
     variables_what = character(0)
   )
-  res_ma <- filter_ccma(d, cc_mode = FALSE)
+  res_ma <- filter_across(d, "ccma", cc_mode = FALSE)
   # MA-only path on a circle should have radius < 1 (corner cutting present)
   expect_lt(mean(sqrt(res_ma$x^2 + res_ma$y^2)), 1)
 })
@@ -58,7 +59,7 @@ test_that("filter_ccma preserves input length and aniframe class", {
     y = rnorm(n),
     variables_what = character(0)
   )
-  res <- filter_ccma(d)
+  res <- filter_across(d, "ccma")
   expect_equal(nrow(res), n)
   expect_s3_class(res, "aniframe")
 })
@@ -74,7 +75,7 @@ test_that("filter_ccma works in 3D", {
     variables_where = c("x", "y", "z"),
     variables_what = character(0)
   )
-  res <- filter_ccma(d, window_width_ma = 7, window_width_cc = 5)
+  res <- filter_across(d, "ccma", window_width_ma = 7, window_width_cc = 5)
   expect_equal(nrow(res), n)
   expect_false(any(is.na(res$x)))
   expect_false(any(is.na(res$z)))
@@ -93,10 +94,10 @@ test_that("filter_ccma preserves NAs by default and fills with keep_na = FALSE",
     variables_what = character(0)
   )
 
-  res_filled <- filter_ccma(d, keep_na = FALSE)
+  res_filled <- filter_across(d, "ccma", keep_na = FALSE)
   expect_false(any(is.na(res_filled$x)))
 
-  res_kept <- filter_ccma(d)
+  res_kept <- filter_across(d, "ccma")
   expect_true(is.na(res_kept$x[10]))
   expect_true(is.na(res_kept$x[30]))
   # y was clean — should still be clean
@@ -110,7 +111,7 @@ test_that("filter_ccma errors when na_action = 'error' and NAs are present", {
     y = rnorm(10),
     variables_what = character(0)
   )
-  expect_error(filter_ccma(d, na_action = "error"), "NA")
+  expect_error(filter_across(d, "ccma", na_action = "error"), "NA")
 })
 
 test_that("filter_ccma operates per group", {
@@ -125,7 +126,7 @@ test_that("filter_ccma operates per group", {
     variables_what = "track"
   )
 
-  res <- filter_ccma(d, window_width_ma = 11, window_width_cc = 7)
+  res <- filter_across(d, "ccma", window_width_ma = 11, window_width_cc = 7)
 
   res_a <- res[res$track == "a", ]
   res_b <- res[res$track == "b", ]
@@ -142,7 +143,7 @@ test_that("filter_ccma rejects 1-D variables_where", {
     variables_where = "x",
     variables_what = character(0)
   )
-  expect_error(filter_ccma(d), "2 or 3 spatial coordinates")
+  expect_error(filter_across(d, "ccma"), "2 or 3 coordinate columns")
 })
 
 test_that("filter_ccma validates window widths", {
@@ -152,9 +153,9 @@ test_that("filter_ccma validates window widths", {
     y = rnorm(20),
     variables_what = character(0)
   )
-  expect_error(filter_ccma(d, window_width_ma = 0))
-  expect_error(filter_ccma(d, window_width_cc = -1))
-  expect_error(filter_ccma(d, window_width_ma = c(11, 13)))
+  expect_error(filter_across(d, "ccma", window_width_ma = 0))
+  expect_error(filter_across(d, "ccma", window_width_cc = -1))
+  expect_error(filter_across(d, "ccma", window_width_ma = c(11, 13)))
 })
 
 test_that("filter_ccma rounds even window widths up to odd", {
@@ -168,8 +169,13 @@ test_that("filter_ccma rounds even window widths up to odd", {
     y = sin(t),
     variables_what = character(0)
   )
-  res_even <- filter_ccma(d, window_width_ma = 10, window_width_cc = 6)
-  res_odd <- filter_ccma(d, window_width_ma = 11, window_width_cc = 7)
+  res_even <- filter_across(
+    d,
+    "ccma",
+    window_width_ma = 10,
+    window_width_cc = 6
+  )
+  res_odd <- filter_across(d, "ccma", window_width_ma = 11, window_width_cc = 7)
   expect_equal(res_even$x, res_odd$x)
 })
 
@@ -182,7 +188,7 @@ test_that("filter_ccma uniform kernel runs and returns expected length", {
     y = sin(t),
     variables_what = character(0)
   )
-  res <- filter_ccma(d, kernel = "uniform")
+  res <- filter_across(d, "ccma", kernel = "uniform")
   expect_equal(nrow(res), n)
   expect_false(any(is.na(res$x)))
 })
@@ -213,7 +219,7 @@ test_that("filter_ccma coordinate-frame form matches the aniframe form", {
   )
   expect_equal(
     filter_ccma(data.frame(x = cos(t), y = sin(t))),
-    as.data.frame(filter_ccma(d))[, c("x", "y")],
+    as.data.frame(filter_across(d, "ccma"))[, c("x", "y")],
     ignore_attr = TRUE
   )
 })
@@ -233,7 +239,7 @@ test_that("filter_ccma errors when a variables_where column is missing", {
     variables_what = character(0)
   )
   d <- aniframe::set_metadata(d, variables_where = c("x", "y", "z"))
-  expect_error(filter_ccma(d), "Missing spatial column")
+  expect_error(filter_across(d, "ccma"), "Missing spatial column")
 })
 
 test_that("filter_ccma errors when a spatial column is non-numeric", {
@@ -244,7 +250,7 @@ test_that("filter_ccma errors when a spatial column is non-numeric", {
     variables_what = character(0)
   )
   d$x <- as.character(d$x)
-  expect_error(filter_ccma(d), "must be numeric")
+  expect_error(filter_across(d, "ccma"), "must be numeric")
 })
 
 test_that("filter_ccma returns the input when NAs cannot be filled", {
@@ -257,7 +263,7 @@ test_that("filter_ccma returns the input when NAs cannot be filled", {
     y = sin(t),
     variables_what = character(0)
   )
-  suppressWarnings(out <- filter_ccma(d))
+  suppressWarnings(out <- filter_across(d, "ccma"))
   expect_true(all(is.na(out$x)))
 })
 
@@ -268,7 +274,7 @@ test_that("filter_ccma passes through trajectories shorter than 3 points", {
     y = c(0, 1),
     variables_what = character(0)
   )
-  out <- filter_ccma(d)
+  out <- filter_across(d, "ccma")
   expect_equal(out$x, c(0, 1))
   expect_equal(out$y, c(0, 1))
 })
@@ -285,7 +291,7 @@ test_that("filter_ccma handles straight-line trajectories (zero curvature)", {
     y = rep(0, n),
     variables_what = character(0)
   )
-  out <- filter_ccma(d, window_width_ma = 5, window_width_cc = 3)
+  out <- filter_across(d, "ccma", window_width_ma = 5, window_width_cc = 3)
   expect_equal(out$y, rep(0, n), tolerance = 1e-9)
   # Interior of x is fully supported by the MA window (no padding bleed).
   interior <- 6:25
@@ -309,7 +315,7 @@ test_that("filter_ccma rejects non-Cartesian coordinate systems", {
       d,
       coordinate_system = factor(cs, levels = cs_levels)
     )
-    expect_error(filter_ccma(bad), "Cartesian coordinate system")
+    expect_error(filter_across(bad, "ccma"), "Cartesian coordinate system")
   }
 })
 
@@ -331,35 +337,22 @@ test_that("filter_ccma smooths each group independently", {
   ) |>
     dplyr::group_by(individual)
 
-  alone <- function(d) {
-    res <- filter_ccma(aniframe::aniframe(
-      time = d$time,
-      x = d$x,
-      y = d$y,
-      variables_what = character(0)
-    ))
-    as.data.frame(res)[, c("x", "y")]
-  }
+  alone <- function(d) filter_ccma(data.frame(x = d$x, y = d$y))
 
   expect_equal(
-    as.data.frame(filter_ccma(grouped))[, c("x", "y")],
+    as.data.frame(filter_across(grouped, "ccma"))[, c("x", "y")],
     rbind(alone(a), alone(b)),
     ignore_attr = TRUE
   )
 })
 
-test_that("filter_ccma reports where the coordinate count came from", {
-  # aniframe: the count comes from the variables_where metadata field
-  d <- aniframe::aniframe(
-    time = 1:6,
-    x = as.numeric(1:6),
-    variables_what = character(0)
-  )
-  expect_error(filter_ccma(d), "variables_where")
-
-  # coordinate frame: the count comes from the columns
+test_that("filter_ccma reports the coordinate count it was given", {
   expect_error(
     filter_ccma(data.frame(x = as.numeric(1:6))),
-    "columns of"
+    "2 or 3 coordinate columns"
+  )
+  expect_error(
+    filter_ccma(data.frame(a = 1:6, b = 1:6, c = 1:6, d = 1:6)),
+    "2 or 3 coordinate columns"
   )
 })

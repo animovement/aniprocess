@@ -7,21 +7,18 @@
 filter_na_confidence(data, threshold = 0.6, confidence = NULL)
 }
 \arguments{
-\item{data}{An aniframe containing a \code{confidence} column and spatial columns
-as defined in the metadata's \code{variables_where}, or a data frame of numeric
-coordinate columns.}
+\item{data}{A data frame of numeric coordinate columns — typically supplied
+by \code{\link[dplyr:pick]{dplyr::pick()}} inside \code{\link[dplyr:mutate]{dplyr::mutate()}}. To filter a whole aniframe,
+use \code{\link[=filter_na_across]{filter_na_across()}}.}
 
 \item{threshold}{A numeric value specifying the minimum confidence level to
 retain data. Must be a single value between 0 and 1. Default is 0.6.}
 
-\item{confidence}{Numeric vector of confidence values, one per row.
-Required when \code{data} is a coordinate frame. When \code{data} is an aniframe
-this defaults to its \code{confidence} column.}
+\item{confidence}{Numeric vector of confidence values, one per row.}
 }
 \value{
-The same shape as the input, with spatial values replaced by \code{NA}
-where confidence is below the threshold. For an aniframe the
-\code{confidence} column is filtered too.
+\code{data}, with coordinates replaced by \code{NA} where confidence is
+below the threshold.
 }
 \description{
 This function replaces spatial coordinate values with \code{NA} if the confidence
@@ -39,44 +36,25 @@ as well, filter \code{confidence} directly with \code{\link[=filter_na_range]{fi
 }
 \section{Input shape}{
 
-Returns the same shape it is given.
-\itemize{
-\item Given an \strong{aniframe}, the columns named by \code{variables_where} are masked,
-along with \code{confidence}.
-\item Given a \strong{data frame of coordinate columns}, that frame is masked and
-returned — the form to use inside \code{\link[dplyr:mutate]{dplyr::mutate()}}:
-}
+Takes and returns a frame of coordinate columns, so it composes inside
+\code{\link[dplyr:mutate]{dplyr::mutate()}}:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{data |> mutate(
   filter_na_confidence(pick(all_of(c("x", "y"))), confidence = confidence)
 )
 }\if{html}{\out{</div>}}
 
-\code{confidence} is not a coordinate, so it is only filtered by the aniframe
-form; the coordinate-frame form returns just the masked coordinates.
+The decision uses all coordinates at once, so this cannot be used with
+\code{\link[dplyr:across]{dplyr::across()}}. \code{confidence} is not a coordinate and so is never
+modified here; \code{\link[=filter_na_across]{filter_na_across()}} filters it as well.
 }
 
 \examples{
-# 2D example
-data <- aniframe::aniframe(
-  time = 1:5,
-  x = 1:5,
-  y = 6:10,
+coords <- data.frame(x = 1:5, y = 6:10)
+filter_na_confidence(
+  coords,
+  threshold = 0.6,
   confidence = c(0.5, 0.7, 0.4, 0.8, 0.9)
 )
-
-filter_na_confidence(data, threshold = 0.6)
-
-# With z column (3D)
-data_3d <- aniframe::aniframe(
-  time = 1:5,
-  x = 1:5,
-  y = 6:10,
-  z = 11:15,
-  confidence = c(0.5, 0.7, 0.4, 0.8, 0.9),
-  variables_where = c("x", "y", "z")
-)
-
-filter_na_confidence(data_3d, threshold = 0.6)
 
 }

@@ -7,7 +7,9 @@
 filter_na_roi_rect(data, x_min, x_max, y_min, y_max, z_min, z_max, has_z)
 }
 \arguments{
-\item{data}{An aniframe containing spatial coordinates.}
+\item{data}{A data frame with numeric \code{x} and \code{y} columns (and optionally
+\code{z}) — typically supplied by \code{\link[dplyr:pick]{dplyr::pick()}} inside \code{\link[dplyr:mutate]{dplyr::mutate()}}.
+To filter a whole aniframe, use \code{\link[=filter_na_across]{filter_na_across()}}.}
 
 \item{x_min, x_max, y_min, y_max, z_min, z_max}{Bounds of the ROI.}
 

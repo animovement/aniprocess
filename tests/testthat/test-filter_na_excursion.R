@@ -24,7 +24,7 @@ test_that("filter_na_excursion flags a multi-frame excursion that returns", {
     y = y,
     variables_what = character(0)
   )
-  out <- filter_na_excursion(d)
+  out <- filter_na_across(d, "excursion")
 
   expect_true(all(is.na(out$x[100:102])))
   expect_true(all(is.na(out$y[100:102])))
@@ -47,7 +47,7 @@ test_that("filter_na_excursion leaves persistent shifts untouched", {
     y = y,
     variables_what = character(0)
   )
-  out <- filter_na_excursion(d)
+  out <- filter_na_across(d, "excursion")
 
   expect_false(any(is.na(out$x)))
   expect_false(any(is.na(out$y)))
@@ -67,7 +67,7 @@ test_that("filter_na_excursion (per-axis) flags a row when only one axis jumps",
     y = y,
     variables_what = character(0)
   )
-  out <- filter_na_excursion(d, by_axis = TRUE)
+  out <- filter_na_across(d, "excursion", by_axis = TRUE)
 
   expect_true(all(is.na(out$x[100:102])))
   # Per-axis OR: the whole row is blanked even though y was fine.
@@ -90,7 +90,7 @@ test_that("filter_na_excursion (joint Euclidean) flags only when magnitude is la
     y = y,
     variables_what = character(0)
   )
-  out <- filter_na_excursion(d, by_axis = FALSE)
+  out <- filter_na_across(d, "excursion", by_axis = FALSE)
 
   expect_true(all(is.na(out$x[100:102])))
   expect_true(all(is.na(out$y[100:102])))
@@ -112,7 +112,7 @@ test_that("filter_na_excursion blanks confidence at flagged rows", {
     confidence = conf,
     variables_what = character(0)
   )
-  out <- filter_na_excursion(d)
+  out <- filter_na_across(d, "excursion")
 
   expect_true(all(is.na(out$confidence[100:102])))
   expect_false(is.na(out$confidence[1]))
@@ -137,7 +137,7 @@ test_that("filter_na_excursion runs per group", {
     y = c(y_a, y_b),
     variables_what = "track"
   )
-  out <- filter_na_excursion(d)
+  out <- filter_na_across(d, "excursion")
 
   out_a <- out[out$track == "a", ]
   out_b <- out[out$track == "b", ]
@@ -153,7 +153,7 @@ test_that("filter_na_excursion returns an aniframe of the same shape", {
     y = rnorm(50),
     variables_what = character(0)
   )
-  out <- filter_na_excursion(d)
+  out <- filter_na_across(d, "excursion")
   expect_s3_class(out, "aniframe")
   expect_equal(nrow(out), 50)
   expect_equal(names(out), names(d))
@@ -168,7 +168,7 @@ test_that("filter_na_excursion handles trajectories with no σ (constant data)",
     y = rep(5, 20),
     variables_what = character(0)
   )
-  out <- filter_na_excursion(d)
+  out <- filter_na_across(d, "excursion")
   expect_false(any(is.na(out$x)))
   expect_false(any(is.na(out$y)))
 })
@@ -192,7 +192,7 @@ test_that("filter_na_excursion coordinate-frame form matches the aniframe form",
   )
   expect_equal(
     filter_na_excursion(data.frame(x = x, y = y)),
-    as.data.frame(filter_na_excursion(d))[, c("x", "y")],
+    as.data.frame(filter_na_across(d, "excursion"))[, c("x", "y")],
     ignore_attr = TRUE
   )
 })
@@ -205,7 +205,7 @@ test_that("filter_na_excursion errors when a variables_where column is missing",
     variables_what = character(0)
   )
   d <- aniframe::set_metadata(d, variables_where = c("x", "y", "z"))
-  expect_error(filter_na_excursion(d), "Missing spatial column")
+  expect_error(filter_na_across(d, "excursion"), "Missing spatial column")
 })
 
 test_that("filter_na_excursion errors on non-numeric spatial columns", {
@@ -216,7 +216,7 @@ test_that("filter_na_excursion errors on non-numeric spatial columns", {
     variables_what = character(0)
   )
   d$x <- as.character(d$x)
-  expect_error(filter_na_excursion(d), "must be numeric")
+  expect_error(filter_na_across(d, "excursion"), "must be numeric")
 })
 
 test_that("filter_na_excursion validates threshold arguments", {
@@ -226,10 +226,10 @@ test_that("filter_na_excursion validates threshold arguments", {
     y = rnorm(50),
     variables_what = character(0)
   )
-  expect_error(filter_na_excursion(d, outlier_sd = 0))
-  expect_error(filter_na_excursion(d, outlier_sd = -1))
-  expect_error(filter_na_excursion(d, outlier_sd = c(1, 2)))
-  expect_error(filter_na_excursion(d, return_sd = 0))
+  expect_error(filter_na_across(d, "excursion", outlier_sd = 0))
+  expect_error(filter_na_across(d, "excursion", outlier_sd = -1))
+  expect_error(filter_na_across(d, "excursion", outlier_sd = c(1, 2)))
+  expect_error(filter_na_across(d, "excursion", return_sd = 0))
 })
 
 test_that("filter_na_excursion handles short trajectories", {
@@ -239,7 +239,7 @@ test_that("filter_na_excursion handles short trajectories", {
     y = 1,
     variables_what = character(0)
   )
-  expect_no_error(filter_na_excursion(d))
+  expect_no_error(filter_na_across(d, "excursion"))
 })
 
 test_that("filter_na_excursion (joint) bails out on constant data", {
@@ -249,7 +249,7 @@ test_that("filter_na_excursion (joint) bails out on constant data", {
     y = rep(5, 20),
     variables_what = character(0)
   )
-  out <- filter_na_excursion(d, by_axis = FALSE)
+  out <- filter_na_across(d, "excursion", by_axis = FALSE)
   expect_false(any(is.na(out$x)))
   expect_false(any(is.na(out$y)))
 })
@@ -268,7 +268,7 @@ test_that("filter_na_excursion preserves existing NAs", {
     variables_what = character(0)
   )
   for (mode in c(TRUE, FALSE)) {
-    out <- filter_na_excursion(d, by_axis = mode)
+    out <- filter_na_across(d, "excursion", by_axis = mode)
     expect_true(is.na(out$x[10]))
     expect_true(is.na(out$x[50]))
   }
@@ -310,7 +310,7 @@ test_that("filter_na_excursion treats each group independently", {
   }
 
   expect_equal(
-    as.data.frame(filter_na_excursion(grouped))[, c("x", "y")],
+    as.data.frame(filter_na_across(grouped, "excursion"))[, c("x", "y")],
     rbind(alone(a), alone(b)),
     ignore_attr = TRUE
   )
@@ -326,5 +326,5 @@ test_that("filter_na_excursion leaves one-row groups untouched", {
   ) |>
     dplyr::group_by(individual)
 
-  expect_equal(filter_na_excursion(d)$x[4], 42)
+  expect_equal(filter_na_across(d, "excursion")$x[4], 42)
 })

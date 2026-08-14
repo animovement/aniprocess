@@ -21,7 +21,7 @@ test_that("filter_na_speed flags a single-frame outlier (2D)", {
     y = c(1, 2, 3, 4, 100, 6, 7, 8, 9)
   )
 
-  result <- filter_na_speed(data, threshold = 20)
+  result <- filter_na_across(data, "speed", threshold = 20)
 
   # The outlier itself is flagged
   expect_true(is.na(result$x[5]))
@@ -42,7 +42,7 @@ test_that("filter_na_speed flags a single-frame outlier (3D)", {
     variables_where = c("x", "y", "z")
   )
 
-  result <- filter_na_speed(data, threshold = 20)
+  result <- filter_na_across(data, "speed", threshold = 20)
 
   expect_true(is.na(result$x[5]))
   expect_true(is.na(result$y[5]))
@@ -59,7 +59,7 @@ test_that("filter_na_speed leaves legitimate step changes alone", {
     y = c(1, 2, 3, 100, 101, 102, 103, 104)
   )
 
-  result <- filter_na_speed(data, threshold = 20)
+  result <- filter_na_across(data, "speed", threshold = 20)
 
   # Nothing should be flagged - this is a state change, not an outlier
   expect_false(any(is.na(result$x)))
@@ -74,7 +74,7 @@ test_that("filter_na_speed calculates auto threshold", {
     y = 1:100
   )
 
-  result <- filter_na_speed(data, threshold = "auto")
+  result <- filter_na_across(data, "speed", threshold = "auto")
 
   # The outlier at 51 should be flagged
   expect_true(is.na(result$x[51]))
@@ -89,7 +89,7 @@ test_that("filter_na_speed preserves existing NAs", {
     y = c(0, 1, NA, 3, 4)
   )
 
-  result <- filter_na_speed(data, threshold = 100)
+  result <- filter_na_across(data, "speed", threshold = 100)
 
   # Existing NAs should remain
   expect_true(is.na(result$x[2]))
@@ -104,7 +104,7 @@ test_that("filter_na_speed does not contaminate neighbors of NA inputs", {
     y = c(1, 2, 3, 4, 5, 6, 7)
   )
 
-  result <- filter_na_speed(data, threshold = 100)
+  result <- filter_na_across(data, "speed", threshold = 100)
 
   # Neighbors of the NA row remain clean
   expect_false(is.na(result$x[2]))
@@ -122,7 +122,7 @@ test_that("filter_na_speed preserves other columns", {
     value = c(10, 20, 30, 40, 50)
   )
 
-  result <- filter_na_speed(data, threshold = 100)
+  result <- filter_na_across(data, "speed", threshold = 100)
 
   expect_equal(result$id, c("a", "b", "c", "d", "e"))
   expect_equal(result$value, c(10, 20, 30, 40, 50))
@@ -136,7 +136,7 @@ test_that("filter_na_speed filters confidence when present", {
     confidence = rep(0.9, 7)
   )
 
-  result <- filter_na_speed(data, threshold = 20)
+  result <- filter_na_across(data, "speed", threshold = 20)
 
   expect_true(is.na(result$confidence[4]))
   expect_false(is.na(result$confidence[1]))
@@ -149,8 +149,10 @@ test_that("filter_na_speed works without confidence column", {
     y = c(0, 1, 2, 3, 4)
   )
 
-  expect_no_error(filter_na_speed(data, threshold = 100))
-  expect_false("confidence" %in% names(filter_na_speed(data, threshold = 100)))
+  expect_no_error(filter_na_across(data, "speed", threshold = 100))
+  expect_false(
+    "confidence" %in% names(filter_na_across(data, "speed", threshold = 100))
+  )
 })
 
 test_that("filter_na_speed validates data is an aniframe", {
@@ -161,7 +163,7 @@ test_that("filter_na_speed validates data is an aniframe", {
   )
 
   expect_error(
-    filter_na_speed(data, threshold = 5),
+    filter_na_across(data, "speed", threshold = 5),
     class = "rlang_error"
   )
 })
@@ -176,7 +178,7 @@ test_that("filter_na_speed validates required columns exist", {
   data <- aniframe::set_metadata(data, variables_where = c("x", "y", "z"))
 
   expect_error(
-    filter_na_speed(data, threshold = 5),
+    filter_na_across(data, "speed", threshold = 5),
     "Missing spatial column"
   )
 })
@@ -191,7 +193,7 @@ test_that("filter_na_speed validates columns are numeric", {
   data$time <- as.character(data$time)
 
   expect_error(
-    filter_na_speed(data, threshold = 5)
+    filter_na_across(data, "speed", threshold = 5)
   )
 })
 
@@ -203,12 +205,12 @@ test_that("filter_na_speed validates threshold is auto or numeric", {
   )
 
   expect_error(
-    filter_na_speed(data, threshold = "high"),
+    filter_na_across(data, "speed", threshold = "high"),
     "must be either"
   )
 
   expect_error(
-    filter_na_speed(data, threshold = c(1, 2)),
+    filter_na_across(data, "speed", threshold = c(1, 2)),
     "single numeric value"
   )
 })
@@ -220,7 +222,7 @@ test_that("filter_na_speed returns an aniframe", {
     y = c(0, 1, 2, 3, 4)
   )
 
-  result <- filter_na_speed(data, threshold = 100)
+  result <- filter_na_across(data, "speed", threshold = 100)
 
   expect_s3_class(result, "aniframe")
 })
@@ -232,7 +234,7 @@ test_that("filter_na_speed handles constant position", {
     y = c(5, 5, 5, 5, 5)
   )
 
-  result <- filter_na_speed(data, threshold = 1)
+  result <- filter_na_across(data, "speed", threshold = 1)
 
   # All speeds should be 0, nothing filtered
   expect_false(any(is.na(result$x)))
@@ -247,7 +249,7 @@ test_that("filter_na_speed handles uneven time spacing", {
     y = c(0, 1, 2, 100, 4, 5, 6)
   )
 
-  result <- filter_na_speed(data, threshold = 50)
+  result <- filter_na_across(data, "speed", threshold = 50)
 
   # The outlier at index 4 should be flagged
   expect_true(is.na(result$x[4]))
@@ -315,19 +317,19 @@ test_that("filter_na_speed errors when time column is missing", {
     variables_what = character(0)
   )
   data$time <- NULL
-  expect_error(filter_na_speed(data), "Missing required column.*time")
+  expect_error(filter_na_across(data, "speed"), "Missing required column.*time")
 })
 
 # --- grouping (issue #37) ---------------------------------------------------
 
 # Two individuals stacked in one aniframe, `sep` units apart, time restarting
 # per individual. Individual "a" has one genuine single-frame outlier.
-speed_fixture <- function(sep) {
+speed_fixture <- function(sep, np = 30) {
   aniframe::aniframe(
-    time = rep(1:10, 2),
-    individual = rep(c("a", "b"), each = 10),
-    x = c(c(0:3, 500, 5:9), (0:9) + sep),
-    y = rep(0, 20),
+    time = rep(seq_len(np), 2),
+    individual = rep(c("a", "b"), each = np),
+    x = c(c(0:3, 500, 5:(np - 1)), (0:(np - 1)) + sep),
+    y = rep(0, 2 * np),
     variables_what = "individual"
   ) |>
     dplyr::group_by(individual)
@@ -352,7 +354,7 @@ test_that("filter_na_speed detection is independent of other tracks", {
   # Before the fix, the contaminated auto threshold missed it from 1e4 up.
   for (sep in c(1e3, 1e4, 1e5, 1e7)) {
     expect_equal(
-      which(is.na(filter_na_speed(speed_fixture(sep))$x)),
+      which(is.na(filter_na_across(speed_fixture(sep), "speed")$x)),
       5L,
       info = paste("separation", sep)
     )
@@ -379,7 +381,7 @@ test_that("filter_na_speed auto threshold ignores cross-track steps", {
       sp = calculate_step_speed(dplyr::pick(dplyr::all_of(c("x", "y"))), time)
     )$sp
     expect_equal(mean(speed, na.rm = TRUE), 0)
-    expect_true(!any(is.na(filter_na_speed(d)$x)))
+    expect_true(!any(is.na(filter_na_across(d, "speed")$x)))
   }
 })
 
@@ -396,7 +398,7 @@ test_that("filter_na_speed leaves one-row groups untouched", {
   ) |>
     dplyr::group_by(individual)
 
-  res <- filter_na_speed(d, threshold = 0.5)
+  res <- filter_na_across(d, "speed", threshold = 0.5)
   expect_false(is.na(res$x[4]))
   expect_equal(res$x[4], 42)
   expect_false(is.na(res$confidence[4]))
@@ -409,15 +411,18 @@ test_that("filter_na_speed is unchanged on ungrouped data", {
     y = rep(0, 10),
     variables_what = character(0)
   )
-  expect_equal(which(is.na(filter_na_speed(d, threshold = 100)$x)), 5L)
+  expect_equal(
+    which(is.na(filter_na_across(d, "speed", threshold = 100)$x)),
+    5L
+  )
 
   # A frame with a single group must behave exactly like an ungrouped one
   d_one_group <- d |>
     dplyr::mutate(individual = "a") |>
     dplyr::group_by(individual)
   expect_equal(
-    filter_na_speed(d_one_group, threshold = 100)$x,
-    filter_na_speed(d, threshold = 100)$x
+    filter_na_across(d_one_group, "speed", threshold = 100)$x,
+    filter_na_across(d, "speed", threshold = 100)$x
   )
 })
 
@@ -442,7 +447,7 @@ test_that("filter_na_speed coordinate-frame form matches the aniframe form", {
   )
   expect_equal(
     filter_na_speed(data.frame(x = x, y = y), threshold = 100, time = tm),
-    as.data.frame(filter_na_speed(d, threshold = 100))[, c("x", "y")],
+    as.data.frame(filter_na_across(d, "speed", threshold = 100))[, c("x", "y")],
     ignore_attr = TRUE
   )
 })
@@ -469,7 +474,7 @@ test_that("filter_na_speed works inside mutate via pick()", {
   )
   expect_equal(
     as.data.frame(via_pick)[, c("x", "y")],
-    as.data.frame(filter_na_speed(d, threshold = 100))[, c("x", "y")]
+    as.data.frame(filter_na_across(d, "speed", threshold = 100))[, c("x", "y")]
   )
 })
 
@@ -477,5 +482,26 @@ test_that("filter_na_speed rejects a mismatched time length", {
   expect_error(
     filter_na_speed(data.frame(x = 1:5, y = 1:5), time = 1:3),
     "one value per row"
+  )
+})
+
+test_that("filter_na_speed computes an auto threshold on a coordinate frame", {
+  # Called directly, rather than through filter_na_across(), the threshold
+  # is estimated from the rows it was given.
+  coords <- data.frame(x = c(0:8, 500, 10:19), y = rep(0, 20))
+  out <- filter_na_speed(coords, threshold = "auto", time = seq_len(20))
+
+  expect_equal(which(is.na(out$x)), 10L)
+})
+
+test_that("filter_na_speed rejects a pooled threshold", {
+  # Pooling needs groups; this function only ever sees the rows it was given.
+  expect_error(
+    filter_na_speed(
+      data.frame(x = 1:5, y = rep(0, 5)),
+      threshold = "pooled",
+      time = 1:5
+    ),
+    "cannot be"
   )
 })

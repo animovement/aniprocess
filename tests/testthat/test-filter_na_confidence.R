@@ -21,7 +21,7 @@ test_that("filter_na_confidence filters with default threshold (2D)", {
   ) |>
     aniframe::as_aniframe()
 
-  result <- filter_na_confidence(data)
+  result <- filter_na_across(data, "confidence")
 
   # threshold = 0.6, so rows 1 and 3 should be NA
   expect_equal(result$x, c(NA, 2, NA, 4, 5))
@@ -39,7 +39,7 @@ test_that("filter_na_confidence filters with default threshold (3D)", {
   ) |>
     aniframe::as_aniframe(variables_where = c("x", "y", "z"))
 
-  result <- filter_na_confidence(data)
+  result <- filter_na_across(data, "confidence")
 
   # threshold = 0.6, so rows 1 and 3 should be NA
   expect_equal(result$x, c(NA, 2, NA, 4, 5))
@@ -58,7 +58,7 @@ test_that("filter_na_confidence filters with custom threshold", {
   ) |>
     aniframe::as_aniframe(variables_where = c("x", "y", "z"))
 
-  result <- filter_na_confidence(data, threshold = 0.75)
+  result <- filter_na_across(data, "confidence", threshold = 0.75)
 
   # threshold = 0.75, so rows 1, 2, and 3 should be NA
   expect_equal(result$x, c(NA, NA, NA, 4, 5))
@@ -76,7 +76,7 @@ test_that("filter_na_confidence handles boundary values", {
   ) |>
     aniframe::as_aniframe()
 
-  result <- filter_na_confidence(data, threshold = 0.6)
+  result <- filter_na_across(data, "confidence", threshold = 0.6)
 
   # 0.6 exactly should be kept (threshold is minimum to retain)
   expect_equal(result$x, c(NA, 2, 3, 4))
@@ -93,7 +93,7 @@ test_that("filter_na_confidence handles threshold of 0", {
   ) |>
     aniframe::as_aniframe()
 
-  result <- filter_na_confidence(data, threshold = 0)
+  result <- filter_na_across(data, "confidence", threshold = 0)
 
   # Only negative values should be filtered
   expect_equal(result$x, c(NA, 2, 3))
@@ -109,7 +109,7 @@ test_that("filter_na_confidence handles threshold of 1", {
   ) |>
     aniframe::as_aniframe()
 
-  result <- filter_na_confidence(data, threshold = 1)
+  result <- filter_na_across(data, "confidence", threshold = 1)
 
   # Only value >= 1 should be kept
   expect_equal(result$x, c(NA, NA, 3))
@@ -125,7 +125,7 @@ test_that("filter_na_confidence preserves existing NAs in x and y", {
   ) |>
     aniframe::as_aniframe()
 
-  result <- filter_na_confidence(data, threshold = 0.6)
+  result <- filter_na_across(data, "confidence", threshold = 0.6)
 
   # Row 1: confidence < 0.6, becomes NA
   # Row 2: x already NA, confidence >= 0.6
@@ -149,7 +149,7 @@ test_that("filter_na_confidence preserves existing NAs in z", {
   ) |>
     aniframe::as_aniframe(variables_where = c("x", "y", "z"))
 
-  result <- filter_na_confidence(data, threshold = 0.6)
+  result <- filter_na_across(data, "confidence", threshold = 0.6)
 
   # Row 2: z already NA, confidence >= 0.6
   # Row 3: confidence < 0.6, becomes NA
@@ -168,7 +168,11 @@ test_that("filter_na_confidence leaves rows with a missing confidence alone", {
   ) |>
     aniframe::as_aniframe()
 
-  result <- suppressWarnings(filter_na_confidence(data, threshold = 0.6))
+  result <- suppressWarnings(filter_na_across(
+    data,
+    "confidence",
+    threshold = 0.6
+  ))
 
   # A missing confidence means "not scored", not "scored badly"
   expect_false(is.na(result$x[2]))
@@ -194,7 +198,7 @@ test_that("filter_na_confidence warns about missing confidence values", {
     aniframe::as_aniframe()
 
   expect_warning(
-    filter_na_confidence(data, threshold = 0.6),
+    filter_na_across(data, "confidence", threshold = 0.6),
     "2 confidence values are missing"
   )
 })
@@ -208,7 +212,11 @@ test_that("filter_na_confidence handles all NAs in confidence", {
   ) |>
     aniframe::as_aniframe()
 
-  result <- suppressWarnings(filter_na_confidence(data, threshold = 0.6))
+  result <- suppressWarnings(filter_na_across(
+    data,
+    "confidence",
+    threshold = 0.6
+  ))
 
   # Nothing was scored, so nothing is filtered
   expect_equal(result$x, 1:3)
@@ -227,7 +235,7 @@ test_that("filter_na_confidence preserves other columns", {
   ) |>
     aniframe::as_aniframe()
 
-  result <- filter_na_confidence(data, threshold = 0.6)
+  result <- filter_na_across(data, "confidence", threshold = 0.6)
 
   # Other columns should remain unchanged
   expect_equal(result$id, c("a", "b", "c"))
@@ -243,7 +251,7 @@ test_that("filter_na_confidence works with 2D data", {
   ) |>
     aniframe::as_aniframe()
 
-  result <- filter_na_confidence(data, threshold = 0.6)
+  result <- filter_na_across(data, "confidence", threshold = 0.6)
 
   expect_equal(result$x, c(NA, 2, 3))
   expect_equal(result$y, c(NA, 5, 6))
@@ -260,7 +268,7 @@ test_that("filter_na_confidence works with 3D data", {
   ) |>
     aniframe::as_aniframe(variables_where = c("x", "y", "z"))
 
-  result <- filter_na_confidence(data, threshold = 0.6)
+  result <- filter_na_across(data, "confidence", threshold = 0.6)
 
   # Should filter z along with x and y
   expect_equal(result$x, c(NA, 2, 3))
@@ -277,7 +285,7 @@ test_that("filter_na_confidence works with polar coordinates", {
   ) |>
     aniframe::as_aniframe(variables_where = c("rho", "phi"))
 
-  result <- filter_na_confidence(data, threshold = 0.6)
+  result <- filter_na_across(data, "confidence", threshold = 0.6)
 
   expect_equal(result$rho, c(NA, 2, 3))
   expect_equal(result$phi, c(NA, 1.0, 1.5))
@@ -293,7 +301,7 @@ test_that("filter_na_confidence validates data is an aniframe", {
   )
 
   expect_error(
-    filter_na_confidence(data),
+    filter_na_across(data, "confidence"),
     class = "rlang_error"
   )
 
@@ -318,7 +326,7 @@ test_that("filter_na_confidence validates required columns exist", {
   data <- aniframe::set_metadata(data, variables_where = c("x", "y", "z"))
 
   expect_error(
-    filter_na_confidence(data),
+    filter_na_across(data, "confidence"),
     "Missing spatial column"
   )
 })
@@ -332,7 +340,7 @@ test_that("filter_na_confidence validates confidence column exists", {
     aniframe::as_aniframe()
 
   expect_error(
-    filter_na_confidence(data),
+    filter_na_across(data, "confidence"),
     "Missing required column.*confidence"
   )
 })
@@ -348,19 +356,19 @@ test_that("filter_na_confidence validates threshold is single numeric", {
 
   # Non-numeric
   expect_error(
-    filter_na_confidence(data, threshold = "0.5"),
+    filter_na_across(data, "confidence", threshold = "0.5"),
     class = "rlang_error"
   )
 
   # NA threshold
   expect_error(
-    filter_na_confidence(data, threshold = NA),
+    filter_na_across(data, "confidence", threshold = NA),
     class = "rlang_error"
   )
 
   # Vector threshold
   expect_error(
-    filter_na_confidence(data, threshold = c(0.5, 0.6)),
+    filter_na_across(data, "confidence", threshold = c(0.5, 0.6)),
     class = "rlang_error"
   )
 })
@@ -376,13 +384,13 @@ test_that("filter_na_confidence validates threshold is between 0 and 1", {
 
   # Below 0
   expect_error(
-    filter_na_confidence(data, threshold = -0.1),
+    filter_na_across(data, "confidence", threshold = -0.1),
     class = "rlang_error"
   )
 
   # Above 1
   expect_error(
-    filter_na_confidence(data, threshold = 1.1),
+    filter_na_across(data, "confidence", threshold = 1.1),
     class = "rlang_error"
   )
 })
@@ -397,7 +405,7 @@ test_that("filter_na_confidence returns an aniframe", {
   ) |>
     aniframe::as_aniframe(variables_where = c("x", "y", "z"))
 
-  result <- filter_na_confidence(data, threshold = 0.6)
+  result <- filter_na_across(data, "confidence", threshold = 0.6)
 
   expect_s3_class(result, "aniframe")
   expect_equal(result$x, c(NA, 2, 3))
@@ -414,7 +422,7 @@ test_that("filter_na_confidence validates confidence column is numeric", {
     aniframe::as_aniframe()
 
   expect_error(
-    filter_na_confidence(data),
+    filter_na_across(data, "confidence"),
     "confidence.*must be numeric"
   )
 })
@@ -457,7 +465,10 @@ test_that("filter_na_confidence coordinate-frame form matches the aniframe form"
       threshold = 0.6,
       confidence = conf
     ),
-    as.data.frame(filter_na_confidence(d, threshold = 0.6))[, c("x", "y")],
+    as.data.frame(filter_na_across(d, "confidence", threshold = 0.6))[, c(
+      "x",
+      "y"
+    )],
     ignore_attr = TRUE
   )
 })
