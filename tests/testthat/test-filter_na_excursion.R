@@ -185,7 +185,10 @@ test_that("filter_na_excursion coordinate-frame form matches the aniframe form",
   y <- rnorm(np, sd = 2)
 
   d <- aniframe::aniframe(
-    time = seq_len(np), x = x, y = y, variables_what = character(0)
+    time = seq_len(np),
+    x = x,
+    y = y,
+    variables_what = character(0)
   )
   expect_equal(
     filter_na_excursion(data.frame(x = x, y = y)),

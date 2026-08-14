@@ -206,7 +206,9 @@ test_that("filter_ccma accepts a coordinate frame and returns one", {
 test_that("filter_ccma coordinate-frame form matches the aniframe form", {
   t <- seq(0, 2 * pi, length.out = 60)
   d <- aniframe::aniframe(
-    time = seq_len(60), x = cos(t), y = sin(t),
+    time = seq_len(60),
+    x = cos(t),
+    y = sin(t),
     variables_what = character(0)
   )
   expect_equal(

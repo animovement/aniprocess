@@ -421,11 +421,17 @@ test_that("filter_na_confidence coordinate-frame form masks the coordinates", {
 test_that("filter_na_confidence coordinate-frame form matches the aniframe form", {
   conf <- c(0.9, 0.2, NA, 0.7)
   d <- aniframe::aniframe(
-    time = 1:4, x = c(1, 2, 3, 4), y = c(5, 6, 7, 8), confidence = conf
+    time = 1:4,
+    x = c(1, 2, 3, 4),
+    y = c(5, 6, 7, 8),
+    confidence = conf
   )
   expect_equal(
-    filter_na_confidence(data.frame(x = c(1, 2, 3, 4), y = c(5, 6, 7, 8)),
-                         threshold = 0.6, confidence = conf),
+    filter_na_confidence(
+      data.frame(x = c(1, 2, 3, 4), y = c(5, 6, 7, 8)),
+      threshold = 0.6,
+      confidence = conf
+    ),
     as.data.frame(filter_na_confidence(d, threshold = 0.6))[, c("x", "y")],
     ignore_attr = TRUE
   )

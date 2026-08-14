@@ -367,7 +367,10 @@ test_that("filter_na_roi rejects input that is neither aniframe nor data frame",
 test_that("filter_na_roi coordinate-frame form matches the aniframe form", {
   coords <- data.frame(x = c(0, 10, 20), y = c(0, 10, 20))
   d <- aniframe::aniframe(
-    time = 1:3, x = coords$x, y = coords$y, variables_what = character(0)
+    time = 1:3,
+    x = coords$x,
+    y = coords$y,
+    variables_what = character(0)
   )
   expect_equal(
     filter_na_roi(coords, x_min = 5, x_max = 15),

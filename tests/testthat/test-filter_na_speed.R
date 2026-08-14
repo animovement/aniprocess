@@ -435,7 +435,10 @@ test_that("filter_na_speed coordinate-frame form matches the aniframe form", {
   y <- rep(0, 10)
   tm <- 1:10
   d <- aniframe::aniframe(
-    time = tm, x = x, y = y, variables_what = character(0)
+    time = tm,
+    x = x,
+    y = y,
+    variables_what = character(0)
   )
   expect_equal(
     filter_na_speed(data.frame(x = x, y = y), threshold = 100, time = tm),
