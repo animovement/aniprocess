@@ -106,7 +106,7 @@ butter_filtered <- filter_highpass(x, 2, 1000)
 
 }
 \seealso{
-\code{\link{replace_na}} for details on NA handling methods
+\code{\link[=replace_na_with]{replace_na_with()}} for details on NA handling methods
 \code{\link{filter_lowpass_fft}} for FFT-based low-pass filtering
 \code{\link{filter_highpass}} for Butterworth-based filtering
 }

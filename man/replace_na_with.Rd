@@ -62,5 +62,4 @@ replace_na_with(data.frame(a = x, b = rev(x)), "locf")
 }
 \seealso{
 \code{\link[=filter_with]{filter_with()}} for smoothing, \code{\link[=filter_na_with]{filter_na_with()}} for masking.
-\code{\link[=replace_na]{replace_na()}} is the deprecated former name of this function.
 }

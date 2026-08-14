@@ -84,7 +84,7 @@ outward in the curve's plane.
 
 Because curvature is intrinsically multi-dimensional, this filter
 operates on all spatial coordinates jointly (unlike the per-column
-filters dispatched through \code{\link[=filter_aniframe]{filter_aniframe()}}). It is most useful
+filters dispatched through \code{\link[=filter_across]{filter_across()}}). It is most useful
 for smoothing curved 2D or 3D trajectories where a plain moving
 average visibly cuts corners; for general-purpose time-series
 smoothing reach for \code{\link[=filter_gaussian]{filter_gaussian()}} or \code{\link[=filter_sgolay]{filter_sgolay()}}.

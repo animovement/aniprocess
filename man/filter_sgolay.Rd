@@ -116,5 +116,5 @@ Simplified Least Squares Procedures. Analytical Chemistry, 36(8), 1627-1639.
 }
 \seealso{
 \code{\link{filter_lowpass}} for frequency-based filtering
-\code{\link{replace_na}} for details on NA handling methods
+\code{\link[=replace_na_with]{replace_na_with()}} for details on NA handling methods
 }

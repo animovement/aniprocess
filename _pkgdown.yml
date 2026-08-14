@@ -25,7 +25,6 @@ reference:
   contents:
   - replace_na_across
   - replace_na_with
-  - replace_na
   - replace_na_linear
   - replace_na_locf
   - replace_na_spline
@@ -37,7 +36,6 @@ reference:
   contents:
   - filter_across
   - filter_with
-  - filter_aniframe
   - filter_ccma
   - filter_gaussian
   - filter_highpass

@@ -37,7 +37,7 @@
 #' # A frame is filtered column by column
 #' filter_with(data.frame(x = x, y = rev(x)), "rollmean", window_width = 3)
 #'
-#' @seealso [filter_aniframe()] to apply a filter across an aniframe's
+#' @seealso [filter_across()] to apply a filter across an aniframe's
 #'   spatial columns.
 #' @export
 filter_with <- function(
