@@ -123,11 +123,9 @@ filter_aniframe <- function(
       dplyr::across(dplyr::all_of(variables_where), apply_filter)
     )
   } else {
-    integrate_filtered <- function(col) {
-      d <- col - dplyr::lag(col)
-      d <- apply_filter(d)
-      cumsum(dplyr::coalesce(d, 0)) + d * 0
-    }
+    # Shares derivative_wrapper() with filter_across(), so the two cannot
+    # drift apart.
+    integrate_filtered <- derivative_wrapper(apply_filter)
     dplyr::mutate(
       data,
       dplyr::across(dplyr::all_of(variables_where), integrate_filtered)

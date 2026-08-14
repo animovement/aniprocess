@@ -137,13 +137,65 @@ test_that("filter_across returns an aniframe and preserves grouping", {
   expect_equal(dplyr::group_vars(out), "individual")
 })
 
-test_that("filter_across use_derivatives matches filter_aniframe", {
+test_that("filter_across on_deltas matches filter_aniframe use_derivatives", {
   d <- grouped_fixture(np = 20)
 
   expect_equal(
-    filter_across(d, "rollmean", window_width = 3, use_derivatives = TRUE)$x,
+    filter_across(d, "rollmean", window_width = 3, on_deltas = TRUE)$x,
     filter_aniframe(d, "rollmean", window_width = 3, use_derivatives = TRUE)$x
   )
+})
+
+test_that("on_deltas round trips when the filter does nothing", {
+  # window_width = 1 makes rollmean the identity, so differencing and
+  # re-integrating must return the input unchanged.
+  d <- aniframe::aniframe(
+    time = 1:5,
+    x = c(10, 11, 13, 16, 20),
+    y = c(-3, -3, -1, 2, 6),
+    variables_what = character(0)
+  )
+  out <- filter_across(d, "rollmean", window_width = 1, on_deltas = TRUE)
+
+  expect_equal(out$x, d$x)
+  expect_equal(out$y, d$y)
+})
+
+test_that("on_deltas keeps the original starting value", {
+  d <- aniframe::aniframe(
+    time = 1:20,
+    x = 100 + cumsum(c(0, rnorm(19))),
+    y = rep(0, 20),
+    variables_what = character(0)
+  )
+  out <- filter_across(d, "rollmean", window_width = 3, on_deltas = TRUE)
+
+  expect_equal(out$x[1], d$x[1])
+  expect_false(is.na(out$x[1]))
+})
+
+test_that("on_deltas restores NA at a missing step without blanking the rest", {
+  d <- aniframe::aniframe(
+    time = 1:6,
+    x = c(10, 11, NA, 16, 20, 25),
+    y = rep(0, 6),
+    variables_what = character(0)
+  )
+  out <- filter_across(d, "rollmean", window_width = 1, on_deltas = TRUE)
+
+  # The steps into and out of the gap are unknown, so those positions are NA
+  expect_true(any(is.na(out$x)))
+  # but the series continues afterwards
+  expect_false(is.na(out$x[6]))
+})
+
+test_that("on_deltas respects grouping", {
+  d <- grouped_fixture(np = 10)
+  out <- filter_across(d, "rollmean", window_width = 1, on_deltas = TRUE)
+
+  # Each track re-integrates from its own starting value
+  expect_equal(out$x[1], d$x[1])
+  expect_equal(out$x[11], d$x[11])
 })
 
 test_that("filter_across errors on a missing selected column", {

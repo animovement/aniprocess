@@ -29,6 +29,7 @@
   They do more than loop over columns. `variables` is a tidyselect expression defaulting to `variables_where`. Parameters the aniframe already knows are filled in: `sampling_rate` for the filters that need it, and the time column from `variables_when` for `"speed"` and `"kalman_irregular"`. Multivariate methods — `"ccma"`, and everything except `"range"` in `filter_na_across()` — are applied jointly rather than column by column. And `filter_na_across()` blanks `confidence` on the rows it masked, which the vector-level functions cannot do because `confidence` is not a coordinate.
 
   Per-row arguments such as `time` name a *column* at this level rather than taking a vector, since each group needs its own slice.
+* `filter_across()` names this argument `on_deltas` rather than `use_derivatives`: the values are differences, not derivatives — nothing is divided by a time step. `filter_aniframe()` keeps the old name, and both share one implementation.
 
 * New `filter_with()`, `filter_na_with()` and `replace_na_with()`: generic entry points that select a method by name rather than by choosing a function, which is the third step towards the unified interface in #30 (#30).
 
@@ -56,6 +57,8 @@
 * `keep_na` is validated: a non-logical, `NA`, or non-scalar value now aborts with a clear message rather than being silently coerced.
 
 ## Bug fixes
+
+* Differencing filters no longer lose the first sample or shift the series. `filter_aniframe(use_derivatives = TRUE)` differenced each column, filtered, then accumulated with `cumsum()` starting from zero — so the re-integrated series was offset by its own starting value and began with `NA`. With a filter that does nothing the round trip should be lossless; `c(10, 11, 13, 16, 20)` came back as `c(NA, 1, 3, 6, 10)`. It now re-integrates from the original starting value (#30).
 
 * `filter_na_speed()` now computes speed within each group of a grouped aniframe. It previously worked on the raw column vectors, so a step was formed between the last row of one track and the first row of the next. Where `time` restarts per track that step has a negative duration and yields a negative "speed", which inflated the `"auto"` threshold and caused genuine outliers to be **missed** — how badly depended on how far apart the tracks happened to be. The cross-track step never produced false positives, because per-row speed is the minimum of the backward and forward step and a track boundary is one-sided (#37).
 * `filter_na_speed()` no longer blanks rows belonging to groups shorter than two rows. Such a group has no step, so its speed is `NA`, and `dplyr::if_else()` propagates a missing condition (#37).
