@@ -9,7 +9,7 @@ It provides a sharp frequency cutoff but may introduce ringing artifacts (Gibbs 
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9005</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -105,7 +105,7 @@ interpolated estimates.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments passed to replace_na(). Common options include:</p><ul><li><p>value: Numeric value for replacement when na_action = "value"</p></li>
+<dd><p>Additional arguments passed to replace_na_with(). Common options include:</p><ul><li><p>value: Numeric value for replacement when na_action = "value"</p></li>
 <li><p>min_gap: Minimum gap size to interpolate/fill</p></li>
 <li><p>max_gap: Maximum gap size to interpolate/fill</p></li>
 </ul></dd>
@@ -125,7 +125,7 @@ advantageous for:</p><ul><li><p>Precise frequency selection</p></li>
 <li><p>Assumes periodic signal (can cause edge effects)</p></li>
 <li><p>Less suitable for real-time processing</p></li>
 </ul><p>Missing Value Handling:
-The function uses replace_na() internally for handling missing values. See ?replace_na
+The function uses replace_na_with() internally for handling missing values. See ?replace_na_with
 for detailed information about each method and its parameters. NAs can optionally be
 restored to their original positions after filtering using keep_na = TRUE.</p>
     </div>

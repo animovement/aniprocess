@@ -15,6 +15,7 @@
 <url><loc>http://animovement.dev/aniprocess/reference/ccma_filter_one.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/ccma_kernel.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/ccma_validate_window.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/dispatch_method.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/ensure_aniframe_spatial.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/ensure_coords.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/ensure_keep_na.html</loc></url>
@@ -40,10 +41,12 @@
 <url><loc>http://animovement.dev/aniprocess/reference/filter_na_roi_rect.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_na_roi_sphere.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_na_speed.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/filter_na_with.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_rollmean.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_rollmedian.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_sgolay.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_triangular.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/filter_with.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/find_peaks.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/find_troughs.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/index.html</loc></url>
@@ -54,6 +57,7 @@
 <url><loc>http://animovement.dev/aniprocess/reference/replace_na_spline.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/replace_na_stine.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/replace_na_value.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/replace_na_with.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/restore_na.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/rolling_with_min_obs.html</loc></url>
 </urlset>

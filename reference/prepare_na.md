@@ -1,7 +1,7 @@
 # Record and fill NA positions before filtering
 
 Captures where the `NA`s are, then fills them via
-[`replace_na()`](http://animovement.dev/aniprocess/reference/replace_na.md)
+[`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
 so the filter receives a complete series. Pair with
 [`restore_na()`](http://animovement.dev/aniprocess/reference/restore_na.md)
 to put the gaps back afterwards.
@@ -21,13 +21,13 @@ prepare_na(x, na_action, replace_na_args = list(), call = rlang::caller_env())
 - na_action:
 
   One of the
-  [`replace_na()`](http://animovement.dev/aniprocess/reference/replace_na.md)
+  [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
   methods, or `"error"`.
 
 - replace_na_args:
 
   Named list of extra arguments for
-  [`replace_na()`](http://animovement.dev/aniprocess/reference/replace_na.md),
+  [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md),
   typically `list(...)` from the calling filter.
 
 - call:

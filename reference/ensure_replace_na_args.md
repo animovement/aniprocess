@@ -4,7 +4,7 @@ Aborts on a non-numeric `x`, `min_gap < 1`, or `max_gap < min_gap`. Used
 at the start of every `replace_na_*()` function so the same messages and
 behaviour apply consistently when those functions are called directly
 (rather than via
-[`replace_na()`](http://animovement.dev/aniprocess/reference/replace_na.md)).
+[`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)).
 
 ## Usage
 

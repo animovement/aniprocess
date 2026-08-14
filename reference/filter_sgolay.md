@@ -68,7 +68,7 @@ filter_sgolay(
 
 - ...:
 
-  Additional arguments passed to replace_na()
+  Additional arguments passed to replace_na_with()
 
 ## Value
 

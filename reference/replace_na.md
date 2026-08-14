@@ -1,7 +1,12 @@
 # Replace Missing Values Using Various Methods
 
-A wrapper function that replaces missing values using various
-interpolation or filling methods.
+**\[deprecated\]**
+
+Use
+[`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
+instead. This name collides with `tidyr::replace_na()`, which does
+something different — it replaces `NA` with a fixed value per column,
+rather than interpolating gaps.
 
 ## Usage
 
@@ -53,6 +58,9 @@ A numeric vector with NA values replaced according to the specified
 method where gap length criteria are met.
 
 ## See also
+
+- [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md),
+  the replacement
 
 - replace_na_linear() for linear interpolation details
 

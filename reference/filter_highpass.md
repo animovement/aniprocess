@@ -67,7 +67,8 @@ filter_highpass(
 
 - ...:
 
-  Additional arguments passed to replace_na(). Common options include:
+  Additional arguments passed to replace_na_with(). Common options
+  include:
 
   - value: Numeric value for replacement when na_action = "value"
 
@@ -107,10 +108,11 @@ Common values by field:
 
 - Mechanical vibrations: order=2, cutoff application-specific
 
-Missing Value Handling: The function uses replace_na() internally for
-handling missing values. See ?replace_na for detailed information about
-each method and its parameters. NAs can optionally be restored to their
-original positions after filtering using keep_na = TRUE.
+Missing Value Handling: The function uses replace_na_with() internally
+for handling missing values. See ?replace_na_with for detailed
+information about each method and its parameters. NAs can optionally be
+restored to their original positions after filtering using keep_na =
+TRUE.
 
 ## References
 

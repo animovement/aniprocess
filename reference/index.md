@@ -4,6 +4,8 @@
 
 These functions ensure that your data is ready for analysis.
 
+- [`filter_na_with()`](http://animovement.dev/aniprocess/reference/filter_na_with.md)
+  : Mask values to NA by a named criterion
 - [`filter_na_confidence()`](http://animovement.dev/aniprocess/reference/filter_na_confidence.md)
   : Filter low-confidence values in a dataset
 - [`filter_na_excursion()`](http://animovement.dev/aniprocess/reference/filter_na_excursion.md)
@@ -19,8 +21,10 @@ These functions ensure that your data is ready for analysis.
 
 These functions ensure that your data is ready for analysis.
 
+- [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
+  : Fill missing values by a named method
 - [`replace_na()`](http://animovement.dev/aniprocess/reference/replace_na.md)
-  : Replace Missing Values Using Various Methods
+  **\[deprecated\]** : Replace Missing Values Using Various Methods
 - [`replace_na_linear()`](http://animovement.dev/aniprocess/reference/replace_na_linear.md)
   : Replace Missing Values Using Linear Interpolation
 - [`replace_na_locf()`](http://animovement.dev/aniprocess/reference/replace_na_locf.md)
@@ -36,6 +40,8 @@ These functions ensure that your data is ready for analysis.
 
 These functions ensure that your data is ready for analysis.
 
+- [`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md)
+  : Apply a filter by name
 - [`filter_aniframe()`](http://animovement.dev/aniprocess/reference/filter_aniframe.md)
   **\[experimental\]** : Smooth Movement Data
 - [`filter_ccma()`](http://animovement.dev/aniprocess/reference/filter_ccma.md)

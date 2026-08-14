@@ -4,6 +4,15 @@
 
 ### Breaking changes
 
+- [`replace_na()`](http://animovement.dev/aniprocess/reference/replace_na.md)
+  is deprecated in favour of
+  [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md).
+  It still works and delegates to the new function, but warns.
+  Internally the filters’ `na_action` argument now calls
+  [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md),
+  so filtering data with `NA`s does not emit the deprecation warning
+  ([\#30](https://github.com/animovement/aniprocess/issues/30)).
+
 - Argument names are now consistent across the package, so that a
   generic wrapper can forward them without special-casing. This is the
   first step towards the unified interface in
@@ -74,6 +83,51 @@
   ([\#38](https://github.com/animovement/aniprocess/issues/38)).
 
 ### New features
+
+- New
+  [`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md),
+  [`filter_na_with()`](http://animovement.dev/aniprocess/reference/filter_na_with.md)
+  and
+  [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md):
+  generic entry points that select a method by name rather than by
+  choosing a function, which is the third step towards the unified
+  interface in
+  [\#30](https://github.com/animovement/aniprocess/issues/30)
+  ([\#30](https://github.com/animovement/aniprocess/issues/30)).
+
+  ``` r
+
+  filter_with(x, "gaussian", sigma = 2)
+  filter_na_with(coords, "speed", threshold = 10, time = time)
+  replace_na_with(x, "linear", max_gap = 3)
+  ```
+
+  All three preserve shape: a vector gives a vector, a data frame of
+  columns gives a data frame. Univariate methods are applied column by
+  column, so
+  [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
+  and most of
+  [`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md)
+  work with
+  [`dplyr::across()`](https://dplyr.tidyverse.org/reference/across.html)
+  as well as
+  [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html).
+  The multivariate methods — `"ccma"` in
+  [`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md),
+  and everything except `"range"` in
+  [`filter_na_with()`](http://animovement.dev/aniprocess/reference/filter_na_with.md)
+  — require a data frame and say so when handed a bare vector.
+
+  They reject an aniframe. An aniframe *is* a data frame, so without
+  that guard it would be filtered column by column, `time` and identity
+  columns included.
+
+- [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
+  replaces
+  [`replace_na()`](http://animovement.dev/aniprocess/reference/replace_na.md),
+  which collides with `tidyr::replace_na()` — a function that does
+  something different (it substitutes a fixed value per column rather
+  than interpolating gaps).
 
 - The aniframe-aware filters now accept a data frame of coordinate
   columns as well as an aniframe, and return whichever shape they were

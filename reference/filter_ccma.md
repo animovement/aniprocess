@@ -76,7 +76,7 @@ filter_ccma(
 - ...:
 
   Additional arguments passed to
-  [`replace_na()`](http://animovement.dev/aniprocess/reference/replace_na.md)
+  [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
   (e.g. `value`, `min_gap`, `max_gap`).
 
 ## Value
