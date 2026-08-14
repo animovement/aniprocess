@@ -4,7 +4,7 @@
 \alias{filter_gaussian}
 \title{Apply Gaussian Kernel Smoother}
 \usage{
-filter_gaussian(x, sigma = 1, window_width = NULL)
+filter_gaussian(x, sigma = 1, window_width = NULL, keep_na = TRUE)
 }
 \arguments{
 \item{x}{Numeric vector to filter.}
@@ -15,6 +15,12 @@ filter_gaussian(x, sigma = 1, window_width = NULL)
 \item{window_width}{Integer kernel width in samples. Must be positive
 and is forced to be odd. Defaults to \code{2 * ceiling(3 * sigma) + 1},
 which truncates the kernel at ±3σ.}
+
+\item{keep_na}{Logical. If \code{TRUE} (default), positions that were \code{NA} in
+the input are \code{NA} in the output — gaps stay gaps. If \code{FALSE}, the
+values used to fill those gaps are kept, so the output has \strong{fewer
+\code{NA}s than the input} and genuinely-missing stretches come back as
+interpolated estimates.}
 }
 \value{
 Filtered numeric vector, same length as \code{x}.

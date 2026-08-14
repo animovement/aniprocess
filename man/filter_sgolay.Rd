@@ -10,7 +10,7 @@ filter_sgolay(
   window_size = ceiling(sampling_rate/10) * 2 + 1,
   order = 3,
   na_action = "linear",
-  keep_na = FALSE,
+  keep_na = TRUE,
   ...
 )
 }
@@ -34,17 +34,17 @@ higher-order moments in the data:
 \item order=5: Maximum preservation (may retain too much noise)
 }}
 
-\item{na_action}{Method to handle NA values before filtering. One of:
-\itemize{
-\item "linear": Linear interpolation (default)
-\item "spline": Spline interpolation for smoother curves
-\item "locf": Last observation carried forward
-\item "value": Replace with a constant value
-\item "error": Raise an error if NAs are present
-}}
+\item{na_action}{Method used to fill \code{NA} values \emph{before} filtering, so
+the filter sees a complete series. One of \code{"linear"} (default),
+\code{"spline"}, \code{"stine"}, \code{"locf"}, \code{"value"}, or \code{"error"} to abort when
+\code{NA}s are present. Filling is internal: whether the filled values reach
+the output is controlled by \code{keep_na}.}
 
-\item{keep_na}{Logical indicating whether to restore NAs to their original positions
-after filtering (default = FALSE)}
+\item{keep_na}{Logical. If \code{TRUE} (default), positions that were \code{NA} in
+the input are \code{NA} in the output — gaps stay gaps. If \code{FALSE}, the
+values used to fill those gaps are kept, so the output has \strong{fewer
+\code{NA}s than the input} and genuinely-missing stretches come back as
+interpolated estimates.}
 
 \item{...}{Additional arguments passed to replace_na()}
 }

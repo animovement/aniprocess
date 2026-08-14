@@ -13,6 +13,12 @@
 #'          Represents the noise level in your measurements.
 #' @param initial_state Optional. Initial state estimate. If NULL, uses first non-NA measurement.
 #' @param initial_P Optional. Initial state uncertainty. If NULL, calculated based on sampling_rate.
+#' @param keep_na Logical. If `TRUE`, positions that were `NA` in
+#'   `measurements` are `NA` in the output. Defaults to `FALSE`, unlike the
+#'   rest of the filter family: a Kalman filter's predict step is designed
+#'   to carry the state estimate through missing observations, so inferring
+#'   across gaps is the intended behaviour rather than an accident. Set
+#'   `TRUE` when you want gaps left as gaps.
 #'
 #' @return
 #' A numeric vector of the same length as measurements containing the filtered values.
@@ -60,12 +66,14 @@ filter_kalman <- function(
   base_Q = NULL,
   R = NULL,
   initial_state = NULL,
-  initial_P = NULL
+  initial_P = NULL,
+  keep_na = FALSE
 ) {
   # Input validation
   if (!is.numeric(sampling_rate) || length(sampling_rate) != 1) {
     stop("sampling_rate must be a single numeric value")
   }
+  ensure_keep_na(keep_na)
   if (
     sampling_rate <= 0 || is.infinite(sampling_rate) || is.na(sampling_rate)
   ) {
@@ -151,7 +159,7 @@ filter_kalman <- function(
     filtered[i] <- x_hat
   }
 
-  return(filtered)
+  restore_na(filtered, is.na(measurements), keep_na)
 }
 
 #' Kalman Filter for Irregular Time Series with Optional Resampling
@@ -169,6 +177,13 @@ filter_kalman <- function(
 #' @param initial_P Optional. Initial state uncertainty. If NULL, calculated from median sampling rate.
 #' @param resample Logical. Whether to return regularly resampled data (default: FALSE).
 #' @param resample_freq Numeric. Desired sampling frequency in Hz for resampling (required if resample=TRUE).
+#' @param keep_na Logical. If `TRUE`, positions that were `NA` in
+#'   `measurements` are `NA` in the values reported on the original
+#'   timestamps. Defaults to `FALSE`, for the reason given in
+#'   [filter_kalman()]. When `resample = TRUE` this applies to
+#'   `original_values` only — the resampled `values` sit on a different
+#'   time grid, where input positions have no counterpart, so they are
+#'   always interpolated from the complete filtered series.
 #'
 #' @return
 #' If resample=FALSE:
@@ -236,8 +251,10 @@ filter_kalman_irregular <- function(
   initial_state = NULL,
   initial_P = NULL,
   resample = FALSE,
-  resample_freq = NULL
+  resample_freq = NULL,
+  keep_na = FALSE
 ) {
+  ensure_keep_na(keep_na)
   # Previous input validation remains the same
   if (length(measurements) != length(times)) {
     stop("measurements and times must have the same length")
@@ -359,6 +376,8 @@ filter_kalman_irregular <- function(
   if (resample) {
     dt <- 1 / resample_freq
     regular_times <- seq(min(times), max(times), by = dt)
+    # Resample from the complete series: the regular grid has no
+    # correspondence with input positions, so keep_na cannot apply to it.
     regular_filtered <- stats::approx(
       times,
       filtered,
@@ -371,9 +390,9 @@ filter_kalman_irregular <- function(
       time = regular_times,
       values = regular_filtered,
       original_time = times,
-      original_values = filtered
+      original_values = restore_na(filtered, is.na(measurements), keep_na)
     ))
   } else {
-    return(filtered)
+    return(restore_na(filtered, is.na(measurements), keep_na))
   }
 }

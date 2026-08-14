@@ -102,12 +102,16 @@ test_that("filters handle NA values correctly with different methods", {
   x_with_na <- x
   x_with_na[c(100, 200, 300:305)] <- NA
 
+  # keep_na = FALSE throughout: these check that na_action fills the gaps,
+  # which is only observable in the output when the fill is kept.
+
   # Test linear interpolation (default)
   expect_no_error({
     filtered_linear <- filter_lowpass(
       x_with_na,
       cutoff_freq = 5,
-      sampling_rate = 1000
+      sampling_rate = 1000,
+      keep_na = FALSE
     )
   })
   expect_false(any(is.na(filtered_linear)))
@@ -118,7 +122,8 @@ test_that("filters handle NA values correctly with different methods", {
       x_with_na,
       cutoff_freq = 5,
       sampling_rate = 1000,
-      na_action = "spline"
+      na_action = "spline",
+      keep_na = FALSE
     )
   })
   expect_false(any(is.na(filtered_spline)))
@@ -129,7 +134,8 @@ test_that("filters handle NA values correctly with different methods", {
       x_with_na,
       cutoff_freq = 5,
       sampling_rate = 1000,
-      na_action = "stine"
+      na_action = "stine",
+      keep_na = FALSE
     )
   })
   expect_false(any(is.na(filtered_stine)))
@@ -140,7 +146,8 @@ test_that("filters handle NA values correctly with different methods", {
       x_with_na,
       cutoff_freq = 5,
       sampling_rate = 1000,
-      na_action = "locf"
+      na_action = "locf",
+      keep_na = FALSE
     )
   })
   expect_false(any(is.na(filtered_locf)))
@@ -152,7 +159,8 @@ test_that("filters handle NA values correctly with different methods", {
       cutoff_freq = 5,
       sampling_rate = 1000,
       na_action = "value",
-      value = 0
+      value = 0,
+      keep_na = FALSE
     )
   })
   expect_false(any(is.na(filtered_value)))
@@ -165,7 +173,7 @@ test_that("filters handle NA values correctly with different methods", {
       sampling_rate = 1000,
       na_action = "error"
     ),
-    "Signal contains NA values"
+    "Input contains .*NA.* values"
   )
 })
 
@@ -257,7 +265,8 @@ test_that("FFT filters handle NA values consistently", {
       x = x_with_na,
       cutoff_freq = 5,
       sampling_rate = 1000,
-      na_action = method
+      na_action = method,
+      keep_na = FALSE
     )
     if (method == "value") {
       args$value <- 0
@@ -282,7 +291,7 @@ test_that("FFT filters handle NA values consistently", {
       sampling_rate = 1000,
       na_action = "error"
     ),
-    "Signal contains NA values"
+    "Input contains .*NA.* values"
   )
 })
 
@@ -322,7 +331,8 @@ test_that("filter_highpass handles NA values via na_action", {
       x_with_na,
       cutoff_freq = 20,
       sampling_rate = 1000,
-      na_action = method
+      na_action = method,
+      keep_na = FALSE
     )
     expect_equal(length(filtered), length(x_with_na))
     expect_false(any(is.na(filtered)))
@@ -335,7 +345,7 @@ test_that("filter_highpass handles NA values via na_action", {
       sampling_rate = 1000,
       na_action = "error"
     ),
-    "Signal contains NA values"
+    "Input contains .*NA.* values"
   )
 })
 

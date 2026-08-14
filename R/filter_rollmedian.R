@@ -16,14 +16,18 @@ filter_rollmedian <- function(
   x,
   window_width = 5,
   min_obs = 1,
-  align = c("right", "left", "center")
+  align = c("right", "left", "center"),
+  keep_na = TRUE
 ) {
   align <- match.arg(align)
-  rolling_with_min_obs(
+  ensure_keep_na(keep_na)
+
+  result <- rolling_with_min_obs(
     x,
     fn = data.table::frollmedian,
     window_width = window_width,
     min_obs = min_obs,
     align = align
   )
+  restore_na(result, is.na(x), keep_na)
 }

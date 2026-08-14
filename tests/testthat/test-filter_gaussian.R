@@ -22,12 +22,20 @@ test_that("filter_gaussian preserves a constant signal", {
 
 test_that("filter_gaussian fills isolated NA via weight renormalisation", {
   x <- c(1, 2, 3, NA, 5, 6, 7, 8, 9)
-  result <- filter_gaussian(x, sigma = 1)
+  result <- filter_gaussian(x, sigma = 1, keep_na = FALSE)
   # Position 4 was NA in input but should not be NA in output
   expect_false(is.na(result[4]))
   # Should be approximately the average of nearby non-NA values (around 4)
   expect_gt(result[4], 3)
   expect_lt(result[4], 5)
+})
+
+test_that("filter_gaussian preserves input NAs by default", {
+  x <- c(1, 2, 3, NA, 5, 6, 7, 8, 9)
+  result <- filter_gaussian(x, sigma = 1)
+  expect_equal(which(is.na(result)), 4L)
+  # The renormalised estimate is still available on request
+  expect_false(is.na(filter_gaussian(x, sigma = 1, keep_na = FALSE)[4]))
 })
 
 test_that("filter_gaussian returns NA for all-NA window", {

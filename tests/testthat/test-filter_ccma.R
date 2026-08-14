@@ -80,7 +80,7 @@ test_that("filter_ccma works in 3D", {
   expect_false(any(is.na(res$z)))
 })
 
-test_that("filter_ccma fills NAs by default and restores them with keep_na", {
+test_that("filter_ccma preserves NAs by default and fills with keep_na = FALSE", {
   n <- 60
   t <- seq(0, 2 * pi, length.out = n)
   x <- cos(t)
@@ -93,10 +93,10 @@ test_that("filter_ccma fills NAs by default and restores them with keep_na", {
     variables_what = character(0)
   )
 
-  res_filled <- filter_ccma(d)
+  res_filled <- filter_ccma(d, keep_na = FALSE)
   expect_false(any(is.na(res_filled$x)))
 
-  res_kept <- filter_ccma(d, keep_na = TRUE)
+  res_kept <- filter_ccma(d)
   expect_true(is.na(res_kept$x[10]))
   expect_true(is.na(res_kept$x[30]))
   # y was clean — should still be clean

@@ -8,7 +8,8 @@ filter_rollmean(
   x,
   window_width = 5,
   min_obs = 1,
-  align = c("right", "left", "center")
+  align = c("right", "left", "center"),
+  keep_na = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,12 @@ Positions with fewer non-NA values return \code{NA}. Defaults to \code{1}.}
 
 \item{align}{Window alignment. One of \code{"right"} (default), \code{"left"}, or
 \code{"center"}.}
+
+\item{keep_na}{Logical. If \code{TRUE} (default), positions that were \code{NA} in
+the input are \code{NA} in the output — gaps stay gaps. If \code{FALSE}, the
+values used to fill those gaps are kept, so the output has \strong{fewer
+\code{NA}s than the input} and genuinely-missing stretches come back as
+interpolated estimates.}
 }
 \value{
 Filtered numeric vector, same length as \code{x}.
@@ -31,6 +38,14 @@ Applies a rolling mean filter to a numeric vector using
 \code{\link[data.table:frollmean]{data.table::frollmean()}}.
 }
 \details{
+\code{keep_na} and \code{min_obs} control different things and are usually worth
+setting together. \code{keep_na} governs positions that were \code{NA} in the
+\emph{input}; \code{min_obs} governs positions that were observed but whose
+\emph{window} is too sparse to trust. Neither substitutes for the other:
+with \code{min_obs = 1}, positions next to a gap still produce values drawn
+from very few observations, and no \code{min_obs} setting blanks the input
+gaps without also blanking their neighbours and the series edges.
+
 For \code{align = "right"} or \code{"left"}, partial windows at the edges of the
 series are computed (so position 1 with a width-5 right-aligned window
 returns the value at position 1, not \code{NA}). For \code{align = "center"},
