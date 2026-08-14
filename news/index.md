@@ -122,6 +122,22 @@
 ### New features
 
 - New
+  [`filter_one_euro()`](http://animovement.dev/aniprocess/reference/filter_one_euro.md):
+  the One Euro filter (Casiez, Roussel & Vogel, 2012), an adaptive
+  low-pass whose cutoff rises with the estimated speed of the signal. A
+  fixed cutoff forces one compromise on a whole recording — low enough
+  to stop jitter while the animal is still is too low to track it
+  moving. Making the cutoff a function of speed removes that trade-off,
+  tuned with `min_cutoff` for the still end and `beta` for the moving
+  end ([\#35](https://github.com/animovement/aniprocess/issues/35)).
+
+  Available as `"one_euro"` through
+  [`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md)
+  and
+  [`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md),
+  which supplies `sampling_rate` from the aniframe’s metadata.
+
+- New
   [`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md),
   [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
   and

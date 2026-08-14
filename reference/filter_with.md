@@ -10,7 +10,8 @@ itself a parameter — comparing filters, or driving one from a config.
 filter_with(
   x,
   method = c("gaussian", "rollmean", "rollmedian", "triangular", "sgolay", "lowpass",
-    "highpass", "lowpass_fft", "highpass_fft", "kalman", "kalman_irregular", "ccma"),
+    "highpass", "lowpass_fft", "highpass_fft", "kalman", "kalman_irregular", "one_euro",
+    "ccma"),
   ...
 )
 ```
@@ -25,8 +26,8 @@ filter_with(
 
   Filter to apply. One of `"gaussian"`, `"rollmean"`, `"rollmedian"`,
   `"triangular"`, `"sgolay"`, `"lowpass"`, `"highpass"`,
-  `"lowpass_fft"`, `"highpass_fft"`, `"kalman"`, `"kalman_irregular"` or
-  `"ccma"`.
+  `"lowpass_fft"`, `"highpass_fft"`, `"kalman"`, `"kalman_irregular"`,
+  `"one_euro"` or `"ccma"`.
 
 - ...:
 

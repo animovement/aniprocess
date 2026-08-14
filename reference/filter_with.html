@@ -11,7 +11,7 @@ itself a parameter — comparing filters, or driving one from a config."></head>
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9009</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9010</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,7 +66,8 @@ itself a parameter — comparing filters, or driving one from a config.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">filter_with</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gaussian"</span>, <span class="st">"rollmean"</span>, <span class="st">"rollmedian"</span>, <span class="st">"triangular"</span>, <span class="st">"sgolay"</span>, <span class="st">"lowpass"</span>,</span>
-<span>    <span class="st">"highpass"</span>, <span class="st">"lowpass_fft"</span>, <span class="st">"highpass_fft"</span>, <span class="st">"kalman"</span>, <span class="st">"kalman_irregular"</span>, <span class="st">"ccma"</span><span class="op">)</span>,</span>
+<span>    <span class="st">"highpass"</span>, <span class="st">"lowpass_fft"</span>, <span class="st">"highpass_fft"</span>, <span class="st">"kalman"</span>, <span class="st">"kalman_irregular"</span>, <span class="st">"one_euro"</span>,</span>
+<span>    <span class="st">"ccma"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -82,8 +83,8 @@ itself a parameter — comparing filters, or driving one from a config.</p>
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>Filter to apply. One of <code>"gaussian"</code>, <code>"rollmean"</code>,
 <code>"rollmedian"</code>, <code>"triangular"</code>, <code>"sgolay"</code>, <code>"lowpass"</code>, <code>"highpass"</code>,
-<code>"lowpass_fft"</code>, <code>"highpass_fft"</code>, <code>"kalman"</code>, <code>"kalman_irregular"</code> or
-<code>"ccma"</code>.</p></dd>
+<code>"lowpass_fft"</code>, <code>"highpass_fft"</code>, <code>"kalman"</code>, <code>"kalman_irregular"</code>,
+<code>"one_euro"</code> or <code>"ccma"</code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

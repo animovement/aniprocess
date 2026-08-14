@@ -12,7 +12,8 @@ field, within the frame's existing grouping.
 filter_across(
   data,
   method = c("gaussian", "rollmean", "rollmedian", "triangular", "sgolay", "lowpass",
-    "highpass", "lowpass_fft", "highpass_fft", "kalman", "kalman_irregular", "ccma"),
+    "highpass", "lowpass_fft", "highpass_fft", "kalman", "kalman_irregular", "one_euro",
+    "ccma"),
   variables = NULL,
   ...,
   on_deltas = FALSE
@@ -29,8 +30,8 @@ filter_across(
 
   Filter to apply. One of `"gaussian"`, `"rollmean"`, `"rollmedian"`,
   `"triangular"`, `"sgolay"`, `"lowpass"`, `"highpass"`,
-  `"lowpass_fft"`, `"highpass_fft"`, `"kalman"`, `"kalman_irregular"` or
-  `"ccma"`.
+  `"lowpass_fft"`, `"highpass_fft"`, `"kalman"`, `"kalman_irregular"`,
+  `"one_euro"` or `"ccma"`.
 
 - variables:
 

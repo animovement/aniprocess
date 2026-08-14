@@ -21,6 +21,7 @@
 <url><loc>http://animovement.dev/aniprocess/reference/ensure_aniframe_spatial.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/ensure_coords.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/ensure_keep_na.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/ensure_positive_scalar.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/ensure_replace_na_args.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/excursion_mask.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/excursion_mask_joint.html</loc></url>
@@ -48,6 +49,7 @@
 <url><loc>http://animovement.dev/aniprocess/reference/filter_na_speed.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_na_with.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_needs_sampling_rate.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/filter_one_euro.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_rollmean.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_rollmedian.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_sgolay.html</loc></url>
@@ -60,6 +62,8 @@
 <url><loc>http://animovement.dev/aniprocess/reference/mask_across_columns.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/metadata_value.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/newly_masked.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/one_euro_alpha.html</loc></url>
+<url><loc>http://animovement.dev/aniprocess/reference/one_euro_core.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/prepare_na.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/replace_na_across.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/replace_na_linear.html</loc></url>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9009</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9010</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,6 +77,10 @@
 <div class="section level3">
 <h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
 <ul><li>
+<p>New <code><a href="../reference/filter_one_euro.html">filter_one_euro()</a></code>: the One Euro filter (Casiez, Roussel &amp; Vogel, 2012), an adaptive low-pass whose cutoff rises with the estimated speed of the signal. A fixed cutoff forces one compromise on a whole recording — low enough to stop jitter while the animal is still is too low to track it moving. Making the cutoff a function of speed removes that trade-off, tuned with <code>min_cutoff</code> for the still end and <code>beta</code> for the moving end (<a href="https://github.com/animovement/aniprocess/issues/35" class="external-link">#35</a>).</p>
+<p>Available as <code>"one_euro"</code> through <code><a href="../reference/filter_with.html">filter_with()</a></code> and <code><a href="../reference/filter_across.html">filter_across()</a></code>, which supplies <code>sampling_rate</code> from the aniframe’s metadata.</p>
+</li>
+<li>
 <p>New <code><a href="../reference/filter_across.html">filter_across()</a></code>, <code><a href="../reference/filter_na_across.html">filter_na_across()</a></code> and <code><a href="../reference/replace_na_across.html">replace_na_across()</a></code>: the aniframe-level tier of the interface, applying a named method to the columns given by <code>variables_where</code> within the frame’s existing grouping (<a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a>).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/filter_across.html">filter_across</a></span><span class="op">(</span><span class="va">data</span>, <span class="st">"lowpass"</span>, cutoff_freq <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>          <span class="co"># sampling_rate from metadata</span></span>

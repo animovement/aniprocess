@@ -128,6 +128,8 @@ Suppress noise while preserving the movement you care about.
   : Apply Butterworth Lowpass Filter to Signal
 - [`filter_lowpass_fft()`](http://animovement.dev/aniprocess/reference/filter_lowpass_fft.md)
   : Apply FFT-based Lowpass Filter to Signal
+- [`filter_one_euro()`](http://animovement.dev/aniprocess/reference/filter_one_euro.md)
+  : Apply the One Euro filter
 - [`filter_rollmean()`](http://animovement.dev/aniprocess/reference/filter_rollmean.md)
   : Apply Rolling Mean Filter
 - [`filter_rollmedian()`](http://animovement.dev/aniprocess/reference/filter_rollmedian.md)

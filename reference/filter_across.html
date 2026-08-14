@@ -13,7 +13,7 @@ field, within the frame's existing grouping."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9009</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9010</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,8 @@ field, within the frame's existing grouping.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">filter_across</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gaussian"</span>, <span class="st">"rollmean"</span>, <span class="st">"rollmedian"</span>, <span class="st">"triangular"</span>, <span class="st">"sgolay"</span>, <span class="st">"lowpass"</span>,</span>
-<span>    <span class="st">"highpass"</span>, <span class="st">"lowpass_fft"</span>, <span class="st">"highpass_fft"</span>, <span class="st">"kalman"</span>, <span class="st">"kalman_irregular"</span>, <span class="st">"ccma"</span><span class="op">)</span>,</span>
+<span>    <span class="st">"highpass"</span>, <span class="st">"lowpass_fft"</span>, <span class="st">"highpass_fft"</span>, <span class="st">"kalman"</span>, <span class="st">"kalman_irregular"</span>, <span class="st">"one_euro"</span>,</span>
+<span>    <span class="st">"ccma"</span><span class="op">)</span>,</span>
 <span>  variables <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  on_deltas <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -87,8 +88,8 @@ field, within the frame's existing grouping.</p>
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>Filter to apply. One of <code>"gaussian"</code>, <code>"rollmean"</code>,
 <code>"rollmedian"</code>, <code>"triangular"</code>, <code>"sgolay"</code>, <code>"lowpass"</code>, <code>"highpass"</code>,
-<code>"lowpass_fft"</code>, <code>"highpass_fft"</code>, <code>"kalman"</code>, <code>"kalman_irregular"</code> or
-<code>"ccma"</code>.</p></dd>
+<code>"lowpass_fft"</code>, <code>"highpass_fft"</code>, <code>"kalman"</code>, <code>"kalman_irregular"</code>,
+<code>"one_euro"</code> or <code>"ccma"</code>.</p></dd>
 
 
 <dt id="arg-variables">variables<a class="anchor" aria-label="anchor" href="#arg-variables"></a></dt>
