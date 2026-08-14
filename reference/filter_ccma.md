@@ -104,7 +104,7 @@ The algorithm has two stages:
 Because curvature is intrinsically multi-dimensional, this filter
 operates on all spatial coordinates jointly (unlike the per-column
 filters dispatched through
-[`filter_aniframe()`](http://animovement.dev/aniprocess/reference/filter_aniframe.md)).
+[`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md)).
 It is most useful for smoothing curved 2D or 3D trajectories where a
 plain moving average visibly cuts corners; for general-purpose
 time-series smoothing reach for

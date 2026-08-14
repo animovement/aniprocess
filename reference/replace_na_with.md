@@ -75,8 +75,6 @@ as well as
 for smoothing,
 [`filter_na_with()`](http://animovement.dev/aniprocess/reference/filter_na_with.md)
 for masking.
-[`replace_na()`](http://animovement.dev/aniprocess/reference/replace_na.md)
-is the deprecated former name of this function.
 
 ## Examples
 

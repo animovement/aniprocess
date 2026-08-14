@@ -4,13 +4,16 @@
 
 ### Breaking changes
 
-- [`replace_na()`](http://animovement.dev/aniprocess/reference/replace_na.md)
-  is deprecated in favour of
+- `replace_na()` is removed; use
   [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md).
-  It still works and delegates to the new function, but warns.
-  Internally the filters’ `na_action` argument now calls
-  [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md),
-  so filtering data with `NA`s does not emit the deprecation warning
+  The old name collided with `tidyr::replace_na()`, which substitutes a
+  fixed value per column rather than interpolating gaps
+  ([\#30](https://github.com/animovement/aniprocess/issues/30)).
+
+- `filter_aniframe()` is removed; use
+  [`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md),
+  which does the same job and additionally reads `sampling_rate` and the
+  time column from the aniframe’s metadata
   ([\#30](https://github.com/animovement/aniprocess/issues/30)).
 
 - Argument names are now consistent across the package, so that a
@@ -120,9 +123,8 @@
 - [`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md)
   names this argument `on_deltas` rather than `use_derivatives`: the
   values are differences, not derivatives — nothing is divided by a time
-  step.
-  [`filter_aniframe()`](http://animovement.dev/aniprocess/reference/filter_aniframe.md)
-  keeps the old name, and both share one implementation.
+  step. `filter_aniframe()` keeps the old name, and both share one
+  implementation.
 
 - New
   [`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md),
@@ -163,11 +165,9 @@
   columns included.
 
 - [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
-  replaces
-  [`replace_na()`](http://animovement.dev/aniprocess/reference/replace_na.md),
-  which collides with `tidyr::replace_na()` — a function that does
-  something different (it substitutes a fixed value per column rather
-  than interpolating gaps).
+  replaces `replace_na()`, which collides with `tidyr::replace_na()` — a
+  function that does something different (it substitutes a fixed value
+  per column rather than interpolating gaps).
 
 - The aniframe-aware filters now accept a data frame of coordinate
   columns as well as an aniframe, and return whichever shape they were
@@ -344,9 +344,9 @@
   blanked, not its neighbours), and a single NA in the input no longer
   contaminates adjacent rows
   ([\#14](https://github.com/animovement/aniprocess/issues/14)).
-- [`filter_aniframe()`](http://animovement.dev/aniprocess/reference/filter_aniframe.md)
-  works on aniframes without an `individual` column. Identity columns
-  now come from `variables_what`, spatial columns from `variables_where`
+- `filter_aniframe()` works on aniframes without an `individual` column.
+  Identity columns now come from `variables_what`, spatial columns from
+  `variables_where`
   ([\#16](https://github.com/animovement/aniprocess/issues/16)).
 - [`find_peaks()`](http://animovement.dev/aniprocess/reference/find_peaks.md)
   /

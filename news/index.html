@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9007</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9008</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,8 @@
 <h2 class="pkg-version" data-toc-text="development version" id="aniprocess-development-version">aniprocess (development version)<a class="anchor" aria-label="anchor" href="#aniprocess-development-version"></a></h2>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
-<ul><li><p><code><a href="../reference/replace_na.html">replace_na()</a></code> is deprecated in favour of <code><a href="../reference/replace_na_with.html">replace_na_with()</a></code>. It still works and delegates to the new function, but warns. Internally the filters’ <code>na_action</code> argument now calls <code><a href="../reference/replace_na_with.html">replace_na_with()</a></code>, so filtering data with <code>NA</code>s does not emit the deprecation warning (<a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a>).</p></li>
+<ul><li><p><code>replace_na()</code> is removed; use <code><a href="../reference/replace_na_with.html">replace_na_with()</a></code>. The old name collided with <code>tidyr::replace_na()</code>, which substitutes a fixed value per column rather than interpolating gaps (<a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a>).</p></li>
+<li><p><code>filter_aniframe()</code> is removed; use <code><a href="../reference/filter_across.html">filter_across()</a></code>, which does the same job and additionally reads <code>sampling_rate</code> and the time column from the aniframe’s metadata (<a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a>).</p></li>
 <li>
 <p>Argument names are now consistent across the package, so that a generic wrapper can forward them without special-casing. This is the first step towards the unified interface in <a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a> (<a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a>).</p>
 <ul><li>
@@ -80,7 +81,7 @@
 <p>They do more than loop over columns. <code>variables</code> is a tidyselect expression defaulting to <code>variables_where</code>. Parameters the aniframe already knows are filled in: <code>sampling_rate</code> for the filters that need it, and the time column from <code>variables_when</code> for <code>"speed"</code> and <code>"kalman_irregular"</code>. Multivariate methods — <code>"ccma"</code>, and everything except <code>"range"</code> in <code><a href="../reference/filter_na_across.html">filter_na_across()</a></code> — are applied jointly rather than column by column. And <code><a href="../reference/filter_na_across.html">filter_na_across()</a></code> blanks <code>confidence</code> on the rows it masked, which the vector-level functions cannot do because <code>confidence</code> is not a coordinate.</p>
 <p>Per-row arguments such as <code>time</code> name a <em>column</em> at this level rather than taking a vector, since each group needs its own slice.</p>
 </li>
-<li><p><code><a href="../reference/filter_across.html">filter_across()</a></code> names this argument <code>on_deltas</code> rather than <code>use_derivatives</code>: the values are differences, not derivatives — nothing is divided by a time step. <code><a href="../reference/filter_aniframe.html">filter_aniframe()</a></code> keeps the old name, and both share one implementation.</p></li>
+<li><p><code><a href="../reference/filter_across.html">filter_across()</a></code> names this argument <code>on_deltas</code> rather than <code>use_derivatives</code>: the values are differences, not derivatives — nothing is divided by a time step. <code>filter_aniframe()</code> keeps the old name, and both share one implementation.</p></li>
 <li>
 <p>New <code><a href="../reference/filter_with.html">filter_with()</a></code>, <code><a href="../reference/filter_na_with.html">filter_na_with()</a></code> and <code><a href="../reference/replace_na_with.html">replace_na_with()</a></code>: generic entry points that select a method by name rather than by choosing a function, which is the third step towards the unified interface in <a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a> (<a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a>).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -90,7 +91,7 @@
 <p>All three preserve shape: a vector gives a vector, a data frame of columns gives a data frame. Univariate methods are applied column by column, so <code><a href="../reference/replace_na_with.html">replace_na_with()</a></code> and most of <code><a href="../reference/filter_with.html">filter_with()</a></code> work with <code><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">dplyr::across()</a></code> as well as <code><a href="https://dplyr.tidyverse.org/reference/pick.html" class="external-link">dplyr::pick()</a></code>. The multivariate methods — <code>"ccma"</code> in <code><a href="../reference/filter_with.html">filter_with()</a></code>, and everything except <code>"range"</code> in <code><a href="../reference/filter_na_with.html">filter_na_with()</a></code> — require a data frame and say so when handed a bare vector.</p>
 <p>They reject an aniframe. An aniframe <em>is</em> a data frame, so without that guard it would be filtered column by column, <code>time</code> and identity columns included.</p>
 </li>
-<li><p><code><a href="../reference/replace_na_with.html">replace_na_with()</a></code> replaces <code><a href="../reference/replace_na.html">replace_na()</a></code>, which collides with <code>tidyr::replace_na()</code> — a function that does something different (it substitutes a fixed value per column rather than interpolating gaps).</p></li>
+<li><p><code><a href="../reference/replace_na_with.html">replace_na_with()</a></code> replaces <code>replace_na()</code>, which collides with <code>tidyr::replace_na()</code> — a function that does something different (it substitutes a fixed value per column rather than interpolating gaps).</p></li>
 <li>
 <p>The aniframe-aware filters now accept a data frame of coordinate columns as well as an aniframe, and return whichever shape they were given. This makes them usable inside <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">dplyr::mutate()</a></code> via <code><a href="https://dplyr.tidyverse.org/reference/pick.html" class="external-link">dplyr::pick()</a></code>, which is the second step towards the unified interface in <a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a> (<a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a>).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -133,7 +134,7 @@
 <li>
 <code><a href="../reference/filter_na_speed.html">filter_na_speed()</a></code> now flags single-frame outliers correctly (the outlier itself is blanked, not its neighbours), and a single NA in the input no longer contaminates adjacent rows (<a href="https://github.com/animovement/aniprocess/issues/14" class="external-link">#14</a>).</li>
 <li>
-<code><a href="../reference/filter_aniframe.html">filter_aniframe()</a></code> works on aniframes without an <code>individual</code> column. Identity columns now come from <code>variables_what</code>, spatial columns from <code>variables_where</code> (<a href="https://github.com/animovement/aniprocess/issues/16" class="external-link">#16</a>).</li>
+<code>filter_aniframe()</code> works on aniframes without an <code>individual</code> column. Identity columns now come from <code>variables_what</code>, spatial columns from <code>variables_where</code> (<a href="https://github.com/animovement/aniprocess/issues/16" class="external-link">#16</a>).</li>
 <li>
 <code><a href="../reference/find_peaks.html">find_peaks()</a></code> / <code><a href="../reference/find_troughs.html">find_troughs()</a></code>: prominence now matches the documented topographic definition (saddle = max of left/right valley min). Previously could overestimate prominence and let peaks slip past <code>min_prominence</code>.</li>
 <li>

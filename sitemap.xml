@@ -28,7 +28,6 @@
 <url><loc>http://animovement.dev/aniprocess/reference/excursion_state_machine_1d.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter-na-args.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_across.html</loc></url>
-<url><loc>http://animovement.dev/aniprocess/reference/filter_aniframe.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_ccma.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_gaussian.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/filter_highpass.html</loc></url>
@@ -62,7 +61,6 @@
 <url><loc>http://animovement.dev/aniprocess/reference/metadata_value.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/newly_masked.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/prepare_na.html</loc></url>
-<url><loc>http://animovement.dev/aniprocess/reference/replace_na.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/replace_na_across.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/replace_na_linear.html</loc></url>
 <url><loc>http://animovement.dev/aniprocess/reference/replace_na_locf.html</loc></url>

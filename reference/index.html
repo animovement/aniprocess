@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9007</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9008</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,9 +50,9 @@
     </div>
 
     <div class="section level2">
-      <h2 id="remove-observations-of-poor-quality">Remove observations of poor quality<a class="anchor" aria-label="anchor" href="#remove-observations-of-poor-quality"></a></h2>
+      <h2 id="mask-unreliable-observations">Mask unreliable observations<a class="anchor" aria-label="anchor" href="#mask-unreliable-observations"></a></h2>
 
-      <div class="section-desc"><p>These functions ensure that your data is ready for analysis.</p></div>
+      <div class="section-desc"><p>Replace values that fail a quality criterion with <code>NA</code>.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -108,9 +108,9 @@
         </dt>
         <dd>Filter values by speed threshold</dd>
       </dl></div><div class="section level2">
-      <h2 id="interpolate-over-missing-values">Interpolate over missing values<a class="anchor" aria-label="anchor" href="#interpolate-over-missing-values"></a></h2>
+      <h2 id="fill-missing-values">Fill missing values<a class="anchor" aria-label="anchor" href="#fill-missing-values"></a></h2>
 
-      <div class="section-desc"><p>These functions ensure that your data is ready for analysis.</p></div>
+      <div class="section-desc"><p>Fill gaps by interpolation, carrying forward, or a constant.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -130,13 +130,6 @@
 
         </dt>
         <dd>Fill missing values by a named method</dd>
-
-        <dt>
-
-          <code><a href="replace_na.html">replace_na()</a></code>
-          <span class="badge lifecycle lifecycle-deprecated">deprecated</span>
-        </dt>
-        <dd>Replace Missing Values Using Various Methods</dd>
 
         <dt>
 
@@ -173,9 +166,9 @@
         </dt>
         <dd>Replace Missing Values with a Constant Value</dd>
       </dl></div><div class="section level2">
-      <h2 id="smoothing-filtering-functions">Smoothing/filtering functions<a class="anchor" aria-label="anchor" href="#smoothing-filtering-functions"></a></h2>
+      <h2 id="smooth-and-filter-signals">Smooth and filter signals<a class="anchor" aria-label="anchor" href="#smooth-and-filter-signals"></a></h2>
 
-      <div class="section-desc"><p>These functions ensure that your data is ready for analysis.</p></div>
+      <div class="section-desc"><p>Suppress noise while preserving the movement you care about.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -195,13 +188,6 @@
 
         </dt>
         <dd>Apply a filter by name</dd>
-
-        <dt>
-
-          <code><a href="filter_aniframe.html">filter_aniframe()</a></code>
-          <span class="badge lifecycle lifecycle-experimental">experimental</span>
-        </dt>
-        <dd>Smooth Movement Data</dd>
 
         <dt>
 
@@ -287,9 +273,9 @@
         </dt>
         <dd>Apply Triangular Filter</dd>
       </dl></div><div class="section level2">
-      <h2 id="other-functions">Other functions<a class="anchor" aria-label="anchor" href="#other-functions"></a></h2>
+      <h2 id="find-peaks-and-troughs">Find peaks and troughs<a class="anchor" aria-label="anchor" href="#find-peaks-and-troughs"></a></h2>
 
-      <div class="section-desc"><p>These functions ensure that your data is ready for analysis.</p></div>
+      <div class="section-desc"><p>Locate local extrema by height, prominence and plateau handling.</p></div>
 
       <dl></dl></div><div class="section level2">
 

@@ -100,7 +100,7 @@ TRUE.
 
 ## See also
 
-[`replace_na`](http://animovement.dev/aniprocess/reference/replace_na.md)
+[`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
 for details on NA handling methods
 [`filter_lowpass_fft`](http://animovement.dev/aniprocess/reference/filter_lowpass_fft.md)
 for FFT-based low-pass filtering

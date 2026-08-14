@@ -1,8 +1,8 @@
 # Package index
 
-## Remove observations of poor quality
+## Mask unreliable observations
 
-These functions ensure that your data is ready for analysis.
+Replace values that fail a quality criterion with `NA`.
 
 - [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
   **\[experimental\]** : Mask values to NA across an aniframe's spatial
@@ -20,17 +20,15 @@ These functions ensure that your data is ready for analysis.
 - [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)
   : Filter values by speed threshold
 
-## Interpolate over missing values
+## Fill missing values
 
-These functions ensure that your data is ready for analysis.
+Fill gaps by interpolation, carrying forward, or a constant.
 
 - [`replace_na_across()`](http://animovement.dev/aniprocess/reference/replace_na_across.md)
   **\[experimental\]** : Fill missing values across an aniframe's
   spatial columns
 - [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
   : Fill missing values by a named method
-- [`replace_na()`](http://animovement.dev/aniprocess/reference/replace_na.md)
-  **\[deprecated\]** : Replace Missing Values Using Various Methods
 - [`replace_na_linear()`](http://animovement.dev/aniprocess/reference/replace_na_linear.md)
   : Replace Missing Values Using Linear Interpolation
 - [`replace_na_locf()`](http://animovement.dev/aniprocess/reference/replace_na_locf.md)
@@ -42,17 +40,15 @@ These functions ensure that your data is ready for analysis.
 - [`replace_na_value()`](http://animovement.dev/aniprocess/reference/replace_na_value.md)
   : Replace Missing Values with a Constant Value
 
-## Smoothing/filtering functions
+## Smooth and filter signals
 
-These functions ensure that your data is ready for analysis.
+Suppress noise while preserving the movement you care about.
 
 - [`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md)
   **\[experimental\]** : Apply a filter across an aniframe's spatial
   columns
 - [`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md)
   : Apply a filter by name
-- [`filter_aniframe()`](http://animovement.dev/aniprocess/reference/filter_aniframe.md)
-  **\[experimental\]** : Smooth Movement Data
 - [`filter_ccma()`](http://animovement.dev/aniprocess/reference/filter_ccma.md)
   **\[experimental\]** : Apply Curvature-Corrected Moving Average (CCMA)
 - [`filter_gaussian()`](http://animovement.dev/aniprocess/reference/filter_gaussian.md)
@@ -78,9 +74,9 @@ These functions ensure that your data is ready for analysis.
 - [`filter_triangular()`](http://animovement.dev/aniprocess/reference/filter_triangular.md)
   : Apply Triangular Filter
 
-## Other functions
+## Find peaks and troughs
 
-These functions ensure that your data is ready for analysis.
+Locate local extrema by height, prominence and plateau handling.
 
 - [`find_peaks()`](http://animovement.dev/aniprocess/reference/find_peaks.md)
   : Find Peaks in Time Series Data
