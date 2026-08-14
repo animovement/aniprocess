@@ -1,84 +1,39 @@
-# aniprocess (development version)
+# aniprocess 0.3.0
 
 ## Breaking changes
 
-* `filter_ccma()`, `filter_na_speed()`, `filter_na_excursion()`, `filter_na_roi()` and `filter_na_confidence()` now take a data frame of coordinate columns rather than an aniframe. Use `filter_across()` / `filter_na_across()` for a whole aniframe, or `dplyr::pick()` inside `dplyr::mutate()` for the columns directly. `filter_na_speed()` requires `time` and `filter_na_confidence()` requires `confidence`, which the `*_across()` verbs supply from the frame (#30).
+* The interface is now split into three tiers (#30). The individual functions work on a vector or a frame of coordinate columns, `*_with()` selects a method by name, and `*_across()` applies one to a whole aniframe.
 
-  This completes the tier separation: each level now works strictly at its own level, rather than one function trying to serve both.
-* `filter_na_across(method = "speed")` estimates an `"auto"` threshold separately for each group, so every track is judged against its own noise. Previously `filter_na_speed()` on an aniframe pooled the estimate across all groups. Pass `threshold = "pooled"` for the old behaviour, which is steadier when tracks are short (#30).
+  ```r
+  filter_across(data, "lowpass", cutoff_freq = 5)
+  filter_with(x, "gaussian", sigma = 2)
+  data |> mutate(filter_ccma(pick(all_of(c("x", "y")))))
+  ```
 
-* `replace_na()` is removed; use `replace_na_with()`. The old name collided with `tidyr::replace_na()`, which substitutes a fixed value per column rather than interpolating gaps (#30).
-* `filter_aniframe()` is removed; use `filter_across()`, which does the same job and additionally reads `sampling_rate` and the time column from the aniframe's metadata (#30).
-
-* Argument names are now consistent across the package, so that a generic wrapper can forward them without special-casing. This is the first step towards the unified interface in #30 (#30).
-  * `window_size` is now `window_width` in `filter_sgolay()`, `find_peaks()` and `find_troughs()`, matching `filter_gaussian()`, `filter_rollmean()`, `filter_rollmedian()` and `filter_triangular()`.
-  * The first argument of `filter_kalman()` and `filter_kalman_irregular()` is now `x` rather than `measurements`. They were the only vector-level functions whose first argument was not `x`, which prevented their use with `dplyr::across()`.
-  * `filter_na_range()` takes `min_value`/`max_value` rather than `min`/`max`, which shadowed the base functions of those names and did not match the `min_gap`/`max_gap`/`min_obs` convention used elsewhere.
-
-  No deprecation cycle: nothing in the animovement org passes these names, verified across `aniread`, `animetric`, `aniframe`, `anicheck`, `anispace`, `anivis` and the `animovement` meta-package.
-
-* Filters no longer fill gaps by default. `keep_na` now defaults to `TRUE` in `filter_sgolay()`, `filter_lowpass()`, `filter_highpass()`, `filter_lowpass_fft()`, `filter_highpass_fft()` and `filter_ccma()`, so positions that were `NA` in the input are `NA` in the output. Previously the default was `FALSE`, which meant genuinely-missing stretches came back as smoothed interpolations with no indication that any interpolation had happened. Pass `keep_na = FALSE` for the old behaviour (#38).
-* `keep_na` is now available on every filter. `filter_gaussian()`, `filter_rollmean()`, `filter_rollmedian()` and `filter_triangular()` gain the argument, defaulting to `TRUE`; they previously filled gaps — fully or partially — with no way to opt out (#38).
-* `filter_kalman()` and `filter_kalman_irregular()` also gain `keep_na`, but default to `FALSE`. A Kalman filter's predict step is designed to carry the state estimate through missing observations, so inferring across gaps is intended rather than accidental. Pass `keep_na = TRUE` to leave gaps as gaps (#38).
+* `filter_aniframe()` is removed — use `filter_across()`.
+* `replace_na()` is removed — use `replace_na_with()`, which does not collide with `tidyr::replace_na()`.
+* `filter_ccma()`, `filter_na_speed()`, `filter_na_excursion()`, `filter_na_roi()` and `filter_na_confidence()` now take a frame of coordinate columns rather than an aniframe. Use `filter_across()` / `filter_na_across()` for a whole aniframe.
+* Filters preserve gaps by default: `keep_na` is `TRUE` everywhere except the Kalman filters, where inferring across gaps is the point. Pass `keep_na = FALSE` for the old behaviour (#38).
+* Argument names are consistent across the package: `window_width` replaces `window_size` in `filter_sgolay()`, `find_peaks()` and `find_troughs()`; `x` replaces `measurements` in the Kalman filters; `min_value`/`max_value` replace `min`/`max` in `filter_na_range()`.
+* `filter_na_confidence()` no longer masks rows whose confidence is `NA`, and warns instead — a missing score means *not assessed*, not *poor*.
+* `filter_na_across(method = "speed")` estimates an `"auto"` threshold per group. Pass `threshold = "pooled"` for a single estimate across all groups, which is steadier when tracks are short.
 
 ## New features
 
-* New `filter_one_euro()`: the One Euro filter (Casiez, Roussel & Vogel, 2012), an adaptive low-pass whose cutoff rises with the estimated speed of the signal. A fixed cutoff forces one compromise on a whole recording — low enough to stop jitter while the animal is still is too low to track it moving. Making the cutoff a function of speed removes that trade-off, tuned with `min_cutoff` for the still end and `beta` for the moving end (#35).
-
-  Available as `"one_euro"` through `filter_with()` and `filter_across()`, which supplies `sampling_rate` from the aniframe's metadata.
-
-* New `filter_across()`, `filter_na_across()` and `replace_na_across()`: the aniframe-level tier of the interface, applying a named method to the columns given by `variables_where` within the frame's existing grouping (#30).
-
-  ```r
-  filter_across(data, "lowpass", cutoff_freq = 5)          # sampling_rate from metadata
-  filter_across(data, "gaussian", variables = c(x, y), sigma = 2)
-  filter_na_across(data, "speed", threshold = "auto")      # time from variables_when
-  replace_na_across(data, "linear", max_gap = 5)
-  ```
-
-  They do more than loop over columns. `variables` is a tidyselect expression defaulting to `variables_where`. Parameters the aniframe already knows are filled in: `sampling_rate` for the filters that need it, and the time column from `variables_when` for `"speed"` and `"kalman_irregular"`. Multivariate methods — `"ccma"`, and everything except `"range"` in `filter_na_across()` — are applied jointly rather than column by column. And `filter_na_across()` blanks `confidence` on the rows it masked, which the vector-level functions cannot do because `confidence` is not a coordinate.
-
-  Per-row arguments such as `time` name a *column* at this level rather than taking a vector, since each group needs its own slice.
-* `filter_across()` names this argument `on_deltas` rather than `use_derivatives`: the values are differences, not derivatives — nothing is divided by a time step. `filter_aniframe()` keeps the old name, and both share one implementation.
-
-* New `filter_with()`, `filter_na_with()` and `replace_na_with()`: generic entry points that select a method by name rather than by choosing a function, which is the third step towards the unified interface in #30 (#30).
-
-  ```r
-  filter_with(x, "gaussian", sigma = 2)
-  filter_na_with(coords, "speed", threshold = 10, time = time)
-  replace_na_with(x, "linear", max_gap = 3)
-  ```
-
-  All three preserve shape: a vector gives a vector, a data frame of columns gives a data frame. Univariate methods are applied column by column, so `replace_na_with()` and most of `filter_with()` work with `dplyr::across()` as well as `dplyr::pick()`. The multivariate methods — `"ccma"` in `filter_with()`, and everything except `"range"` in `filter_na_with()` — require a data frame and say so when handed a bare vector.
-
-  They reject an aniframe. An aniframe *is* a data frame, so without that guard it would be filtered column by column, `time` and identity columns included.
-* `replace_na_with()` replaces `replace_na()`, which collides with `tidyr::replace_na()` — a function that does something different (it substitutes a fixed value per column rather than interpolating gaps).
-
-* The aniframe-aware filters now accept a data frame of coordinate columns as well as an aniframe, and return whichever shape they were given. This makes them usable inside `dplyr::mutate()` via `dplyr::pick()`, which is the second step towards the unified interface in #30 (#30).
-  ```r
-  data |> mutate(filter_ccma(pick(all_of(c("x", "y")))))
-  data |> mutate(filter_na_speed(pick(all_of(c("x", "y"))), time = time))
-  ```
-  Applies to `filter_ccma()`, `filter_na_speed()`, `filter_na_excursion()`, `filter_na_roi()` and `filter_na_confidence()`. These operations are multivariate — each result depends on all coordinates jointly — so they work with `pick()` but not with `dplyr::across()`, which passes one column at a time.
-* `filter_na_speed()` gains a `time` argument and `filter_na_confidence()` a `confidence` argument. Both are required when the input is a coordinate frame and default to the corresponding aniframe column otherwise. Neither `time` nor `confidence` is a coordinate, so the coordinate-frame form cannot mask `confidence`; only the aniframe form does.
-* `filter_na_roi()` now aborts with a clear message when the coordinates it needs (`x` and `y`) are absent, rather than failing further in.
-* `filter_na_confidence()` no longer masks rows whose confidence is `NA`. A missing confidence means *not scored* rather than *scored badly* — a human annotator has no natural number to enter for "not assessed", and tracker scores are not bounded at 1 (SLEAP can exceed it), so `NA` is the sensible thing to record. Those rows are left unfiltered and a rate-limited warning reports how many there were. To drop them as well, filter `confidence` directly with `filter_na_range()`.
-* `na_action` and `keep_na` are now documented from a single shared source, so the contract is stated identically across the filter family (#38).
-* `keep_na` is validated: a non-logical, `NA`, or non-scalar value now aborts with a clear message rather than being silently coerced.
+* New `filter_one_euro()`: the One Euro filter (Casiez, Roussel & Vogel, 2012), an adaptive low-pass whose cutoff rises with the speed of the signal — smooth when the animal is still, responsive when it moves (#35).
+* `*_across()` uses what the aniframe already knows: `sampling_rate` and the time column come from its metadata. `variables` selects columns with tidyselect, defaulting to `variables_where`.
+* `keep_na` is available on every filter, and validated.
 
 ## Bug fixes
 
-* Differencing filters no longer lose the first sample or shift the series. `filter_aniframe(use_derivatives = TRUE)` differenced each column, filtered, then accumulated with `cumsum()` starting from zero — so the re-integrated series was offset by its own starting value and began with `NA`. With a filter that does nothing the round trip should be lossless; `c(10, 11, 13, 16, 20)` came back as `c(NA, 1, 3, 6, 10)`. It now re-integrates from the original starting value (#30).
+* `filter_na_speed()` computes speed within each group, so a step is never formed between one track and the next. Where `time` restarts per track that step inflated the `"auto"` threshold and caused genuine outliers to be missed (#37).
+* Differencing filters (`on_deltas`, formerly `use_derivatives`) re-integrate from the original starting value; they previously dropped the first sample and shifted the whole series (#30).
+* `filter_na_speed()` no longer blanks groups too short to contain a step (#37).
+* The `data.table (>= 1.18.0)` requirement is enforced when the package loads, not only when it is installed (#33).
 
-* `filter_na_speed()` now computes speed within each group of a grouped aniframe. It previously worked on the raw column vectors, so a step was formed between the last row of one track and the first row of the next. Where `time` restarts per track that step has a negative duration and yields a negative "speed", which inflated the `"auto"` threshold and caused genuine outliers to be **missed** — how badly depended on how far apart the tracks happened to be. The cross-track step never produced false positives, because per-row speed is the minimum of the backward and forward step and a track boundary is one-sided (#37).
-* `filter_na_speed()` no longer blanks rows belonging to groups shorter than two rows. Such a group has no step, so its speed is `NA`, and `dplyr::if_else()` propagates a missing condition (#37).
+## Performance
 
-## Internal
-
-* `filter_na_speed()`, `filter_na_excursion()` and `filter_ccma()` all resolve groups through `dplyr::mutate()` and `dplyr::pick()` rather than re-deriving row indices with `dplyr::group_indices()`. Only `filter_na_speed()` changes behaviour; for the other two the output is unchanged, verified byte-for-byte against the previous implementation. The manual loops rescanned the group vector on every iteration — and in `filter_ccma()` rebuilt the whole data frame — making them quadratic in group count. At 3,000 groups × 20 rows, `filter_ccma()` goes from 47.8s to 5.9s and `filter_na_excursion()` from 2.19s to 0.63s. `filter_na_speed()` becomes slower (0.02s to 0.31s) because it previously did no per-group work at all (#37).
-* `calculate_speed_2d()` and `calculate_speed_3d()` are replaced by a single dimension-agnostic `calculate_step_speed()`, which sums the squared step over whatever coordinate columns it is given.
-
-* The `data.table (>= 1.18.0)` requirement is now enforced when the package loads, not only when it is installed. Because the rolling filters reached `data.table` solely via `data.table::`, R had no namespace import to version-check, so an older `data.table` arriving after installation (conda, a stale `renv` lockfile, a manual downgrade) failed with `unused argument (partial = use_partial)` from inside `filter_rollmean()` rather than a version error naming `data.table` (#33).
+* `filter_ccma()` and `filter_na_excursion()` no longer scale quadratically in the number of groups. At 3,000 groups they are roughly 8× and 3.5× faster (#37).
 
 # aniprocess 0.2.0
 
