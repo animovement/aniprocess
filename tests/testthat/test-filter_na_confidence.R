@@ -461,3 +461,23 @@ test_that("filter_na_confidence coordinate-frame form matches the aniframe form"
     ignore_attr = TRUE
   )
 })
+
+test_that("filter_na_confidence rejects a mismatched confidence length", {
+  expect_error(
+    filter_na_confidence(
+      data.frame(x = 1:5, y = 1:5),
+      confidence = c(0.9, 0.8)
+    ),
+    "one value per row"
+  )
+})
+
+test_that("filter_na_confidence rejects a non-numeric confidence", {
+  expect_error(
+    filter_na_confidence(
+      data.frame(x = 1:5, y = 1:5),
+      confidence = letters[1:5]
+    ),
+    "must be numeric"
+  )
+})

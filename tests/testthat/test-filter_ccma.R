@@ -347,3 +347,19 @@ test_that("filter_ccma smooths each group independently", {
     ignore_attr = TRUE
   )
 })
+
+test_that("filter_ccma reports where the coordinate count came from", {
+  # aniframe: the count comes from the variables_where metadata field
+  d <- aniframe::aniframe(
+    time = 1:6,
+    x = as.numeric(1:6),
+    variables_what = character(0)
+  )
+  expect_error(filter_ccma(d), "variables_where")
+
+  # coordinate frame: the count comes from the columns
+  expect_error(
+    filter_ccma(data.frame(x = as.numeric(1:6))),
+    "columns of"
+  )
+})
