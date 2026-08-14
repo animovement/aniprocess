@@ -77,7 +77,8 @@ test_that("filter_*_fft handle NA values via na_action", {
       x_with_na,
       cutoff_freq = 5,
       sampling_rate = fs,
-      na_action = method
+      na_action = method,
+      keep_na = FALSE
     )
     expect_false(any(is.na(out_low)))
 
@@ -85,7 +86,8 @@ test_that("filter_*_fft handle NA values via na_action", {
       x_with_na,
       cutoff_freq = 20,
       sampling_rate = fs,
-      na_action = method
+      na_action = method,
+      keep_na = FALSE
     )
     expect_false(any(is.na(out_high)))
   }
@@ -108,7 +110,7 @@ test_that("filter_*_fft handle NA values via na_action", {
       sampling_rate = fs,
       na_action = "error"
     ),
-    "Signal contains NA values"
+    "Input contains .*NA.* values"
   )
   expect_error(
     filter_highpass_fft(
@@ -117,7 +119,7 @@ test_that("filter_*_fft handle NA values via na_action", {
       sampling_rate = fs,
       na_action = "error"
     ),
-    "Signal contains NA values"
+    "Input contains .*NA.* values"
   )
 })
 

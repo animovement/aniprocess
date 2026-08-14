@@ -10,8 +10,17 @@
 #'   Positions with fewer non-NA values return `NA`. Defaults to `1`.
 #' @param align Window alignment. One of `"right"` (default), `"left"`, or
 #'   `"center"`.
+#' @inheritParams filter-na-args
 #'
 #' @details
+#' `keep_na` and `min_obs` control different things and are usually worth
+#' setting together. `keep_na` governs positions that were `NA` in the
+#' *input*; `min_obs` governs positions that were observed but whose
+#' *window* is too sparse to trust. Neither substitutes for the other:
+#' with `min_obs = 1`, positions next to a gap still produce values drawn
+#' from very few observations, and no `min_obs` setting blanks the input
+#' gaps without also blanking their neighbours and the series edges.
+#'
 #' For `align = "right"` or `"left"`, partial windows at the edges of the
 #' series are computed (so position 1 with a width-5 right-aligned window
 #' returns the value at position 1, not `NA`). For `align = "center"`,
@@ -26,14 +35,18 @@ filter_rollmean <- function(
   x,
   window_width = 5,
   min_obs = 1,
-  align = c("right", "left", "center")
+  align = c("right", "left", "center"),
+  keep_na = TRUE
 ) {
   align <- match.arg(align)
-  rolling_with_min_obs(
+  ensure_keep_na(keep_na)
+
+  result <- rolling_with_min_obs(
     x,
     fn = data.table::frollmean,
     window_width = window_width,
     min_obs = min_obs,
     align = align
   )
+  restore_na(result, is.na(x), keep_na)
 }

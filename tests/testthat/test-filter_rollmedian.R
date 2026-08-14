@@ -35,12 +35,23 @@ test_that("filter_rollmedian center alignment leaves NA at edges", {
 
 test_that("filter_rollmedian handles NAs", {
   x <- c(1, NA, 3, 4, 5)
-  result <- filter_rollmedian(x, window_width = 3, align = "right")
+  result <- filter_rollmedian(
+    x,
+    window_width = 3,
+    align = "right",
+    keep_na = FALSE
+  )
   # i=2: c(1, NA) -> median(1) = 1
   # i=3: c(1, NA, 3) -> median(c(1,3)) = 2
   # i=4: c(NA, 3, 4) -> median(c(3,4)) = 3.5
   # i=5: c(3, 4, 5) -> median = 4
   expect_equal(result, c(1, 1, 2, 3.5, 4))
+})
+
+test_that("filter_rollmedian preserves input NAs by default", {
+  x <- c(1, NA, 3, 4, 5)
+  result <- filter_rollmedian(x, window_width = 3, align = "right")
+  expect_equal(result, c(1, NA, 2, 3.5, 4))
 })
 
 test_that("filter_rollmedian returns NA for all-NA windows", {

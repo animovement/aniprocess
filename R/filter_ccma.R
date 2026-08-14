@@ -49,12 +49,7 @@
 #'   length).
 #' @param cc_mode If `FALSE`, returns just the moving-average result
 #'   without curvature correction. Useful for comparison.
-#' @param na_action How to fill `NA` values in the spatial columns
-#'   before filtering. One of `"linear"` (default), `"spline"`,
-#'   `"stine"`, `"locf"`, `"value"`, or `"error"` (abort if any `NA`s
-#'   are present). See [replace_na()].
-#' @param keep_na If `TRUE`, restore `NA`s at their original positions
-#'   in the output. Defaults to `FALSE`.
+#' @inheritParams filter-na-args
 #' @param ... Additional arguments passed to [replace_na()] (e.g.
 #'   `value`, `min_gap`, `max_gap`).
 #'
@@ -83,7 +78,7 @@ filter_ccma <- function(
   boundary = c("padding"),
   cc_mode = TRUE,
   na_action = c("linear", "spline", "stine", "locf", "value", "error"),
-  keep_na = FALSE,
+  keep_na = TRUE,
   ...
 ) {
   ensure_aniframe_spatial(data)
@@ -116,6 +111,7 @@ filter_ccma <- function(
   kernel <- match.arg(kernel)
   boundary <- match.arg(boundary)
   na_action <- match.arg(na_action)
+  ensure_keep_na(keep_na)
 
   extra_args <- rlang::list2(...)
 
@@ -187,27 +183,8 @@ ccma_filter_one <- function(
   keep_na,
   replace_na_args
 ) {
-  d <- ncol(P)
-  na_positions <- if (keep_na) {
-    lapply(seq_len(d), function(i) which(is.na(P[, i])))
-  } else {
-    NULL
-  }
-
-  has_any_na <- anyNA(P)
-  if (na_action == "error" && has_any_na) {
-    cli::cli_abort("Spatial coordinates contain {.val NA} values.")
-  }
-  if (has_any_na && na_action != "error") {
-    for (i in seq_len(d)) {
-      if (anyNA(P[, i])) {
-        P[, i] <- do.call(
-          replace_na,
-          c(list(P[, i], method = na_action), replace_na_args)
-        )
-      }
-    }
-  }
+  prepared <- prepare_na(P, na_action, replace_na_args)
+  P <- prepared$x
 
   if (anyNA(P)) {
     # Some NAs couldn't be filled (e.g. all-NA column). Return as-is.
@@ -223,10 +200,5 @@ ccma_filter_one <- function(
     cc_mode = cc_mode
   )
 
-  if (keep_na) {
-    for (i in seq_len(d)) {
-      out[na_positions[[i]], i] <- NA_real_
-    }
-  }
-  out
+  restore_na(out, prepared$na_positions, keep_na)
 }

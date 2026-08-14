@@ -17,14 +17,7 @@
 #'        - order=3: Also preserves acceleration (good for most movement data)
 #'        - order=4: Also preserves jerk (good for quick movements)
 #'        - order=5: Maximum preservation (may retain too much noise)
-#' @param na_action Method to handle NA values before filtering. One of:
-#'        - "linear": Linear interpolation (default)
-#'        - "spline": Spline interpolation for smoother curves
-#'        - "locf": Last observation carried forward
-#'        - "value": Replace with a constant value
-#'        - "error": Raise an error if NAs are present
-#' @param keep_na Logical indicating whether to restore NAs to their original positions
-#'        after filtering (default = FALSE)
+#' @inheritParams filter-na-args
 #' @param ... Additional arguments passed to replace_na()
 #'
 #' @details
@@ -90,7 +83,7 @@ filter_sgolay <- function(
   window_size = ceiling(sampling_rate / 10) * 2 + 1,
   order = 3,
   na_action = "linear",
-  keep_na = FALSE,
+  keep_na = TRUE,
   ...
 ) {
   # Check signal is installed
@@ -112,22 +105,10 @@ filter_sgolay <- function(
   if (order >= window_size) {
     cli::cli_abort("Polynomial order must be less than window size")
   }
+  ensure_keep_na(keep_na)
 
-  # Handle NAs
-  na_positions <- is.na(x)
-  if (any(na_positions)) {
-    if (na_action == "error") {
-      cli::cli_abort("NA values present in data")
-    }
-    x <- replace_na(x, method = na_action, ...)
-  }
+  prepared <- prepare_na(x, na_action, list(...))
+  result <- signal::sgolayfilt(prepared$x, p = order, n = window_size)
 
-  result <- signal::sgolayfilt(x, p = order, n = window_size)
-
-  # Restore NAs if requested
-  if (keep_na && any(na_positions)) {
-    result[na_positions] <- NA
-  }
-
-  return(result)
+  restore_na(result, prepared$na_positions, keep_na)
 }

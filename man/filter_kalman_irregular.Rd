@@ -12,7 +12,8 @@ filter_kalman_irregular(
   initial_state = NULL,
   initial_P = NULL,
   resample = FALSE,
-  resample_freq = NULL
+  resample_freq = NULL,
+  keep_na = FALSE
 )
 }
 \arguments{
@@ -31,6 +32,14 @@ filter_kalman_irregular(
 \item{resample}{Logical. Whether to return regularly resampled data (default: FALSE).}
 
 \item{resample_freq}{Numeric. Desired sampling frequency in Hz for resampling (required if resample=TRUE).}
+
+\item{keep_na}{Logical. If \code{TRUE}, positions that were \code{NA} in
+\code{measurements} are \code{NA} in the values reported on the original
+timestamps. Defaults to \code{FALSE}, for the reason given in
+\code{\link[=filter_kalman]{filter_kalman()}}. When \code{resample = TRUE} this applies to
+\code{original_values} only — the resampled \code{values} sit on a different
+time grid, where input positions have no counterpart, so they are
+always interpolated from the complete filtered series.}
 }
 \value{
 If resample=FALSE:

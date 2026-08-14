@@ -8,7 +8,8 @@ filter_triangular(
   x,
   window_width = 5,
   min_obs = 1,
-  align = c("center", "right", "left")
+  align = c("center", "right", "left"),
+  keep_na = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,12 @@ per pass. Defaults to \code{1}.}
 
 \item{align}{Window alignment, passed to \code{\link[=filter_rollmean]{filter_rollmean()}}. One of
 \code{"center"} (default), \code{"right"}, or \code{"left"}.}
+
+\item{keep_na}{Logical. If \code{TRUE} (default), positions that were \code{NA} in
+the input are \code{NA} in the output — gaps stay gaps. If \code{FALSE}, the
+values used to fill those gaps are kept, so the output has \strong{fewer
+\code{NA}s than the input} and genuinely-missing stretches come back as
+interpolated estimates.}
 }
 \value{
 Filtered numeric vector, same length as \code{x}.
@@ -37,6 +44,13 @@ For \code{align = "center"}, the underlying \code{\link[=filter_rollmean]{filter
 \code{NA} at the first and last \code{(window_width - 1) \%/\% 2} positions of
 each pass, so the output has roughly \code{window_width - 1} \code{NA} values
 at each edge.
+
+\code{keep_na = TRUE} restores the positions that were \code{NA} in the input,
+but note that this filter fills gaps more aggressively than a single
+\code{\link[=filter_rollmean]{filter_rollmean()}} pass: because the second pass smooths the output of
+the first, values interpolated across a gap propagate outward. \code{keep_na}
+blanks the original gap positions; it does not undo that spread into
+neighbouring positions. Raise \code{min_obs} to suppress it.
 
 Triangular smoothing is sometimes useful as a lightweight alternative
 to a Gaussian kernel when the kernel shape is less critical than the

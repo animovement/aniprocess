@@ -10,7 +10,8 @@ filter_kalman(
   base_Q = NULL,
   R = NULL,
   initial_state = NULL,
-  initial_P = NULL
+  initial_P = NULL,
+  keep_na = FALSE
 )
 }
 \arguments{
@@ -27,6 +28,13 @@ Represents the noise level in your measurements.}
 \item{initial_state}{Optional. Initial state estimate. If NULL, uses first non-NA measurement.}
 
 \item{initial_P}{Optional. Initial state uncertainty. If NULL, calculated based on sampling_rate.}
+
+\item{keep_na}{Logical. If \code{TRUE}, positions that were \code{NA} in
+\code{measurements} are \code{NA} in the output. Defaults to \code{FALSE}, unlike the
+rest of the filter family: a Kalman filter's predict step is designed
+to carry the state estimate through missing observations, so inferring
+across gaps is the intended behaviour rather than an accident. Set
+\code{TRUE} when you want gaps left as gaps.}
 }
 \value{
 A numeric vector of the same length as measurements containing the filtered values.

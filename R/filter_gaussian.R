@@ -8,6 +8,7 @@
 #' @param window_width Integer kernel width in samples. Must be positive
 #'   and is forced to be odd. Defaults to `2 * ceiling(3 * sigma) + 1`,
 #'   which truncates the kernel at ±3σ.
+#' @inheritParams filter-na-args
 #'
 #' @details
 #' The kernel is symmetric and centered: `weights[k] = dnorm(k, sd = sigma)`
@@ -32,10 +33,12 @@
 #' filter_gaussian(x, sigma = 1)
 #'
 #' @export
-filter_gaussian <- function(x, sigma = 1, window_width = NULL) {
+filter_gaussian <- function(x, sigma = 1, window_width = NULL, keep_na = TRUE) {
   if (!is.numeric(sigma) || length(sigma) != 1L || sigma <= 0) {
     cli::cli_abort("{.arg sigma} must be a single positive number.")
   }
+  ensure_keep_na(keep_na)
+  na_positions <- is.na(x)
   if (is.null(window_width)) {
     window_width <- 2L * as.integer(ceiling(3 * sigma)) + 1L
   }
@@ -69,5 +72,5 @@ filter_gaussian <- function(x, sigma = 1, window_width = NULL) {
 
   result <- num / den
   result[den == 0] <- NA_real_
-  result
+  restore_na(result, na_positions, keep_na)
 }

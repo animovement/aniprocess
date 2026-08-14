@@ -33,12 +33,25 @@ test_that("filter_rollmean left alignment uses partial windows at end", {
 
 test_that("filter_rollmean handles NAs", {
   x <- c(1, NA, 3, 4, 5)
-  result <- filter_rollmean(x, window_width = 3, align = "right")
+  result <- filter_rollmean(
+    x,
+    window_width = 3,
+    align = "right",
+    keep_na = FALSE
+  )
   # window at i=2: c(1, NA) -> mean = 1
   # window at i=3: c(1, NA, 3) -> mean = 2
   # window at i=4: c(NA, 3, 4) -> mean = 3.5
   # window at i=5: c(3, 4, 5) -> mean = 4
   expect_equal(result, c(1, 1, 2, 3.5, 4))
+})
+
+test_that("filter_rollmean preserves input NAs by default", {
+  x <- c(1, NA, 3, 4, 5)
+  result <- filter_rollmean(x, window_width = 3, align = "right")
+  # Position 2 was NA in the input, so it stays NA regardless of the
+  # window having enough observations to produce a value.
+  expect_equal(result, c(1, NA, 2, 3.5, 4))
 })
 
 test_that("filter_rollmean returns NA for all-NA windows (not NaN)", {

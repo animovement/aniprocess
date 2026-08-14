@@ -76,11 +76,15 @@ test_that("NA handling works correctly", {
   # Error on NA with na_action = "error"
   expect_error(
     filter_sgolay(x, sampling_rate = 60, na_action = "error"),
-    "NA values present in data"
+    "Input contains .*NA.* values"
   )
 
-  # Linear interpolation (default)
-  filtered <- filter_sgolay(x, sampling_rate = 60)
+  # Gaps are preserved by default
+  filtered_default <- filter_sgolay(x, sampling_rate = 60)
+  expect_equal(which(is.na(filtered_default)), c(25, 75))
+
+  # keep_na = FALSE keeps the linearly interpolated fill
+  filtered <- filter_sgolay(x, sampling_rate = 60, keep_na = FALSE)
   expect_false(any(is.na(filtered)))
 
   # Keep NA option

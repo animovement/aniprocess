@@ -1,5 +1,16 @@
 # aniprocess (development version)
 
+## Breaking changes
+
+* Filters no longer fill gaps by default. `keep_na` now defaults to `TRUE` in `filter_sgolay()`, `filter_lowpass()`, `filter_highpass()`, `filter_lowpass_fft()`, `filter_highpass_fft()` and `filter_ccma()`, so positions that were `NA` in the input are `NA` in the output. Previously the default was `FALSE`, which meant genuinely-missing stretches came back as smoothed interpolations with no indication that any interpolation had happened. Pass `keep_na = FALSE` for the old behaviour (#38).
+* `keep_na` is now available on every filter. `filter_gaussian()`, `filter_rollmean()`, `filter_rollmedian()` and `filter_triangular()` gain the argument, defaulting to `TRUE`; they previously filled gaps — fully or partially — with no way to opt out (#38).
+* `filter_kalman()` and `filter_kalman_irregular()` also gain `keep_na`, but default to `FALSE`. A Kalman filter's predict step is designed to carry the state estimate through missing observations, so inferring across gaps is intended rather than accidental. Pass `keep_na = TRUE` to leave gaps as gaps (#38).
+
+## New features
+
+* `na_action` and `keep_na` are now documented from a single shared source, so the contract is stated identically across the filter family (#38).
+* `keep_na` is validated: a non-logical, `NA`, or non-scalar value now aborts with a clear message rather than being silently coerced.
+
 ## Bug fixes
 
 * The `data.table (>= 1.18.0)` requirement is now enforced when the package loads, not only when it is installed. Because the rolling filters reached `data.table` solely via `data.table::`, R had no namespace import to version-check, so an older `data.table` arriving after installation (conda, a stale `renv` lockfile, a manual downgrade) failed with `unused argument (partial = use_partial)` from inside `filter_rollmean()` rather than a version error naming `data.table` (#33).

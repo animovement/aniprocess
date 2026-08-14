@@ -8,15 +8,7 @@
 #'        while frequencies above are attenuated. Should be between 0 and sampling_rate/2.
 #' @param sampling_rate Sampling rate of the signal in Hz. Must be at
 #'        least twice the highest frequency component in the signal (Nyquist criterion).
-#' @param na_action Method to handle NA values before filtering. One of:
-#'        - "linear": Linear interpolation (default)
-#'        - "spline": Spline interpolation for smoother curves
-#'        - "stine": Stineman interpolation preserving data shape
-#'        - "locf": Last observation carried forward
-#'        - "value": Replace with a constant value
-#'        - "error": Raise an error if NAs are present
-#' @param keep_na Logical indicating whether to restore NAs to their original positions
-#'        after filtering (default = FALSE)
+#' @inheritParams filter-na-args
 #' @param ... Additional arguments passed to replace_na(). Common options include:
 #'        - value: Numeric value for replacement when na_action = "value"
 #'        - min_gap: Minimum gap size to interpolate/fill
@@ -78,7 +70,7 @@ filter_lowpass_fft <- function(
   cutoff_freq,
   sampling_rate,
   na_action = c("linear", "spline", "stine", "locf", "value", "error"),
-  keep_na = FALSE,
+  keep_na = TRUE,
   ...
 ) {
   # Input validation
@@ -90,18 +82,10 @@ filter_lowpass_fft <- function(
   }
 
   na_action <- match.arg(na_action)
+  ensure_keep_na(keep_na)
 
-  # Store original NA positions if needed
-  na_positions <- if (keep_na) which(is.na(x))
-
-  # Handle NAs
-  if (any(is.na(x))) {
-    if (na_action == "error") {
-      cli::cli_abort("Signal contains NA values")
-    } else {
-      x <- replace_na(x, method = na_action, ...)
-    }
-  }
+  prepared <- prepare_na(x, na_action, list(...))
+  x <- prepared$x
 
   N <- length(x)
 
@@ -143,12 +127,7 @@ filter_lowpass_fft <- function(
   # Remove padding
   filtered <- filtered_padded[(n_pad + 1):(n_pad + N)]
 
-  # Restore NAs if requested
-  if (keep_na && length(na_positions) > 0) {
-    filtered[na_positions] <- NA
-  }
-
-  return(filtered)
+  restore_na(filtered, prepared$na_positions, keep_na)
 }
 
 #' Apply FFT-based Highpass Filter to Signal
@@ -161,15 +140,7 @@ filter_lowpass_fft <- function(
 #'        while frequencies below are attenuated. Should be between 0 and sampling_rate/2.
 #' @param sampling_rate Sampling rate of the signal in Hz. Must be at
 #'        least twice the highest frequency component in the signal (Nyquist criterion).
-#' @param na_action Method to handle NA values before filtering. One of:
-#'        - "linear": Linear interpolation (default)
-#'        - "spline": Spline interpolation for smoother curves
-#'        - "stine": Stineman interpolation preserving data shape
-#'        - "locf": Last observation carried forward
-#'        - "value": Replace with a constant value
-#'        - "error": Raise an error if NAs are present
-#' @param keep_na Logical indicating whether to restore NAs to their original positions
-#'        after filtering (default = FALSE)
+#' @inheritParams filter-na-args
 #' @param ... Additional arguments passed to replace_na(). Common options include:
 #'        - value: Numeric value for replacement when na_action = "value"
 #'        - min_gap: Minimum gap size to interpolate/fill
@@ -238,7 +209,7 @@ filter_highpass_fft <- function(
   cutoff_freq,
   sampling_rate,
   na_action = c("linear", "spline", "stine", "locf", "value", "error"),
-  keep_na = FALSE,
+  keep_na = TRUE,
   ...
 ) {
   # Input validation
@@ -250,18 +221,10 @@ filter_highpass_fft <- function(
   }
 
   na_action <- match.arg(na_action)
+  ensure_keep_na(keep_na)
 
-  # Store original NA positions if needed
-  na_positions <- if (keep_na) which(is.na(x))
-
-  # Handle NAs
-  if (any(is.na(x))) {
-    if (na_action == "error") {
-      cli::cli_abort("Signal contains NA values")
-    } else {
-      x <- replace_na(x, method = na_action, ...)
-    }
-  }
+  prepared <- prepare_na(x, na_action, list(...))
+  x <- prepared$x
 
   N <- length(x)
 
@@ -302,10 +265,5 @@ filter_highpass_fft <- function(
   # Remove padding
   filtered <- filtered_padded[(n_pad + 1):(n_pad + N)]
 
-  # Restore NAs if requested
-  if (keep_na && length(na_positions) > 0) {
-    filtered[na_positions] <- NA
-  }
-
-  return(filtered)
+  restore_na(filtered, prepared$na_positions, keep_na)
 }
