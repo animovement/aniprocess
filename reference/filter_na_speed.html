@@ -9,7 +9,7 @@ coordinates and confidence values at flagged rows are replaced with NA."></head>
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9008</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9009</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,8 +68,9 @@ coordinates and confidence values at flagged rows are replaced with NA.</p>
 
 
 <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>An aniframe containing spatial coordinates and a time column,
-or a data frame of numeric coordinate columns.</p></dd>
+<dd><p>A data frame of numeric coordinate columns — typically supplied
+by <code><a href="https://dplyr.tidyverse.org/reference/pick.html" class="external-link">dplyr::pick()</a></code> inside <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">dplyr::mutate()</a></code>. To filter a whole aniframe,
+use <code><a href="filter_na_across.html">filter_na_across()</a></code>.</p></dd>
 
 
 <dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
@@ -80,16 +81,13 @@ confidence values replaced with NA.</p></li>
 
 
 <dt id="arg-time">time<a class="anchor" aria-label="anchor" href="#arg-time"></a></dt>
-<dd><p>Numeric vector of time values, one per row. Required when
-<code>data</code> is a coordinate frame. When <code>data</code> is an aniframe this defaults
-to its <code>time</code> column.</p></dd>
+<dd><p>Numeric vector of time values, one per row.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>The same shape as the input, with spatial values replaced by NA
-where speed exceeds the threshold. For an aniframe, <code>confidence</code> is
-blanked at those rows too.</p>
+    <p><code>data</code>, with coordinates replaced by <code>NA</code> where speed exceeds the
+threshold.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -104,59 +102,46 @@ have one fast step.</p>
 <p>Endpoints have only one neighbor; their speed falls back to the available
 one-sided step. NAs in inputs do not contaminate adjacent rows: a missing
 coordinate at row <code>i</code> only affects row <code>i</code>'s speed estimate.</p>
-<p>Speed is computed <strong>within each group</strong> of a grouped aniframe, so a step
-is never formed between the last row of one track and the first row of
-the next. Each group's first and last rows are treated as endpoints. On
-ungrouped data the whole frame is a single track.</p>
-<p>When using <code>threshold = "auto"</code>, the threshold is set to the mean speed
-plus three standard deviations, pooled across groups. Because no
-cross-track step is ever formed, the estimate uses within-track speeds
-only.</p>
+<p>Every row of <code>data</code> is treated as one continuous track: a step is formed
+between each consecutive pair. Called via <code><a href="filter_na_across.html">filter_na_across()</a></code> or with
+<code><a href="https://dplyr.tidyverse.org/reference/pick.html" class="external-link">dplyr::pick()</a></code> inside a grouped <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">dplyr::mutate()</a></code>, that means one group,
+so a step is never formed across a track boundary.</p>
+<p>When using <code>threshold = "auto"</code>, the threshold is the mean speed plus
+three standard deviations of the rows given. Called through
+<code><a href="filter_na_across.html">filter_na_across()</a></code> that means one threshold per group; pass
+<code>threshold = "pooled"</code> there to estimate a single threshold from every
+group at once instead.</p>
     </div>
     <div class="section level2">
     <h2 id="input-shape">Input shape<a class="anchor" aria-label="anchor" href="#input-shape"></a></h2>
 
 
-<p>Returns the same shape it is given.</p><ul><li><p>Given an <strong>aniframe</strong>, the columns named by <code>variables_where</code> are
-masked, along with <code>confidence</code> if present.</p></li>
-<li><p>Given a <strong>data frame of coordinate columns</strong>, that frame is masked and
-returned — the form to use inside <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">dplyr::mutate()</a></code>:</p></li>
-</ul><p></p><div class="sourceCode r"><pre><code><span><span class="va">data</span> <span class="op">|&gt;</span> <span class="fu">mutate</span><span class="op">(</span><span class="fu"><a href="../reference/filter_na_speed.html">filter_na_speed</a></span><span class="op">(</span><span class="fu">pick</span><span class="op">(</span><span class="fu">all_of</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, time <span class="op">=</span> <span class="va">time</span><span class="op">)</span><span class="op">)</span></span></code></pre><p></p></div>
+<p>Takes and returns a frame of coordinate columns, so it composes inside
+<code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">dplyr::mutate()</a></code>:</p>
+<p></p><div class="sourceCode r"><pre><code><span><span class="va">data</span> <span class="op">|&gt;</span> <span class="fu">mutate</span><span class="op">(</span><span class="fu"><a href="../reference/filter_na_speed.html">filter_na_speed</a></span><span class="op">(</span><span class="fu">pick</span><span class="op">(</span><span class="fu">all_of</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, time <span class="op">=</span> <span class="va">time</span><span class="op">)</span><span class="op">)</span></span></code></pre><p></p></div>
 <p>Speed depends on all coordinates jointly, so this cannot be used with
-<code><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">dplyr::across()</a></code>. <code>confidence</code> is not a coordinate, so it can only be
-masked via the aniframe form.</p>
+<code><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">dplyr::across()</a></code>. <code>confidence</code> is not a coordinate and so is never
+modified here; <code><a href="filter_na_across.html">filter_na_across()</a></code> blanks it on masked rows.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">aniframe</span><span class="fu">::</span><span class="fu"><a href="http://animovement.dev/aniframe/reference/aniframe.html" class="external-link">aniframe</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  time <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span></span>
-<span class="r-in"><span>  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">7</span>, <span class="fl">11</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">5</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  confidence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.8</span>, <span class="fl">0.9</span>, <span class="fl">0.7</span>, <span class="fl">0.85</span>, <span class="fl">0.6</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">coords</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">7</span>, <span class="fl">11</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Filter data by a speed threshold of 3</span></span></span>
-<span class="r-in"><span><span class="fu">filter_na_speed</span><span class="op">(</span><span class="va">data</span>, threshold <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Keypoints: centroid</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   keypoint  time     x     y confidence</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> centroid     1     1     1        0.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> centroid     2     2     1        0.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> centroid     3     4     2        0.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> centroid     4    <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> centroid     5    <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>  </span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Use automatic threshold</span></span></span>
-<span class="r-in"><span><span class="fu">filter_na_speed</span><span class="op">(</span><span class="va">data</span>, threshold <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Keypoints: centroid</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   keypoint  time     x     y confidence</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> centroid     1     1     1       0.8 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> centroid     2     2     1       0.9 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> centroid     3     4     2       0.7 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> centroid     4     7     3       0.85</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> centroid     5    11     5       0.6 </span>
+<span class="r-in"><span><span class="fu">filter_na_speed</span><span class="op">(</span><span class="va">coords</span>, threshold <span class="op">=</span> <span class="fl">3</span>, time <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    x  y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  2  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  4  2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 NA NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 NA NA</span>
+<span class="r-in"><span><span class="fu">filter_na_speed</span><span class="op">(</span><span class="va">coords</span>, threshold <span class="op">=</span> <span class="st">"auto"</span>, time <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    x y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  2 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  4 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  7 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 11 5</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

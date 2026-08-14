@@ -17,7 +17,7 @@ position."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9008</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9009</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,7 +80,9 @@ position.</p>
 
 
 <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>An aniframe.</p></dd>
+<dd><p>A data frame of numeric coordinate columns — typically supplied
+by <code><a href="https://dplyr.tidyverse.org/reference/pick.html" class="external-link">dplyr::pick()</a></code> inside <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">dplyr::mutate()</a></code>. To filter a whole aniframe,
+use <code><a href="filter_na_across.html">filter_na_across()</a></code>.</p></dd>
 
 
 <dt id="arg-outlier-sd">outlier_sd<a class="anchor" aria-label="anchor" href="#arg-outlier-sd"></a></dt>
@@ -105,13 +107,11 @@ joint Euclidean displacement (consistent with <code><a href="filter_na_speed.htm
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>An aniframe of the same shape, with flagged rows blanked.</p>
+    <p><code>data</code>, with flagged rows blanked.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>For each spatial coordinate listed in the metadata field
-<code>variables_where</code> (and within each existing aniframe group), the
-algorithm:</p><ol><li><p>Computes the standard deviation <code>σ</code> of the coordinate over the
+    <p>For each coordinate column, the algorithm:</p><ol><li><p>Computes the standard deviation <code>σ</code> of the coordinate over the
 full series and the overall median <code>m</code>.</p></li>
 <li><p>Walks the series. When a frame-to-frame change exceeds
 <code>outlier_sd * σ</code>, an excursion starts: that frame is flagged
@@ -124,8 +124,9 @@ the position eventually comes back) from sustained shifts (the
 animal genuinely moved to a new region) — the latter never satisfy
 the return condition unless the new region happens to be near the
 median, in which case it is accepted via the second criterion.</p>
-<p>Spatial columns and <code>confidence</code> (if present) are set to <code>NA</code> at
-flagged rows, matching the convention used by <code><a href="filter_na_speed.html">filter_na_speed()</a></code>.</p>
+<p>Every coordinate column is set to <code>NA</code> at a flagged row. <code>confidence</code> is
+not a coordinate and so is never modified here; <code><a href="filter_na_across.html">filter_na_across()</a></code>
+blanks it too.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -144,10 +145,10 @@ exploration of unsupervised methods for mapping behavior.
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="co"># Default Todd thresholds, per-axis.</span></span></span>
-<span class="r-in"><span><span class="fu">filter_na_excursion</span><span class="op">(</span><span class="va">tracking_data</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">filter_na_excursion</span><span class="op">(</span><span class="va">coords</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Joint Euclidean variant, looser thresholds.</span></span></span>
-<span class="r-in"><span><span class="fu">filter_na_excursion</span><span class="op">(</span><span class="va">tracking_data</span>, outlier_sd <span class="op">=</span> <span class="fl">4</span>, by_axis <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">filter_na_excursion</span><span class="op">(</span><span class="va">coords</span>, outlier_sd <span class="op">=</span> <span class="fl">4</span>, by_axis <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

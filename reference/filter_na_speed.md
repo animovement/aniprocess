@@ -13,8 +13,12 @@ filter_na_speed(data, threshold = "auto", time = NULL)
 
 - data:
 
-  An aniframe containing spatial coordinates and a time column, or a
-  data frame of numeric coordinate columns.
+  A data frame of numeric coordinate columns — typically supplied by
+  [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html)
+  inside
+  [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html).
+  To filter a whole aniframe, use
+  [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md).
 
 - threshold:
 
@@ -27,15 +31,12 @@ filter_na_speed(data, threshold = "auto", time = NULL)
 
 - time:
 
-  Numeric vector of time values, one per row. Required when `data` is a
-  coordinate frame. When `data` is an aniframe this defaults to its
-  `time` column.
+  Numeric vector of time values, one per row.
 
 ## Value
 
-The same shape as the input, with spatial values replaced by NA where
-speed exceeds the threshold. For an aniframe, `confidence` is blanked at
-those rows too.
+`data`, with coordinates replaced by `NA` where speed exceeds the
+threshold.
 
 ## Details
 
@@ -53,63 +54,51 @@ available one-sided step. NAs in inputs do not contaminate adjacent
 rows: a missing coordinate at row `i` only affects row `i`'s speed
 estimate.
 
-Speed is computed **within each group** of a grouped aniframe, so a step
-is never formed between the last row of one track and the first row of
-the next. Each group's first and last rows are treated as endpoints. On
-ungrouped data the whole frame is a single track.
+Every row of `data` is treated as one continuous track: a step is formed
+between each consecutive pair. Called via
+[`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
+or with
+[`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html)
+inside a grouped
+[`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html),
+that means one group, so a step is never formed across a track boundary.
 
-When using `threshold = "auto"`, the threshold is set to the mean speed
-plus three standard deviations, pooled across groups. Because no
-cross-track step is ever formed, the estimate uses within-track speeds
-only.
+When using `threshold = "auto"`, the threshold is the mean speed plus
+three standard deviations of the rows given. Called through
+[`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
+that means one threshold per group; pass `threshold = "pooled"` there to
+estimate a single threshold from every group at once instead.
 
 ## Input shape
 
-Returns the same shape it is given.
-
-- Given an **aniframe**, the columns named by `variables_where` are
-  masked, along with `confidence` if present.
-
-- Given a **data frame of coordinate columns**, that frame is masked and
-  returned — the form to use inside
-  [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html):
+Takes and returns a frame of coordinate columns, so it composes inside
+[`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html):
 
     data |> mutate(filter_na_speed(pick(all_of(c("x", "y"))), time = time))
 
 Speed depends on all coordinates jointly, so this cannot be used with
 [`dplyr::across()`](https://dplyr.tidyverse.org/reference/across.html).
-`confidence` is not a coordinate, so it can only be masked via the
-aniframe form.
+`confidence` is not a coordinate and so is never modified here;
+[`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
+blanks it on masked rows.
 
 ## Examples
 
 ``` r
-data <- aniframe::aniframe(
-  time = 1:5,
-  x = c(1, 2, 4, 7, 11),
-  y = c(1, 1, 2, 3, 5),
-  confidence = c(0.8, 0.9, 0.7, 0.85, 0.6)
-)
+coords <- data.frame(x = c(1, 2, 4, 7, 11), y = c(1, 1, 2, 3, 5))
 
-# Filter data by a speed threshold of 3
-filter_na_speed(data, threshold = 3)
-#> # Keypoints: centroid
-#>   keypoint  time     x     y confidence
-#>   <fct>    <int> <dbl> <dbl>      <dbl>
-#> 1 centroid     1     1     1        0.8
-#> 2 centroid     2     2     1        0.9
-#> 3 centroid     3     4     2        0.7
-#> 4 centroid     4    NA    NA       NA  
-#> 5 centroid     5    NA    NA       NA  
-
-# Use automatic threshold
-filter_na_speed(data, threshold = "auto")
-#> # Keypoints: centroid
-#>   keypoint  time     x     y confidence
-#>   <fct>    <int> <dbl> <dbl>      <dbl>
-#> 1 centroid     1     1     1       0.8 
-#> 2 centroid     2     2     1       0.9 
-#> 3 centroid     3     4     2       0.7 
-#> 4 centroid     4     7     3       0.85
-#> 5 centroid     5    11     5       0.6 
+filter_na_speed(coords, threshold = 3, time = 1:5)
+#>    x  y
+#> 1  1  1
+#> 2  2  1
+#> 3  4  2
+#> 4 NA NA
+#> 5 NA NA
+filter_na_speed(coords, threshold = "auto", time = 1:5)
+#>    x y
+#> 1  1 1
+#> 2  2 1
+#> 3  4 2
+#> 4  7 3
+#> 5 11 5
 ```

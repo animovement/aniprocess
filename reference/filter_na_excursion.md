@@ -16,7 +16,12 @@ filter_na_excursion(data, outlier_sd = 5, return_sd = 1, by_axis = TRUE)
 
 - data:
 
-  An aniframe.
+  A data frame of numeric coordinate columns — typically supplied by
+  [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html)
+  inside
+  [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html).
+  To filter a whole aniframe, use
+  [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md).
 
 - outlier_sd:
 
@@ -40,13 +45,11 @@ filter_na_excursion(data, outlier_sd = 5, return_sd = 1, by_axis = TRUE)
 
 ## Value
 
-An aniframe of the same shape, with flagged rows blanked.
+`data`, with flagged rows blanked.
 
 ## Details
 
-For each spatial coordinate listed in the metadata field
-`variables_where` (and within each existing aniframe group), the
-algorithm:
+For each coordinate column, the algorithm:
 
 1.  Computes the standard deviation `σ` of the coordinate over the full
     series and the overall median `m`.
@@ -64,9 +67,10 @@ genuinely moved to a new region) — the latter never satisfy the return
 condition unless the new region happens to be near the median, in which
 case it is accepted via the second criterion.
 
-Spatial columns and `confidence` (if present) are set to `NA` at flagged
-rows, matching the convention used by
-[`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md).
+Every coordinate column is set to `NA` at a flagged row. `confidence` is
+not a coordinate and so is never modified here;
+[`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
+blanks it too.
 
 ## References
 
@@ -86,9 +90,9 @@ for single-frame outliers.
 ``` r
 if (FALSE) { # \dontrun{
 # Default Todd thresholds, per-axis.
-filter_na_excursion(tracking_data)
+filter_na_excursion(coords)
 
 # Joint Euclidean variant, looser thresholds.
-filter_na_excursion(tracking_data, outlier_sd = 4, by_axis = FALSE)
+filter_na_excursion(coords, outlier_sd = 4, by_axis = FALSE)
 } # }
 ```

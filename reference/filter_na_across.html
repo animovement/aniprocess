@@ -15,7 +15,7 @@ evaluated across a track boundary."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9008</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9009</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,7 +96,11 @@ to the <code>variables_where</code> metadata field.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Arguments passed to the underlying function.</p></dd>
+<dd><p>Arguments passed to the underlying function.</p>
+<p>For <code>"speed"</code>, <code>threshold</code> additionally accepts <code>"pooled"</code>: <code>"auto"</code>
+estimates a threshold separately for each group, so every track is
+judged against its own noise; <code>"pooled"</code> estimates one threshold from
+all groups at once, which is steadier when tracks are short.</p></dd>
 
 </dl></div>
     <div class="section level2">

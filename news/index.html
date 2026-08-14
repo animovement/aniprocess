@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9008</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9009</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,12 @@
 <h2 class="pkg-version" data-toc-text="development version" id="aniprocess-development-version">aniprocess (development version)<a class="anchor" aria-label="anchor" href="#aniprocess-development-version"></a></h2>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
-<ul><li><p><code>replace_na()</code> is removed; use <code><a href="../reference/replace_na_with.html">replace_na_with()</a></code>. The old name collided with <code>tidyr::replace_na()</code>, which substitutes a fixed value per column rather than interpolating gaps (<a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a>).</p></li>
+<ul><li>
+<p><code><a href="../reference/filter_ccma.html">filter_ccma()</a></code>, <code><a href="../reference/filter_na_speed.html">filter_na_speed()</a></code>, <code><a href="../reference/filter_na_excursion.html">filter_na_excursion()</a></code>, <code><a href="../reference/filter_na_roi.html">filter_na_roi()</a></code> and <code><a href="../reference/filter_na_confidence.html">filter_na_confidence()</a></code> now take a data frame of coordinate columns rather than an aniframe. Use <code><a href="../reference/filter_across.html">filter_across()</a></code> / <code><a href="../reference/filter_na_across.html">filter_na_across()</a></code> for a whole aniframe, or <code><a href="https://dplyr.tidyverse.org/reference/pick.html" class="external-link">dplyr::pick()</a></code> inside <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">dplyr::mutate()</a></code> for the columns directly. <code><a href="../reference/filter_na_speed.html">filter_na_speed()</a></code> requires <code>time</code> and <code><a href="../reference/filter_na_confidence.html">filter_na_confidence()</a></code> requires <code>confidence</code>, which the <code>*_across()</code> verbs supply from the frame (<a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a>).</p>
+<p>This completes the tier separation: each level now works strictly at its own level, rather than one function trying to serve both.</p>
+</li>
+<li><p><code>filter_na_across(method = "speed")</code> estimates an <code>"auto"</code> threshold separately for each group, so every track is judged against its own noise. Previously <code><a href="../reference/filter_na_speed.html">filter_na_speed()</a></code> on an aniframe pooled the estimate across all groups. Pass <code>threshold = "pooled"</code> for the old behaviour, which is steadier when tracks are short (<a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a>).</p></li>
+<li><p><code>replace_na()</code> is removed; use <code><a href="../reference/replace_na_with.html">replace_na_with()</a></code>. The old name collided with <code>tidyr::replace_na()</code>, which substitutes a fixed value per column rather than interpolating gaps (<a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a>).</p></li>
 <li><p><code>filter_aniframe()</code> is removed; use <code><a href="../reference/filter_across.html">filter_across()</a></code>, which does the same job and additionally reads <code>sampling_rate</code> and the time column from the aniframe’s metadata (<a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a>).</p></li>
 <li>
 <p>Argument names are now consistent across the package, so that a generic wrapper can forward them without special-casing. This is the first step towards the unified interface in <a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a> (<a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a>).</p>

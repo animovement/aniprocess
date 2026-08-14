@@ -3,8 +3,8 @@
 Filters out coordinates that fall outside a specified region of interest
 by setting them to NA. The ROI can be either rectangular/cuboid (defined
 by min/max coordinates) or circular/spherical (defined by center and
-radius). Automatically handles 2D or 3D data based on the spatial
-variables in the aniframe metadata.
+radius). Handles 2D or 3D data according to whether a `z` column is
+present.
 
 ## Usage
 
@@ -28,7 +28,13 @@ filter_na_roi(
 
 - data:
 
-  An aniframe containing spatial coordinates.
+  A data frame with numeric `x` and `y` columns (and optionally `z`) —
+  typically supplied by
+  [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html)
+  inside
+  [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html).
+  To filter a whole aniframe, use
+  [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md).
 
 - x_min, x_max:
 
@@ -53,70 +59,62 @@ filter_na_roi(
 
 ## Value
 
-An aniframe with coordinates outside ROI set to NA.
+`data`, with coordinates outside the ROI set to `NA`.
 
 ## Examples
 
 ``` r
-# Create sample 2D data
-sample_data <- aniframe::aniframe(
-  time = 1:9,
+coords <- data.frame(
   x = rep(c(25, 50, 75), 3),
   y = rep(c(25, 50, 75), each = 3)
 )
 
-# Rectangular ROI example
-sample_data |>
-  filter_na_roi(x_min = 20, x_max = 60, y_min = 20, y_max = 60)
-#> # Keypoints: centroid
-#>   keypoint  time     x     y
-#>   <fct>    <int> <dbl> <dbl>
-#> 1 centroid     1    25    25
-#> 2 centroid     2    50    25
-#> 3 centroid     3    NA    NA
-#> 4 centroid     4    25    50
-#> 5 centroid     5    50    50
-#> 6 centroid     6    NA    NA
-#> 7 centroid     7    NA    NA
-#> 8 centroid     8    NA    NA
-#> 9 centroid     9    NA    NA
+# Rectangular ROI
+filter_na_roi(coords, x_min = 20, x_max = 60, y_min = 20, y_max = 60)
+#>    x  y
+#> 1 25 25
+#> 2 50 25
+#> 3 NA NA
+#> 4 25 50
+#> 5 50 50
+#> 6 NA NA
+#> 7 NA NA
+#> 8 NA NA
+#> 9 NA NA
 
-# Circular ROI example
-sample_data |>
-  filter_na_roi(x_center = 50, y_center = 50, radius = 30)
-#> # Keypoints: centroid
-#>   keypoint  time     x     y
-#>   <fct>    <int> <dbl> <dbl>
-#> 1 centroid     1    NA    NA
-#> 2 centroid     2    50    25
-#> 3 centroid     3    NA    NA
-#> 4 centroid     4    25    50
-#> 5 centroid     5    50    50
-#> 6 centroid     6    75    50
-#> 7 centroid     7    NA    NA
-#> 8 centroid     8    50    75
-#> 9 centroid     9    NA    NA
+# Circular ROI
+filter_na_roi(coords, x_center = 50, y_center = 50, radius = 30)
+#>    x  y
+#> 1 NA NA
+#> 2 50 25
+#> 3 NA NA
+#> 4 25 50
+#> 5 50 50
+#> 6 75 50
+#> 7 NA NA
+#> 8 50 75
+#> 9 NA NA
 
-# 3D cuboid ROI example
-sample_3d <- aniframe::aniframe(
-  time = 1:8,
+# 3D cuboid ROI
+coords_3d <- data.frame(
   x = rep(c(25, 75), 4),
   y = rep(c(25, 75), each = 2, times = 2),
-  z = rep(c(25, 75), each = 4),
-  variables_where = c("x", "y", "z")
+  z = rep(c(25, 75), each = 4)
 )
 
-sample_3d |>
-  filter_na_roi(x_min = 20, x_max = 60, y_min = 20, y_max = 60, z_min = 20, z_max = 60)
-#> # Keypoints: centroid
-#>   keypoint  time     x     y     z
-#>   <fct>    <int> <dbl> <dbl> <dbl>
-#> 1 centroid     1    25    25    25
-#> 2 centroid     2    NA    NA    NA
-#> 3 centroid     3    NA    NA    NA
-#> 4 centroid     4    NA    NA    NA
-#> 5 centroid     5    NA    NA    NA
-#> 6 centroid     6    NA    NA    NA
-#> 7 centroid     7    NA    NA    NA
-#> 8 centroid     8    NA    NA    NA
+filter_na_roi(
+  coords_3d,
+  x_min = 20, x_max = 60,
+  y_min = 20, y_max = 60,
+  z_min = 20, z_max = 60
+)
+#>    x  y  z
+#> 1 25 25 25
+#> 2 NA NA NA
+#> 3 NA NA NA
+#> 4 NA NA NA
+#> 5 NA NA NA
+#> 6 NA NA NA
+#> 7 NA NA NA
+#> 8 NA NA NA
 ```

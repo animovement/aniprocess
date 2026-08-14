@@ -11,7 +11,7 @@ filtered."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9008</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9009</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,9 +71,9 @@ filtered.</p>
 
 
 <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>An aniframe containing a <code>confidence</code> column and spatial columns
-as defined in the metadata's <code>variables_where</code>, or a data frame of numeric
-coordinate columns.</p></dd>
+<dd><p>A data frame of numeric coordinate columns — typically supplied
+by <code><a href="https://dplyr.tidyverse.org/reference/pick.html" class="external-link">dplyr::pick()</a></code> inside <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">dplyr::mutate()</a></code>. To filter a whole aniframe,
+use <code><a href="filter_na_across.html">filter_na_across()</a></code>.</p></dd>
 
 
 <dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
@@ -82,16 +82,13 @@ retain data. Must be a single value between 0 and 1. Default is 0.6.</p></dd>
 
 
 <dt id="arg-confidence">confidence<a class="anchor" aria-label="anchor" href="#arg-confidence"></a></dt>
-<dd><p>Numeric vector of confidence values, one per row.
-Required when <code>data</code> is a coordinate frame. When <code>data</code> is an aniframe
-this defaults to its <code>confidence</code> column.</p></dd>
+<dd><p>Numeric vector of confidence values, one per row.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>The same shape as the input, with spatial values replaced by <code>NA</code>
-where confidence is below the threshold. For an aniframe the
-<code>confidence</code> column is filtered too.</p>
+    <p><code>data</code>, with coordinates replaced by <code>NA</code> where confidence is
+below the threshold.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -107,56 +104,30 @@ as well, filter <code>confidence</code> directly with <code><a href="filter_na_r
     <h2 id="input-shape">Input shape<a class="anchor" aria-label="anchor" href="#input-shape"></a></h2>
 
 
-<p>Returns the same shape it is given.</p><ul><li><p>Given an <strong>aniframe</strong>, the columns named by <code>variables_where</code> are masked,
-along with <code>confidence</code>.</p></li>
-<li><p>Given a <strong>data frame of coordinate columns</strong>, that frame is masked and
-returned — the form to use inside <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">dplyr::mutate()</a></code>:</p></li>
-</ul><p></p><div class="sourceCode r"><pre><code><span><span class="va">data</span> <span class="op">|&gt;</span> <span class="fu">mutate</span><span class="op">(</span></span>
+<p>Takes and returns a frame of coordinate columns, so it composes inside
+<code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">dplyr::mutate()</a></code>:</p>
+<p></p><div class="sourceCode r"><pre><code><span><span class="va">data</span> <span class="op">|&gt;</span> <span class="fu">mutate</span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/filter_na_confidence.html">filter_na_confidence</a></span><span class="op">(</span><span class="fu">pick</span><span class="op">(</span><span class="fu">all_of</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, confidence <span class="op">=</span> <span class="va">confidence</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre><p></p></div>
-<p><code>confidence</code> is not a coordinate, so it is only filtered by the aniframe
-form; the coordinate-frame form returns just the masked coordinates.</p>
+<p>The decision uses all coordinates at once, so this cannot be used with
+<code><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">dplyr::across()</a></code>. <code>confidence</code> is not a coordinate and so is never
+modified here; <code><a href="filter_na_across.html">filter_na_across()</a></code> filters it as well.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># 2D example</span></span></span>
-<span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">aniframe</span><span class="fu">::</span><span class="fu"><a href="http://animovement.dev/aniframe/reference/aniframe.html" class="external-link">aniframe</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  time <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span></span>
-<span class="r-in"><span>  x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span></span>
-<span class="r-in"><span>  y <span class="op">=</span> <span class="fl">6</span><span class="op">:</span><span class="fl">10</span>,</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">coords</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, y <span class="op">=</span> <span class="fl">6</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">filter_na_confidence</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">coords</span>,</span></span>
+<span class="r-in"><span>  threshold <span class="op">=</span> <span class="fl">0.6</span>,</span></span>
 <span class="r-in"><span>  confidence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.7</span>, <span class="fl">0.4</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">filter_na_confidence</span><span class="op">(</span><span class="va">data</span>, threshold <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Keypoints: centroid</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   keypoint  time     x     y confidence</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> centroid     1    <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> centroid     2     2     7        0.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> centroid     3    <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> centroid     4     4     9        0.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> centroid     5     5    10        0.9</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># With z column (3D)</span></span></span>
-<span class="r-in"><span><span class="va">data_3d</span> <span class="op">&lt;-</span> <span class="fu">aniframe</span><span class="fu">::</span><span class="fu"><a href="http://animovement.dev/aniframe/reference/aniframe.html" class="external-link">aniframe</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  time <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span></span>
-<span class="r-in"><span>  x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span></span>
-<span class="r-in"><span>  y <span class="op">=</span> <span class="fl">6</span><span class="op">:</span><span class="fl">10</span>,</span></span>
-<span class="r-in"><span>  z <span class="op">=</span> <span class="fl">11</span><span class="op">:</span><span class="fl">15</span>,</span></span>
-<span class="r-in"><span>  confidence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.7</span>, <span class="fl">0.4</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  variables_where <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"z"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">filter_na_confidence</span><span class="op">(</span><span class="va">data_3d</span>, threshold <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Keypoints: centroid</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   keypoint  time     x     y     z confidence</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> centroid     1    <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> centroid     2     2     7    12        0.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> centroid     3    <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> centroid     4     4     9    14        0.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> centroid     5     5    10    15        0.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    x  y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 NA NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  2  7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 NA NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  4  9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  5 10</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -4,6 +4,40 @@
 
 ### Breaking changes
 
+- [`filter_ccma()`](http://animovement.dev/aniprocess/reference/filter_ccma.md),
+  [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md),
+  [`filter_na_excursion()`](http://animovement.dev/aniprocess/reference/filter_na_excursion.md),
+  [`filter_na_roi()`](http://animovement.dev/aniprocess/reference/filter_na_roi.md)
+  and
+  [`filter_na_confidence()`](http://animovement.dev/aniprocess/reference/filter_na_confidence.md)
+  now take a data frame of coordinate columns rather than an aniframe.
+  Use
+  [`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md)
+  /
+  [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
+  for a whole aniframe, or
+  [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html)
+  inside
+  [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html)
+  for the columns directly.
+  [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)
+  requires `time` and
+  [`filter_na_confidence()`](http://animovement.dev/aniprocess/reference/filter_na_confidence.md)
+  requires `confidence`, which the `*_across()` verbs supply from the
+  frame ([\#30](https://github.com/animovement/aniprocess/issues/30)).
+
+  This completes the tier separation: each level now works strictly at
+  its own level, rather than one function trying to serve both.
+
+- `filter_na_across(method = "speed")` estimates an `"auto"` threshold
+  separately for each group, so every track is judged against its own
+  noise. Previously
+  [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)
+  on an aniframe pooled the estimate across all groups. Pass
+  `threshold = "pooled"` for the old behaviour, which is steadier when
+  tracks are short
+  ([\#30](https://github.com/animovement/aniprocess/issues/30)).
+
 - `replace_na()` is removed; use
   [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md).
   The old name collided with `tidyr::replace_na()`, which substitutes a

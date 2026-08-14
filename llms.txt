@@ -53,15 +53,35 @@ citation("aniprocess")
 
 # Package index
 
+## Work on a whole aniframe
+
+Apply a named method across the spatial columns, within groups.
+
+- [`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md)
+  **\[experimental\]** : Apply a filter across an aniframe's spatial
+  columns
+- [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
+  **\[experimental\]** : Mask values to NA across an aniframe's spatial
+  columns
+- [`replace_na_across()`](http://animovement.dev/aniprocess/reference/replace_na_across.md)
+  **\[experimental\]** : Fill missing values across an aniframe's
+  spatial columns
+
+## Choose a method by name
+
+The same, for a vector or a frame of coordinates inside `mutate()`.
+
+- [`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md)
+  : Apply a filter by name
+- [`filter_na_with()`](http://animovement.dev/aniprocess/reference/filter_na_with.md)
+  : Mask values to NA by a named criterion
+- [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
+  : Fill missing values by a named method
+
 ## Mask unreliable observations
 
 Replace values that fail a quality criterion with `NA`.
 
-- [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
-  **\[experimental\]** : Mask values to NA across an aniframe's spatial
-  columns
-- [`filter_na_with()`](http://animovement.dev/aniprocess/reference/filter_na_with.md)
-  : Mask values to NA by a named criterion
 - [`filter_na_confidence()`](http://animovement.dev/aniprocess/reference/filter_na_confidence.md)
   : Filter low-confidence values in a dataset
 - [`filter_na_excursion()`](http://animovement.dev/aniprocess/reference/filter_na_excursion.md)
@@ -77,11 +97,6 @@ Replace values that fail a quality criterion with `NA`.
 
 Fill gaps by interpolation, carrying forward, or a constant.
 
-- [`replace_na_across()`](http://animovement.dev/aniprocess/reference/replace_na_across.md)
-  **\[experimental\]** : Fill missing values across an aniframe's
-  spatial columns
-- [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
-  : Fill missing values by a named method
 - [`replace_na_linear()`](http://animovement.dev/aniprocess/reference/replace_na_linear.md)
   : Replace Missing Values Using Linear Interpolation
 - [`replace_na_locf()`](http://animovement.dev/aniprocess/reference/replace_na_locf.md)
@@ -97,11 +112,6 @@ Fill gaps by interpolation, carrying forward, or a constant.
 
 Suppress noise while preserving the movement you care about.
 
-- [`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md)
-  **\[experimental\]** : Apply a filter across an aniframe's spatial
-  columns
-- [`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md)
-  : Apply a filter by name
 - [`filter_ccma()`](http://animovement.dev/aniprocess/reference/filter_ccma.md)
   **\[experimental\]** : Apply Curvature-Corrected Moving Average (CCMA)
 - [`filter_gaussian()`](http://animovement.dev/aniprocess/reference/filter_gaussian.md)

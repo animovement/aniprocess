@@ -38,6 +38,11 @@ filter_na_across(
 
   Arguments passed to the underlying function.
 
+  For `"speed"`, `threshold` additionally accepts `"pooled"`: `"auto"`
+  estimates a threshold separately for each group, so every track is
+  judged against its own noise; `"pooled"` estimates one threshold from
+  all groups at once, which is steadier when tracks are short.
+
 ## Value
 
 An aniframe of the same shape, with failing values replaced by `NA`.

@@ -14,9 +14,12 @@ filter_na_confidence(data, threshold = 0.6, confidence = NULL)
 
 - data:
 
-  An aniframe containing a `confidence` column and spatial columns as
-  defined in the metadata's `variables_where`, or a data frame of
-  numeric coordinate columns.
+  A data frame of numeric coordinate columns — typically supplied by
+  [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html)
+  inside
+  [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html).
+  To filter a whole aniframe, use
+  [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md).
 
 - threshold:
 
@@ -25,15 +28,12 @@ filter_na_confidence(data, threshold = 0.6, confidence = NULL)
 
 - confidence:
 
-  Numeric vector of confidence values, one per row. Required when `data`
-  is a coordinate frame. When `data` is an aniframe this defaults to its
-  `confidence` column.
+  Numeric vector of confidence values, one per row.
 
 ## Value
 
-The same shape as the input, with spatial values replaced by `NA` where
-confidence is below the threshold. For an aniframe the `confidence`
-column is filtered too.
+`data`, with coordinates replaced by `NA` where confidence is below the
+threshold.
 
 ## Details
 
@@ -48,60 +48,32 @@ drop them as well, filter `confidence` directly with
 
 ## Input shape
 
-Returns the same shape it is given.
-
-- Given an **aniframe**, the columns named by `variables_where` are
-  masked, along with `confidence`.
-
-- Given a **data frame of coordinate columns**, that frame is masked and
-  returned — the form to use inside
-  [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html):
+Takes and returns a frame of coordinate columns, so it composes inside
+[`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html):
 
     data |> mutate(
       filter_na_confidence(pick(all_of(c("x", "y"))), confidence = confidence)
     )
 
-`confidence` is not a coordinate, so it is only filtered by the aniframe
-form; the coordinate-frame form returns just the masked coordinates.
+The decision uses all coordinates at once, so this cannot be used with
+[`dplyr::across()`](https://dplyr.tidyverse.org/reference/across.html).
+`confidence` is not a coordinate and so is never modified here;
+[`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
+filters it as well.
 
 ## Examples
 
 ``` r
-# 2D example
-data <- aniframe::aniframe(
-  time = 1:5,
-  x = 1:5,
-  y = 6:10,
+coords <- data.frame(x = 1:5, y = 6:10)
+filter_na_confidence(
+  coords,
+  threshold = 0.6,
   confidence = c(0.5, 0.7, 0.4, 0.8, 0.9)
 )
-
-filter_na_confidence(data, threshold = 0.6)
-#> # Keypoints: centroid
-#>   keypoint  time     x     y confidence
-#>   <fct>    <int> <dbl> <dbl>      <dbl>
-#> 1 centroid     1    NA    NA       NA  
-#> 2 centroid     2     2     7        0.7
-#> 3 centroid     3    NA    NA       NA  
-#> 4 centroid     4     4     9        0.8
-#> 5 centroid     5     5    10        0.9
-
-# With z column (3D)
-data_3d <- aniframe::aniframe(
-  time = 1:5,
-  x = 1:5,
-  y = 6:10,
-  z = 11:15,
-  confidence = c(0.5, 0.7, 0.4, 0.8, 0.9),
-  variables_where = c("x", "y", "z")
-)
-
-filter_na_confidence(data_3d, threshold = 0.6)
-#> # Keypoints: centroid
-#>   keypoint  time     x     y     z confidence
-#>   <fct>    <int> <dbl> <dbl> <dbl>      <dbl>
-#> 1 centroid     1    NA    NA    NA       NA  
-#> 2 centroid     2     2     7    12        0.7
-#> 3 centroid     3    NA    NA    NA       NA  
-#> 4 centroid     4     4     9    14        0.8
-#> 5 centroid     5     5    10    15        0.9
+#>    x  y
+#> 1 NA NA
+#> 2  2  7
+#> 3 NA NA
+#> 4  4  9
+#> 5  5 10
 ```
