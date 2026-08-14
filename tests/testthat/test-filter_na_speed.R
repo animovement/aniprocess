@@ -420,3 +420,62 @@ test_that("filter_na_speed is unchanged on ungrouped data", {
     filter_na_speed(d, threshold = 100)$x
   )
 })
+
+# --- coordinate-frame form (#30 step 2) -------------------------------------
+
+test_that("filter_na_speed requires time for a coordinate frame", {
+  expect_error(
+    filter_na_speed(data.frame(x = 1:5, y = 1:5)),
+    "`time` is required"
+  )
+})
+
+test_that("filter_na_speed coordinate-frame form matches the aniframe form", {
+  x <- c(0:3, 500, 5:9)
+  y <- rep(0, 10)
+  tm <- 1:10
+  d <- aniframe::aniframe(
+    time = tm,
+    x = x,
+    y = y,
+    variables_what = character(0)
+  )
+  expect_equal(
+    filter_na_speed(data.frame(x = x, y = y), threshold = 100, time = tm),
+    as.data.frame(filter_na_speed(d, threshold = 100))[, c("x", "y")],
+    ignore_attr = TRUE
+  )
+})
+
+test_that("filter_na_speed works inside mutate via pick()", {
+  set.seed(9)
+  np <- 20
+  d <- aniframe::aniframe(
+    time = rep(seq_len(np), 2),
+    individual = rep(c("a", "b"), each = np),
+    x = c(c(0:8, 500, 10:19), (0:19) + 1000),
+    y = rep(0, 2 * np),
+    variables_what = "individual"
+  ) |>
+    dplyr::group_by(individual)
+
+  via_pick <- dplyr::mutate(
+    d,
+    filter_na_speed(
+      dplyr::pick(dplyr::all_of(c("x", "y"))),
+      threshold = 100,
+      time = time
+    )
+  )
+  expect_equal(
+    as.data.frame(via_pick)[, c("x", "y")],
+    as.data.frame(filter_na_speed(d, threshold = 100))[, c("x", "y")]
+  )
+})
+
+test_that("filter_na_speed rejects a mismatched time length", {
+  expect_error(
+    filter_na_speed(data.frame(x = 1:5, y = 1:5), time = 1:3),
+    "one value per row"
+  )
+})

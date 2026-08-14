@@ -4,14 +4,35 @@
 #' Filters out single-frame outliers based on movement speed. Spatial
 #' coordinates and confidence values at flagged rows are replaced with NA.
 #'
-#' @param data An aniframe containing spatial coordinates and a time column.
+#' @param data An aniframe containing spatial coordinates and a time column,
+#'   or a data frame of numeric coordinate columns.
+#' @param time Numeric vector of time values, one per row. Required when
+#'   `data` is a coordinate frame. When `data` is an aniframe this defaults
+#'   to its `time` column.
 #' @param threshold A numeric value specifying the speed threshold, or "auto".
 #'   - If numeric: Rows whose speed exceeds this value have their spatial and
 #'     confidence values replaced with NA.
 #'   - If "auto": Sets threshold at mean speed + 3 standard deviations.
 #'
-#' @return An aniframe with the same structure as the input, but with spatial
-#'   and confidence values replaced by NA where speed exceeds the threshold.
+#' @return The same shape as the input, with spatial values replaced by NA
+#'   where speed exceeds the threshold. For an aniframe, `confidence` is
+#'   blanked at those rows too.
+#'
+#' @section Input shape:
+#' Returns the same shape it is given.
+#'
+#' * Given an **aniframe**, the columns named by `variables_where` are
+#'   masked, along with `confidence` if present.
+#' * Given a **data frame of coordinate columns**, that frame is masked and
+#'   returned — the form to use inside [dplyr::mutate()]:
+#'
+#' ```r
+#' data |> mutate(filter_na_speed(pick(all_of(c("x", "y"))), time = time))
+#' ```
+#'
+#' Speed depends on all coordinates jointly, so this cannot be used with
+#' [dplyr::across()]. `confidence` is not a coordinate, so it can only be
+#' masked via the aniframe form.
 #'
 #' @details
 #' For each row, two step speeds are computed: the backward step (from the
@@ -52,15 +73,38 @@
 #' filter_na_speed(data, threshold = "auto")
 #'
 #' @export
-filter_na_speed <- function(data, threshold = "auto") {
-  ensure_aniframe_spatial(data)
-  variables_where <- aniframe::get_metadata(data, "variables_where")
+filter_na_speed <- function(data, threshold = "auto", time = NULL) {
+  is_frame <- aniframe::is_aniframe(data)
 
-  if (!"time" %in% names(data)) {
-    cli::cli_abort("Missing required column: {.val time}.")
+  if (is_frame) {
+    ensure_aniframe_spatial(data)
+    variables_where <- aniframe::get_metadata(data, "variables_where")
+
+    if (is.null(time)) {
+      if (!"time" %in% names(data)) {
+        cli::cli_abort("Missing required column: {.val time}.")
+      }
+      time <- data$time
+    }
+  } else {
+    ensure_coords(data)
+    variables_where <- names(data)
+
+    if (is.null(time)) {
+      cli::cli_abort(c(
+        "{.arg time} is required when {.arg data} is a coordinate frame.",
+        "i" = "Inside {.fn dplyr::mutate}, pass the time column: {.code filter_na_speed(pick(all_of(...)), time = time)}."
+      ))
+    }
   }
-  if (!is.numeric(data$time)) {
-    cli::cli_abort("Column {.val time} must be numeric.")
+
+  if (!is.numeric(time)) {
+    cli::cli_abort("{.arg time} must be numeric.")
+  }
+  if (length(time) != nrow(data)) {
+    cli::cli_abort(
+      "{.arg time} must have one value per row ({nrow(data)}); got {length(time)}."
+    )
   }
 
   # Check threshold input
@@ -74,16 +118,24 @@ filter_na_speed <- function(data, threshold = "auto") {
     cli::cli_abort("{.arg threshold} must be a single numeric value.")
   }
 
-  # Speed is computed inside mutate() so that grouping is respected: a step
-  # is never formed between the last row of one track and the first row of
-  # the next. Works unchanged on ungrouped data, which is simply one group.
-  speed <- dplyr::mutate(
-    data,
-    .aniprocess_speed = calculate_step_speed(
-      dplyr::pick(dplyr::all_of(variables_where)),
-      .data$time
-    )
-  )$.aniprocess_speed
+  if (is_frame) {
+    # Speed is computed inside mutate() so that grouping is respected: a
+    # step is never formed between the last row of one track and the first
+    # row of the next. `time` is attached as a column rather than passed as
+    # a vector, so that it is sliced per group alongside the coordinates.
+    work <- data
+    work$.aniprocess_time <- time
+    speed <- dplyr::mutate(
+      work,
+      .aniprocess_speed = calculate_step_speed(
+        dplyr::pick(dplyr::all_of(variables_where)),
+        .data$.aniprocess_time
+      )
+    )$.aniprocess_speed
+  } else {
+    # The caller has already decided which rows belong together.
+    speed <- calculate_step_speed(data, time)
+  }
 
   # Determine threshold if auto. Estimated from within-track speeds only,
   # since no cross-track step ever enters `speed`.

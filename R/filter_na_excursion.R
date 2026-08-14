@@ -70,14 +70,28 @@ filter_na_excursion <- function(
   return_sd = 1,
   by_axis = TRUE
 ) {
-  ensure_aniframe_spatial(data)
-  variables_where <- aniframe::get_metadata(data, "variables_where")
+  is_frame <- aniframe::is_aniframe(data)
+  if (is_frame) {
+    ensure_aniframe_spatial(data)
+    variables_where <- aniframe::get_metadata(data, "variables_where")
+  } else {
+    ensure_coords(data)
+    variables_where <- names(data)
+  }
 
   for (sd_arg in c("outlier_sd", "return_sd")) {
     val <- get(sd_arg)
     if (!is.numeric(val) || length(val) != 1L || val <= 0) {
       cli::cli_abort("{.arg {sd_arg}} must be a single positive number.")
     }
+  }
+
+  # Given a coordinate frame, the caller has already decided which rows
+  # belong together, so the state machine runs over it directly.
+  if (!is_frame) {
+    flagged <- excursion_mask(data, outlier_sd, return_sd, by_axis)
+    data[flagged, ] <- NA_real_
+    return(data)
   }
 
   # The mask is built inside mutate() so that each group's state machine

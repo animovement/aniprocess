@@ -58,8 +58,21 @@ filter_na_roi <- function(
   z_center = NULL,
   radius = NULL
 ) {
-  ensure_aniframe_spatial(data)
-  variables_where <- aniframe::get_metadata(data, "variables_where")
+  is_frame <- aniframe::is_aniframe(data)
+  if (is_frame) {
+    ensure_aniframe_spatial(data)
+    variables_where <- aniframe::get_metadata(data, "variables_where")
+  } else {
+    ensure_coords(data)
+    variables_where <- names(data)
+  }
+  missing_axes <- setdiff(c("x", "y"), variables_where)
+  if (length(missing_axes) > 0L) {
+    cli::cli_abort(c(
+      "ROI filtering needs coordinate{?s} {.val {missing_axes}}.",
+      "i" = "Got {.val {variables_where}}."
+    ))
+  }
   has_z <- "z" %in% variables_where
 
   # Check for rectangular vs circular ROI

@@ -22,3 +22,39 @@ ensure_replace_na_args <- function(x, min_gap, max_gap) {
   }
   invisible(NULL)
 }
+
+#' Validate a coordinate frame.
+#'
+#' The vector-level form of the aniframe-aware filters accepts a data frame
+#' of coordinate columns — typically supplied by [dplyr::pick()] inside
+#' [dplyr::mutate()]. This checks that it is a data frame with at least one
+#' column and that every column is numeric.
+#'
+#' @param coords The value to validate.
+#' @param arg Argument name to use in error messages.
+#' @param call Environment used for the error's call context.
+#'
+#' @return Invisibly `NULL`. Called for side effects (errors).
+#' @keywords internal
+ensure_coords <- function(coords, arg = "data", call = rlang::caller_env()) {
+  if (!is.data.frame(coords)) {
+    cli::cli_abort(
+      c(
+        "{.arg {arg}} must be an aniframe or a data frame of coordinates.",
+        "i" = "Inside {.fn dplyr::mutate}, use {.code pick(all_of(...))}."
+      ),
+      call = call
+    )
+  }
+  if (ncol(coords) == 0L) {
+    cli::cli_abort("{.arg {arg}} has no columns.", call = call)
+  }
+  non_numeric <- names(coords)[!vapply(coords, is.numeric, logical(1))]
+  if (length(non_numeric) > 0L) {
+    cli::cli_abort(
+      "Coordinate column{?s} {.val {non_numeric}} must be numeric.",
+      call = call
+    )
+  }
+  invisible(NULL)
+}

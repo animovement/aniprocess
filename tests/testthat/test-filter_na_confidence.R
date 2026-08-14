@@ -159,7 +159,7 @@ test_that("filter_na_confidence preserves existing NAs in z", {
   expect_equal(result$z[4], 12)
 })
 
-test_that("filter_na_confidence preserves existing NAs in confidence", {
+test_that("filter_na_confidence leaves rows with a missing confidence alone", {
   data <- data.frame(
     time = 1:4,
     x = 1:4,
@@ -168,12 +168,35 @@ test_that("filter_na_confidence preserves existing NAs in confidence", {
   ) |>
     aniframe::as_aniframe()
 
-  result <- filter_na_confidence(data, threshold = 0.6)
+  result <- suppressWarnings(filter_na_confidence(data, threshold = 0.6))
 
-  # Row with NA confidence should have NA x, y, confidence
-  expect_true(is.na(result$x[2]))
-  expect_true(is.na(result$y[2]))
+  # A missing confidence means "not scored", not "scored badly"
+  expect_false(is.na(result$x[2]))
+  expect_false(is.na(result$y[2]))
+  expect_equal(result$x[2], 2)
+  # It was NA on the way in, so it is still NA on the way out
   expect_true(is.na(result$confidence[2]))
+  # Row 1 is genuinely below threshold and is still masked
+  expect_true(is.na(result$x[1]))
+})
+
+test_that("filter_na_confidence warns about missing confidence values", {
+  # The warning is rate-limited so a grouped mutate() does not emit one per
+  # group; reset the counter so this test sees it regardless of run order.
+  rlang::reset_warning_verbosity("aniprocess_confidence_na")
+
+  data <- data.frame(
+    time = 1:4,
+    x = 1:4,
+    y = 5:8,
+    confidence = c(0.5, NA, NA, 0.9)
+  ) |>
+    aniframe::as_aniframe()
+
+  expect_warning(
+    filter_na_confidence(data, threshold = 0.6),
+    "2 confidence values are missing"
+  )
 })
 
 test_that("filter_na_confidence handles all NAs in confidence", {
@@ -185,11 +208,11 @@ test_that("filter_na_confidence handles all NAs in confidence", {
   ) |>
     aniframe::as_aniframe()
 
-  result <- filter_na_confidence(data, threshold = 0.6)
+  result <- suppressWarnings(filter_na_confidence(data, threshold = 0.6))
 
-  # All rows should become NA since confidence is all NA
-  expect_true(all(is.na(result$x)))
-  expect_true(all(is.na(result$y)))
+  # Nothing was scored, so nothing is filtered
+  expect_equal(result$x, 1:3)
+  expect_equal(result$y, 4:6)
   expect_true(all(is.na(result$confidence)))
 })
 
@@ -393,5 +416,68 @@ test_that("filter_na_confidence validates confidence column is numeric", {
   expect_error(
     filter_na_confidence(data),
     "confidence.*must be numeric"
+  )
+})
+
+# --- coordinate-frame form (#30 step 2) -------------------------------------
+
+test_that("filter_na_confidence requires confidence for a coordinate frame", {
+  expect_error(
+    filter_na_confidence(data.frame(x = 1:5, y = 1:5)),
+    "`confidence` is required"
+  )
+})
+
+test_that("filter_na_confidence coordinate-frame form masks the coordinates", {
+  coords <- data.frame(x = c(1, 2, 3, 4), y = c(5, 6, 7, 8))
+  conf <- c(0.9, 0.2, NA, 0.7)
+
+  res <- suppressWarnings(
+    filter_na_confidence(coords, threshold = 0.6, confidence = conf)
+  )
+
+  # Only the row below threshold is blanked; the missing one is left alone
+  expect_equal(which(is.na(res$x)), 2L)
+  expect_equal(which(is.na(res$y)), 2L)
+  # `confidence` is not a coordinate, so nothing is added to the output
+  expect_equal(names(res), c("x", "y"))
+})
+
+test_that("filter_na_confidence coordinate-frame form matches the aniframe form", {
+  conf <- c(0.9, 0.2, NA, 0.7)
+  d <- aniframe::aniframe(
+    time = 1:4,
+    x = c(1, 2, 3, 4),
+    y = c(5, 6, 7, 8),
+    confidence = conf
+  )
+  expect_equal(
+    filter_na_confidence(
+      data.frame(x = c(1, 2, 3, 4), y = c(5, 6, 7, 8)),
+      threshold = 0.6,
+      confidence = conf
+    ),
+    as.data.frame(filter_na_confidence(d, threshold = 0.6))[, c("x", "y")],
+    ignore_attr = TRUE
+  )
+})
+
+test_that("filter_na_confidence rejects a mismatched confidence length", {
+  expect_error(
+    filter_na_confidence(
+      data.frame(x = 1:5, y = 1:5),
+      confidence = c(0.9, 0.8)
+    ),
+    "one value per row"
+  )
+})
+
+test_that("filter_na_confidence rejects a non-numeric confidence", {
+  expect_error(
+    filter_na_confidence(
+      data.frame(x = 1:5, y = 1:5),
+      confidence = letters[1:5]
+    ),
+    "must be numeric"
   )
 })

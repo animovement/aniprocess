@@ -146,3 +146,36 @@ test_that("every filter rejects an invalid keep_na", {
     "must be a single"
   )
 })
+
+# --- ensure_coords ----------------------------------------------------------
+
+test_that("ensure_coords accepts a numeric data frame", {
+  expect_null(ensure_coords(data.frame(x = 1:3, y = 4:6)))
+})
+
+test_that("ensure_coords rejects non-data-frame input", {
+  expect_error(ensure_coords(1:5), "aniframe or a data frame")
+  expect_error(ensure_coords("a"), "aniframe or a data frame")
+  expect_error(ensure_coords(NULL), "aniframe or a data frame")
+})
+
+test_that("ensure_coords rejects a frame with no columns", {
+  expect_error(ensure_coords(data.frame()), "has no columns")
+  # and through a public entry point
+  expect_error(filter_na_excursion(data.frame()), "has no columns")
+})
+
+test_that("ensure_coords names the non-numeric columns", {
+  expect_error(
+    ensure_coords(data.frame(x = 1:3, y = letters[1:3])),
+    "must be numeric"
+  )
+  expect_error(
+    ensure_coords(data.frame(x = letters[1:3], y = letters[1:3])),
+    "must be numeric"
+  )
+})
+
+test_that("ensure_coords uses the supplied argument name", {
+  expect_error(ensure_coords(1:5, arg = "coords"), "`coords` must be")
+})

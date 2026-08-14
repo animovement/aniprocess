@@ -360,12 +360,29 @@ test_that("filter_na_roi errors when mixing rectangular and circular params", {
   )
 })
 
-test_that("filter_na_roi validates data is an aniframe", {
-  data <- data.frame(x = c(1, 2, 3), y = c(1, 2, 3))
+test_that("filter_na_roi rejects input that is neither aniframe nor data frame", {
+  expect_error(filter_na_roi(1:5, x_min = 0), "aniframe or a data frame")
+})
 
+test_that("filter_na_roi coordinate-frame form matches the aniframe form", {
+  coords <- data.frame(x = c(0, 10, 20), y = c(0, 10, 20))
+  d <- aniframe::aniframe(
+    time = 1:3,
+    x = coords$x,
+    y = coords$y,
+    variables_what = character(0)
+  )
+  expect_equal(
+    filter_na_roi(coords, x_min = 5, x_max = 15),
+    as.data.frame(filter_na_roi(d, x_min = 5, x_max = 15))[, c("x", "y")],
+    ignore_attr = TRUE
+  )
+})
+
+test_that("filter_na_roi needs x and y coordinates", {
   expect_error(
-    filter_na_roi(data, x_min = 0),
-    class = "rlang_error"
+    filter_na_roi(data.frame(a = 1:3, b = 1:3), x_min = 0),
+    "needs coordinate"
   )
 })
 

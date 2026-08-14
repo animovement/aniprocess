@@ -4,10 +4,11 @@
 \alias{filter_na_speed}
 \title{Filter values by speed threshold}
 \usage{
-filter_na_speed(data, threshold = "auto")
+filter_na_speed(data, threshold = "auto", time = NULL)
 }
 \arguments{
-\item{data}{An aniframe containing spatial coordinates and a time column.}
+\item{data}{An aniframe containing spatial coordinates and a time column,
+or a data frame of numeric coordinate columns.}
 
 \item{threshold}{A numeric value specifying the speed threshold, or "auto".
 \itemize{
@@ -15,10 +16,15 @@ filter_na_speed(data, threshold = "auto")
 confidence values replaced with NA.
 \item If "auto": Sets threshold at mean speed + 3 standard deviations.
 }}
+
+\item{time}{Numeric vector of time values, one per row. Required when
+\code{data} is a coordinate frame. When \code{data} is an aniframe this defaults
+to its \code{time} column.}
 }
 \value{
-An aniframe with the same structure as the input, but with spatial
-and confidence values replaced by NA where speed exceeds the threshold.
+The same shape as the input, with spatial values replaced by NA
+where speed exceeds the threshold. For an aniframe, \code{confidence} is
+blanked at those rows too.
 }
 \description{
 Filters out single-frame outliers based on movement speed. Spatial
@@ -48,6 +54,24 @@ plus three standard deviations, pooled across groups. Because no
 cross-track step is ever formed, the estimate uses within-track speeds
 only.
 }
+\section{Input shape}{
+
+Returns the same shape it is given.
+\itemize{
+\item Given an \strong{aniframe}, the columns named by \code{variables_where} are
+masked, along with \code{confidence} if present.
+\item Given a \strong{data frame of coordinate columns}, that frame is masked and
+returned — the form to use inside \code{\link[dplyr:mutate]{dplyr::mutate()}}:
+}
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{data |> mutate(filter_na_speed(pick(all_of(c("x", "y"))), time = time))
+}\if{html}{\out{</div>}}
+
+Speed depends on all coordinates jointly, so this cannot be used with
+\code{\link[dplyr:across]{dplyr::across()}}. \code{confidence} is not a coordinate, so it can only be
+masked via the aniframe form.
+}
+
 \examples{
 data <- aniframe::aniframe(
   time = 1:5,

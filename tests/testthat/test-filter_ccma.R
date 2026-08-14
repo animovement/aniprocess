@@ -187,9 +187,42 @@ test_that("filter_ccma uniform kernel runs and returns expected length", {
   expect_false(any(is.na(res$x)))
 })
 
-test_that("filter_ccma rejects non-aniframe input", {
-  d <- data.frame(time = 1:5, x = 1:5, y = 1:5)
-  expect_error(filter_ccma(d), class = "rlang_error")
+test_that("filter_ccma rejects input that is neither aniframe nor data frame", {
+  expect_error(filter_ccma(1:5), "aniframe or a data frame")
+  expect_error(filter_ccma("a"), "aniframe or a data frame")
+})
+
+test_that("filter_ccma accepts a coordinate frame and returns one", {
+  t <- seq(0, 2 * pi, length.out = 60)
+  coords <- data.frame(x = cos(t), y = sin(t))
+  res <- filter_ccma(coords)
+
+  expect_s3_class(res, "data.frame")
+  expect_false(inherits(res, "aniframe"))
+  expect_equal(names(res), c("x", "y"))
+  expect_equal(nrow(res), 60)
+})
+
+test_that("filter_ccma coordinate-frame form matches the aniframe form", {
+  t <- seq(0, 2 * pi, length.out = 60)
+  d <- aniframe::aniframe(
+    time = seq_len(60),
+    x = cos(t),
+    y = sin(t),
+    variables_what = character(0)
+  )
+  expect_equal(
+    filter_ccma(data.frame(x = cos(t), y = sin(t))),
+    as.data.frame(filter_ccma(d))[, c("x", "y")],
+    ignore_attr = TRUE
+  )
+})
+
+test_that("filter_ccma rejects a coordinate frame with a non-numeric column", {
+  expect_error(
+    filter_ccma(data.frame(x = 1:5, y = letters[1:5])),
+    "must be numeric"
+  )
 })
 
 test_that("filter_ccma errors when a variables_where column is missing", {
@@ -312,5 +345,21 @@ test_that("filter_ccma smooths each group independently", {
     as.data.frame(filter_ccma(grouped))[, c("x", "y")],
     rbind(alone(a), alone(b)),
     ignore_attr = TRUE
+  )
+})
+
+test_that("filter_ccma reports where the coordinate count came from", {
+  # aniframe: the count comes from the variables_where metadata field
+  d <- aniframe::aniframe(
+    time = 1:6,
+    x = as.numeric(1:6),
+    variables_what = character(0)
+  )
+  expect_error(filter_ccma(d), "variables_where")
+
+  # coordinate frame: the count comes from the columns
+  expect_error(
+    filter_ccma(data.frame(x = as.numeric(1:6))),
+    "columns of"
   )
 })
