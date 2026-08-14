@@ -117,6 +117,13 @@
   Per-row arguments such as `time` name a *column* at this level rather
   than taking a vector, since each group needs its own slice.
 
+- [`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md)
+  names this argument `on_deltas` rather than `use_derivatives`: the
+  values are differences, not derivatives — nothing is divided by a time
+  step.
+  [`filter_aniframe()`](http://animovement.dev/aniprocess/reference/filter_aniframe.md)
+  keeps the old name, and both share one implementation.
+
 - New
   [`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md),
   [`filter_na_with()`](http://animovement.dev/aniprocess/reference/filter_na_with.md)
@@ -224,6 +231,16 @@
 
 ### Bug fixes
 
+- Differencing filters no longer lose the first sample or shift the
+  series. `filter_aniframe(use_derivatives = TRUE)` differenced each
+  column, filtered, then accumulated with
+  [`cumsum()`](https://rdrr.io/r/base/cumsum.html) starting from zero —
+  so the re-integrated series was offset by its own starting value and
+  began with `NA`. With a filter that does nothing the round trip should
+  be lossless; `c(10, 11, 13, 16, 20)` came back as
+  `c(NA, 1, 3, 6, 10)`. It now re-integrates from the original starting
+  value ([\#30](https://github.com/animovement/aniprocess/issues/30)).
+
 - [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)
   now computes speed within each group of a grouped aniframe. It
   previously worked on the raw column vectors, so a step was formed
@@ -235,6 +252,7 @@
   false positives, because per-row speed is the minimum of the backward
   and forward step and a track boundary is one-sided
   ([\#37](https://github.com/animovement/aniprocess/issues/37)).
+
 - [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)
   no longer blanks rows belonging to groups shorter than two rows. Such
   a group has no step, so its speed is `NA`, and

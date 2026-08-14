@@ -13,7 +13,7 @@ field, within the frame's existing grouping."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9006</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9007</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,7 +72,7 @@ field, within the frame's existing grouping.</p>
 <span>    <span class="st">"highpass"</span>, <span class="st">"lowpass_fft"</span>, <span class="st">"highpass_fft"</span>, <span class="st">"kalman"</span>, <span class="st">"kalman_irregular"</span>, <span class="st">"ccma"</span><span class="op">)</span>,</span>
 <span>  variables <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span>,</span>
-<span>  use_derivatives <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  on_deltas <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -100,11 +100,15 @@ Defaults to the <code>variables_where</code> metadata field.</p></dd>
 <dd><p>Arguments passed to the underlying filter.</p></dd>
 
 
-<dt id="arg-use-derivatives">use_derivatives<a class="anchor" aria-label="anchor" href="#arg-use-derivatives"></a></dt>
+<dt id="arg-on-deltas">on_deltas<a class="anchor" aria-label="anchor" href="#arg-on-deltas"></a></dt>
 <dd><p>If <code>TRUE</code>, difference each column, filter the
-differences, and re-integrate. For trackball data, where the raw
-measurements are per-frame displacements and the coordinates were
-integrated from them, smoothing belongs on the displacements.</p></dd>
+differences, and re-integrate from the original starting value. For
+trackball data, where the raw measurements are per-frame displacements
+and the coordinates were integrated from them, smoothing belongs on
+the displacements rather than on the integrated positions.</p>
+<p>A <code>NA</code> among the filtered differences counts as no movement when
+accumulating, and is restored as <code>NA</code> at its own position, so one
+missing step does not blank the rest of the series.</p></dd>
 
 </dl></div>
     <div class="section level2">

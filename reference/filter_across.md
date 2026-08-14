@@ -15,7 +15,7 @@ filter_across(
     "highpass", "lowpass_fft", "highpass_fft", "kalman", "kalman_irregular", "ccma"),
   variables = NULL,
   ...,
-  use_derivatives = FALSE
+  on_deltas = FALSE
 )
 ```
 
@@ -41,12 +41,17 @@ filter_across(
 
   Arguments passed to the underlying filter.
 
-- use_derivatives:
+- on_deltas:
 
   If `TRUE`, difference each column, filter the differences, and
-  re-integrate. For trackball data, where the raw measurements are
-  per-frame displacements and the coordinates were integrated from them,
-  smoothing belongs on the displacements.
+  re-integrate from the original starting value. For trackball data,
+  where the raw measurements are per-frame displacements and the
+  coordinates were integrated from them, smoothing belongs on the
+  displacements rather than on the integrated positions.
+
+  A `NA` among the filtered differences counts as no movement when
+  accumulating, and is restored as `NA` at its own position, so one
+  missing step does not blank the rest of the series.
 
 ## Value
 
