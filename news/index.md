@@ -1,8 +1,28 @@
 # Changelog
 
-## aniprocess (development version)
+## aniprocess 0.3.0
 
 ### Breaking changes
+
+- The interface is now split into three tiers
+  ([\#30](https://github.com/animovement/aniprocess/issues/30)). The
+  individual functions work on a vector or a frame of coordinate
+  columns, `*_with()` selects a method by name, and `*_across()` applies
+  one to a whole aniframe.
+
+  ``` r
+
+  filter_across(data, "lowpass", cutoff_freq = 5)
+  filter_with(x, "gaussian", sigma = 2)
+  data |> mutate(filter_ccma(pick(all_of(c("x", "y")))))
+  ```
+
+- `filter_aniframe()` is removed — use
+  [`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md).
+
+- `replace_na()` is removed — use
+  [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md),
+  which does not collide with `tidyr::replace_na()`.
 
 - [`filter_ccma()`](http://animovement.dev/aniprocess/reference/filter_ccma.md),
   [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md),
@@ -10,350 +30,74 @@
   [`filter_na_roi()`](http://animovement.dev/aniprocess/reference/filter_na_roi.md)
   and
   [`filter_na_confidence()`](http://animovement.dev/aniprocess/reference/filter_na_confidence.md)
-  now take a data frame of coordinate columns rather than an aniframe.
-  Use
+  now take a frame of coordinate columns rather than an aniframe. Use
   [`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md)
   /
   [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
-  for a whole aniframe, or
-  [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html)
-  inside
-  [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html)
-  for the columns directly.
-  [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)
-  requires `time` and
-  [`filter_na_confidence()`](http://animovement.dev/aniprocess/reference/filter_na_confidence.md)
-  requires `confidence`, which the `*_across()` verbs supply from the
-  frame ([\#30](https://github.com/animovement/aniprocess/issues/30)).
+  for a whole aniframe.
 
-  This completes the tier separation: each level now works strictly at
-  its own level, rather than one function trying to serve both.
+- Filters preserve gaps by default: `keep_na` is `TRUE` everywhere
+  except the Kalman filters, where inferring across gaps is the point.
+  Pass `keep_na = FALSE` for the old behaviour
+  ([\#38](https://github.com/animovement/aniprocess/issues/38)).
+
+- Argument names are consistent across the package: `window_width`
+  replaces `window_size` in
+  [`filter_sgolay()`](http://animovement.dev/aniprocess/reference/filter_sgolay.md),
+  [`find_peaks()`](http://animovement.dev/aniprocess/reference/find_peaks.md)
+  and
+  [`find_troughs()`](http://animovement.dev/aniprocess/reference/find_troughs.md);
+  `x` replaces `measurements` in the Kalman filters;
+  `min_value`/`max_value` replace `min`/`max` in
+  [`filter_na_range()`](http://animovement.dev/aniprocess/reference/filter_na_range.md).
+
+- [`filter_na_confidence()`](http://animovement.dev/aniprocess/reference/filter_na_confidence.md)
+  no longer masks rows whose confidence is `NA`, and warns instead — a
+  missing score means *not assessed*, not *poor*.
 
 - `filter_na_across(method = "speed")` estimates an `"auto"` threshold
-  separately for each group, so every track is judged against its own
-  noise. Previously
-  [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)
-  on an aniframe pooled the estimate across all groups. Pass
-  `threshold = "pooled"` for the old behaviour, which is steadier when
-  tracks are short
-  ([\#30](https://github.com/animovement/aniprocess/issues/30)).
-
-- `replace_na()` is removed; use
-  [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md).
-  The old name collided with `tidyr::replace_na()`, which substitutes a
-  fixed value per column rather than interpolating gaps
-  ([\#30](https://github.com/animovement/aniprocess/issues/30)).
-
-- `filter_aniframe()` is removed; use
-  [`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md),
-  which does the same job and additionally reads `sampling_rate` and the
-  time column from the aniframe’s metadata
-  ([\#30](https://github.com/animovement/aniprocess/issues/30)).
-
-- Argument names are now consistent across the package, so that a
-  generic wrapper can forward them without special-casing. This is the
-  first step towards the unified interface in
-  [\#30](https://github.com/animovement/aniprocess/issues/30)
-  ([\#30](https://github.com/animovement/aniprocess/issues/30)).
-
-  - `window_size` is now `window_width` in
-    [`filter_sgolay()`](http://animovement.dev/aniprocess/reference/filter_sgolay.md),
-    [`find_peaks()`](http://animovement.dev/aniprocess/reference/find_peaks.md)
-    and
-    [`find_troughs()`](http://animovement.dev/aniprocess/reference/find_troughs.md),
-    matching
-    [`filter_gaussian()`](http://animovement.dev/aniprocess/reference/filter_gaussian.md),
-    [`filter_rollmean()`](http://animovement.dev/aniprocess/reference/filter_rollmean.md),
-    [`filter_rollmedian()`](http://animovement.dev/aniprocess/reference/filter_rollmedian.md)
-    and
-    [`filter_triangular()`](http://animovement.dev/aniprocess/reference/filter_triangular.md).
-  - The first argument of
-    [`filter_kalman()`](http://animovement.dev/aniprocess/reference/filter_kalman.md)
-    and
-    [`filter_kalman_irregular()`](http://animovement.dev/aniprocess/reference/filter_kalman_irregular.md)
-    is now `x` rather than `measurements`. They were the only
-    vector-level functions whose first argument was not `x`, which
-    prevented their use with
-    [`dplyr::across()`](https://dplyr.tidyverse.org/reference/across.html).
-  - [`filter_na_range()`](http://animovement.dev/aniprocess/reference/filter_na_range.md)
-    takes `min_value`/`max_value` rather than `min`/`max`, which
-    shadowed the base functions of those names and did not match the
-    `min_gap`/`max_gap`/`min_obs` convention used elsewhere.
-
-  No deprecation cycle: nothing in the animovement org passes these
-  names, verified across `aniread`, `animetric`, `aniframe`, `anicheck`,
-  `anispace`, `anivis` and the `animovement` meta-package.
-
-- Filters no longer fill gaps by default. `keep_na` now defaults to
-  `TRUE` in
-  [`filter_sgolay()`](http://animovement.dev/aniprocess/reference/filter_sgolay.md),
-  [`filter_lowpass()`](http://animovement.dev/aniprocess/reference/filter_lowpass.md),
-  [`filter_highpass()`](http://animovement.dev/aniprocess/reference/filter_highpass.md),
-  [`filter_lowpass_fft()`](http://animovement.dev/aniprocess/reference/filter_lowpass_fft.md),
-  [`filter_highpass_fft()`](http://animovement.dev/aniprocess/reference/filter_highpass_fft.md)
-  and
-  [`filter_ccma()`](http://animovement.dev/aniprocess/reference/filter_ccma.md),
-  so positions that were `NA` in the input are `NA` in the output.
-  Previously the default was `FALSE`, which meant genuinely-missing
-  stretches came back as smoothed interpolations with no indication that
-  any interpolation had happened. Pass `keep_na = FALSE` for the old
-  behaviour
-  ([\#38](https://github.com/animovement/aniprocess/issues/38)).
-
-- `keep_na` is now available on every filter.
-  [`filter_gaussian()`](http://animovement.dev/aniprocess/reference/filter_gaussian.md),
-  [`filter_rollmean()`](http://animovement.dev/aniprocess/reference/filter_rollmean.md),
-  [`filter_rollmedian()`](http://animovement.dev/aniprocess/reference/filter_rollmedian.md)
-  and
-  [`filter_triangular()`](http://animovement.dev/aniprocess/reference/filter_triangular.md)
-  gain the argument, defaulting to `TRUE`; they previously filled gaps —
-  fully or partially — with no way to opt out
-  ([\#38](https://github.com/animovement/aniprocess/issues/38)).
-
-- [`filter_kalman()`](http://animovement.dev/aniprocess/reference/filter_kalman.md)
-  and
-  [`filter_kalman_irregular()`](http://animovement.dev/aniprocess/reference/filter_kalman_irregular.md)
-  also gain `keep_na`, but default to `FALSE`. A Kalman filter’s predict
-  step is designed to carry the state estimate through missing
-  observations, so inferring across gaps is intended rather than
-  accidental. Pass `keep_na = TRUE` to leave gaps as gaps
-  ([\#38](https://github.com/animovement/aniprocess/issues/38)).
+  per group. Pass `threshold = "pooled"` for a single estimate across
+  all groups, which is steadier when tracks are short.
 
 ### New features
 
 - New
   [`filter_one_euro()`](http://animovement.dev/aniprocess/reference/filter_one_euro.md):
   the One Euro filter (Casiez, Roussel & Vogel, 2012), an adaptive
-  low-pass whose cutoff rises with the estimated speed of the signal. A
-  fixed cutoff forces one compromise on a whole recording — low enough
-  to stop jitter while the animal is still is too low to track it
-  moving. Making the cutoff a function of speed removes that trade-off,
-  tuned with `min_cutoff` for the still end and `beta` for the moving
-  end ([\#35](https://github.com/animovement/aniprocess/issues/35)).
-
-  Available as `"one_euro"` through
-  [`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md)
-  and
-  [`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md),
-  which supplies `sampling_rate` from the aniframe’s metadata.
-
-- New
-  [`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md),
-  [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
-  and
-  [`replace_na_across()`](http://animovement.dev/aniprocess/reference/replace_na_across.md):
-  the aniframe-level tier of the interface, applying a named method to
-  the columns given by `variables_where` within the frame’s existing
-  grouping
-  ([\#30](https://github.com/animovement/aniprocess/issues/30)).
-
-  ``` r
-
-  filter_across(data, "lowpass", cutoff_freq = 5)          # sampling_rate from metadata
-  filter_across(data, "gaussian", variables = c(x, y), sigma = 2)
-  filter_na_across(data, "speed", threshold = "auto")      # time from variables_when
-  replace_na_across(data, "linear", max_gap = 5)
-  ```
-
-  They do more than loop over columns. `variables` is a tidyselect
-  expression defaulting to `variables_where`. Parameters the aniframe
-  already knows are filled in: `sampling_rate` for the filters that need
-  it, and the time column from `variables_when` for `"speed"` and
-  `"kalman_irregular"`. Multivariate methods — `"ccma"`, and everything
-  except `"range"` in
-  [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
-  — are applied jointly rather than column by column. And
-  [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
-  blanks `confidence` on the rows it masked, which the vector-level
-  functions cannot do because `confidence` is not a coordinate.
-
-  Per-row arguments such as `time` name a *column* at this level rather
-  than taking a vector, since each group needs its own slice.
-
-- [`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md)
-  names this argument `on_deltas` rather than `use_derivatives`: the
-  values are differences, not derivatives — nothing is divided by a time
-  step. `filter_aniframe()` keeps the old name, and both share one
-  implementation.
-
-- New
-  [`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md),
-  [`filter_na_with()`](http://animovement.dev/aniprocess/reference/filter_na_with.md)
-  and
-  [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md):
-  generic entry points that select a method by name rather than by
-  choosing a function, which is the third step towards the unified
-  interface in
-  [\#30](https://github.com/animovement/aniprocess/issues/30)
-  ([\#30](https://github.com/animovement/aniprocess/issues/30)).
-
-  ``` r
-
-  filter_with(x, "gaussian", sigma = 2)
-  filter_na_with(coords, "speed", threshold = 10, time = time)
-  replace_na_with(x, "linear", max_gap = 3)
-  ```
-
-  All three preserve shape: a vector gives a vector, a data frame of
-  columns gives a data frame. Univariate methods are applied column by
-  column, so
-  [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
-  and most of
-  [`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md)
-  work with
-  [`dplyr::across()`](https://dplyr.tidyverse.org/reference/across.html)
-  as well as
-  [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html).
-  The multivariate methods — `"ccma"` in
-  [`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md),
-  and everything except `"range"` in
-  [`filter_na_with()`](http://animovement.dev/aniprocess/reference/filter_na_with.md)
-  — require a data frame and say so when handed a bare vector.
-
-  They reject an aniframe. An aniframe *is* a data frame, so without
-  that guard it would be filtered column by column, `time` and identity
-  columns included.
-
-- [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
-  replaces `replace_na()`, which collides with `tidyr::replace_na()` — a
-  function that does something different (it substitutes a fixed value
-  per column rather than interpolating gaps).
-
-- The aniframe-aware filters now accept a data frame of coordinate
-  columns as well as an aniframe, and return whichever shape they were
-  given. This makes them usable inside
-  [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html)
-  via
-  [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html),
-  which is the second step towards the unified interface in
-  [\#30](https://github.com/animovement/aniprocess/issues/30)
-  ([\#30](https://github.com/animovement/aniprocess/issues/30)).
-
-  ``` r
-
-  data |> mutate(filter_ccma(pick(all_of(c("x", "y")))))
-  data |> mutate(filter_na_speed(pick(all_of(c("x", "y"))), time = time))
-  ```
-
-  Applies to
-  [`filter_ccma()`](http://animovement.dev/aniprocess/reference/filter_ccma.md),
-  [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md),
-  [`filter_na_excursion()`](http://animovement.dev/aniprocess/reference/filter_na_excursion.md),
-  [`filter_na_roi()`](http://animovement.dev/aniprocess/reference/filter_na_roi.md)
-  and
-  [`filter_na_confidence()`](http://animovement.dev/aniprocess/reference/filter_na_confidence.md).
-  These operations are multivariate — each result depends on all
-  coordinates jointly — so they work with
-  [`pick()`](https://dplyr.tidyverse.org/reference/pick.html) but not
-  with
-  [`dplyr::across()`](https://dplyr.tidyverse.org/reference/across.html),
-  which passes one column at a time.
-
-- [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)
-  gains a `time` argument and
-  [`filter_na_confidence()`](http://animovement.dev/aniprocess/reference/filter_na_confidence.md)
-  a `confidence` argument. Both are required when the input is a
-  coordinate frame and default to the corresponding aniframe column
-  otherwise. Neither `time` nor `confidence` is a coordinate, so the
-  coordinate-frame form cannot mask `confidence`; only the aniframe form
-  does.
-
-- [`filter_na_roi()`](http://animovement.dev/aniprocess/reference/filter_na_roi.md)
-  now aborts with a clear message when the coordinates it needs (`x` and
-  `y`) are absent, rather than failing further in.
-
-- [`filter_na_confidence()`](http://animovement.dev/aniprocess/reference/filter_na_confidence.md)
-  no longer masks rows whose confidence is `NA`. A missing confidence
-  means *not scored* rather than *scored badly* — a human annotator has
-  no natural number to enter for “not assessed”, and tracker scores are
-  not bounded at 1 (SLEAP can exceed it), so `NA` is the sensible thing
-  to record. Those rows are left unfiltered and a rate-limited warning
-  reports how many there were. To drop them as well, filter `confidence`
-  directly with
-  [`filter_na_range()`](http://animovement.dev/aniprocess/reference/filter_na_range.md).
-
-- `na_action` and `keep_na` are now documented from a single shared
-  source, so the contract is stated identically across the filter family
-  ([\#38](https://github.com/animovement/aniprocess/issues/38)).
-
-- `keep_na` is validated: a non-logical, `NA`, or non-scalar value now
-  aborts with a clear message rather than being silently coerced.
+  low-pass whose cutoff rises with the speed of the signal — smooth when
+  the animal is still, responsive when it moves
+  ([\#35](https://github.com/animovement/aniprocess/issues/35)).
+- `*_across()` uses what the aniframe already knows: `sampling_rate` and
+  the time column come from its metadata. `variables` selects columns
+  with tidyselect, defaulting to `variables_where`.
+- `keep_na` is available on every filter, and validated.
 
 ### Bug fixes
 
-- Differencing filters no longer lose the first sample or shift the
-  series. `filter_aniframe(use_derivatives = TRUE)` differenced each
-  column, filtered, then accumulated with
-  [`cumsum()`](https://rdrr.io/r/base/cumsum.html) starting from zero —
-  so the re-integrated series was offset by its own starting value and
-  began with `NA`. With a filter that does nothing the round trip should
-  be lossless; `c(10, 11, 13, 16, 20)` came back as
-  `c(NA, 1, 3, 6, 10)`. It now re-integrates from the original starting
-  value ([\#30](https://github.com/animovement/aniprocess/issues/30)).
-
 - [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)
-  now computes speed within each group of a grouped aniframe. It
-  previously worked on the raw column vectors, so a step was formed
-  between the last row of one track and the first row of the next. Where
-  `time` restarts per track that step has a negative duration and yields
-  a negative “speed”, which inflated the `"auto"` threshold and caused
-  genuine outliers to be **missed** — how badly depended on how far
-  apart the tracks happened to be. The cross-track step never produced
-  false positives, because per-row speed is the minimum of the backward
-  and forward step and a track boundary is one-sided
-  ([\#37](https://github.com/animovement/aniprocess/issues/37)).
-
+  computes speed within each group, so a step is never formed between
+  one track and the next. Where `time` restarts per track that step
+  inflated the `"auto"` threshold and caused genuine outliers to be
+  missed ([\#37](https://github.com/animovement/aniprocess/issues/37)).
+- Differencing filters (`on_deltas`, formerly `use_derivatives`)
+  re-integrate from the original starting value; they previously dropped
+  the first sample and shifted the whole series
+  ([\#30](https://github.com/animovement/aniprocess/issues/30)).
 - [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)
-  no longer blanks rows belonging to groups shorter than two rows. Such
-  a group has no step, so its speed is `NA`, and
-  [`dplyr::if_else()`](https://dplyr.tidyverse.org/reference/if_else.html)
-  propagates a missing condition
+  no longer blanks groups too short to contain a step
   ([\#37](https://github.com/animovement/aniprocess/issues/37)).
-
-### Internal
-
-- [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md),
-  [`filter_na_excursion()`](http://animovement.dev/aniprocess/reference/filter_na_excursion.md)
-  and
-  [`filter_ccma()`](http://animovement.dev/aniprocess/reference/filter_ccma.md)
-  all resolve groups through
-  [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html)
-  and [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html)
-  rather than re-deriving row indices with
-  [`dplyr::group_indices()`](https://dplyr.tidyverse.org/reference/group_data.html).
-  Only
-  [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)
-  changes behaviour; for the other two the output is unchanged, verified
-  byte-for-byte against the previous implementation. The manual loops
-  rescanned the group vector on every iteration — and in
-  [`filter_ccma()`](http://animovement.dev/aniprocess/reference/filter_ccma.md)
-  rebuilt the whole data frame — making them quadratic in group count.
-  At 3,000 groups × 20 rows,
-  [`filter_ccma()`](http://animovement.dev/aniprocess/reference/filter_ccma.md)
-  goes from 47.8s to 5.9s and
-  [`filter_na_excursion()`](http://animovement.dev/aniprocess/reference/filter_na_excursion.md)
-  from 2.19s to 0.63s.
-  [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)
-  becomes slower (0.02s to 0.31s) because it previously did no per-group
-  work at all
-  ([\#37](https://github.com/animovement/aniprocess/issues/37)).
-
-- `calculate_speed_2d()` and `calculate_speed_3d()` are replaced by a
-  single dimension-agnostic
-  [`calculate_step_speed()`](http://animovement.dev/aniprocess/reference/calculate_step_speed.md),
-  which sums the squared step over whatever coordinate columns it is
-  given.
-
-- The `data.table (>= 1.18.0)` requirement is now enforced when the
-  package loads, not only when it is installed. Because the rolling
-  filters reached `data.table` solely via `data.table::`, R had no
-  namespace import to version-check, so an older `data.table` arriving
-  after installation (conda, a stale `renv` lockfile, a manual
-  downgrade) failed with `unused argument (partial = use_partial)` from
-  inside
-  [`filter_rollmean()`](http://animovement.dev/aniprocess/reference/filter_rollmean.md)
-  rather than a version error naming `data.table`
+- The `data.table (>= 1.18.0)` requirement is enforced when the package
+  loads, not only when it is installed
   ([\#33](https://github.com/animovement/aniprocess/issues/33)).
+
+### Performance
+
+- [`filter_ccma()`](http://animovement.dev/aniprocess/reference/filter_ccma.md)
+  and
+  [`filter_na_excursion()`](http://animovement.dev/aniprocess/reference/filter_na_excursion.md)
+  no longer scale quadratically in the number of groups. At 3,000 groups
+  they are roughly 8× and 3.5× faster
+  ([\#37](https://github.com/animovement/aniprocess/issues/37)).
 
 ## aniprocess 0.2.0
 
