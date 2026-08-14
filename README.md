@@ -46,7 +46,7 @@ citation("aniprocess")
 #> 
 #>   Roald-Arbøl M (2026). "aniprocess: An R package for signal processing
 #>   and filtering of movement data." doi:10.5281/zenodo.17357778
-#>   <https://doi.org/10.5281/zenodo.17357778>,
+#>   <https://doi.org/10.5281/zenodo.17357778>.
 #>   <http://animovement.dev/aniprocess/>.
 #> 
 #> A BibTeX entry for LaTeX users is
@@ -58,6 +58,6 @@ citation("aniprocess")
 #>     year = {2026},
 #>     url = {http://animovement.dev/aniprocess/},
 #>     abstract = {An R package for signal processing and filtering of movement data.},
-#>     version = {0.2.0},
+#>     version = {0.3.0},
 #>   }
 ```
