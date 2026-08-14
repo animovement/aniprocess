@@ -18,7 +18,7 @@ test_that("replace_na input validation works", {
   # Check value parameter
   expect_error(
     replace_na(simple_vec, method = "value"),
-    "value must be specified"
+    "must be specified"
   )
   expect_error(
     replace_na(simple_vec, method = "value", value = "0"),

@@ -15,6 +15,19 @@
 
 ## New features
 
+* New `filter_with()`, `filter_na_with()` and `replace_na_with()`: generic entry points that select a method by name rather than by choosing a function, which is the third step towards the unified interface in #30 (#30).
+
+  ```r
+  filter_with(x, "gaussian", sigma = 2)
+  filter_na_with(coords, "speed", threshold = 10, time = time)
+  replace_na_with(x, "linear", max_gap = 3)
+  ```
+
+  All three preserve shape: a vector gives a vector, a data frame of columns gives a data frame. Univariate methods are applied column by column, so `replace_na_with()` and most of `filter_with()` work with `dplyr::across()` as well as `dplyr::pick()`. The multivariate methods — `"ccma"` in `filter_with()`, and everything except `"range"` in `filter_na_with()` — require a data frame and say so when handed a bare vector.
+
+  They reject an aniframe. An aniframe *is* a data frame, so without that guard it would be filtered column by column, `time` and identity columns included.
+* `replace_na_with()` is the preferred name for `replace_na()`, which collides with `tidyr::replace_na()`. `replace_na()` is not deprecated and now simply calls `replace_na_with()`.
+
 * The aniframe-aware filters now accept a data frame of coordinate columns as well as an aniframe, and return whichever shape they were given. This makes them usable inside `dplyr::mutate()` via `dplyr::pick()`, which is the second step towards the unified interface in #30 (#30).
   ```r
   data |> mutate(filter_ccma(pick(all_of(c("x", "y")))))

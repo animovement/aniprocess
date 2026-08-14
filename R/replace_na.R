@@ -38,7 +38,15 @@
 #' replace_na(x, method = "linear", min_gap = 2, max_gap = 3)
 #' }
 #'
+#' @section Naming:
+#' This is the original name for what is now [replace_na_with()], and the
+#' two are identical — this one simply calls it. `replace_na()` collides
+#' with [tidyr::replace_na()], which does something different, so
+#' [replace_na_with()] is the name to prefer in new code. Nothing is
+#' deprecated: this function keeps working.
+#'
 #' @seealso
+#' - [replace_na_with()], the preferred name
 #' - replace_na_linear() for linear interpolation details
 #' - replace_na_spline() for spline interpolation details
 #' - replace_na_stine() for Stineman interpolation details
@@ -54,33 +62,12 @@ replace_na <- function(
   max_gap = Inf,
   ...
 ) {
-  # Input validation
-  if (!is.numeric(x)) {
-    cli::cli_abort("Input must be numeric")
-  }
-
-  valid_methods <- c("linear", "spline", "stine", "locf", "value")
-  method <- match.arg(method, valid_methods)
-
-  # Check if value is provided when needed
-  if (method == "value" && is.null(value)) {
-    cli::cli_abort("value must be specified when method = 'value'")
-  }
-
-  # Dispatch to appropriate method
-  result <- switch(
-    method,
-    "linear" = replace_na_linear(x, min_gap = min_gap, max_gap = max_gap, ...),
-    "spline" = replace_na_spline(x, min_gap = min_gap, max_gap = max_gap, ...),
-    "stine" = replace_na_stine(x, min_gap = min_gap, max_gap = max_gap, ...),
-    "locf" = replace_na_locf(x, min_gap = min_gap, max_gap = max_gap),
-    "value" = replace_na_value(
-      x,
-      value = value,
-      min_gap = min_gap,
-      max_gap = max_gap
-    )
+  replace_na_with(
+    x,
+    method = method,
+    value = value,
+    min_gap = min_gap,
+    max_gap = max_gap,
+    ...
   )
-
-  return(result)
 }
