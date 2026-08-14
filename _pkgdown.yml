@@ -52,6 +52,7 @@ reference:
   - filter_kalman_irregular
   - filter_lowpass
   - filter_lowpass_fft
+  - filter_one_euro
   - filter_rollmean
   - filter_rollmedian
   - filter_sgolay

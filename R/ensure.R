@@ -58,3 +58,27 @@ ensure_coords <- function(coords, arg = "data", call = rlang::caller_env()) {
   }
   invisible(NULL)
 }
+
+#' Validate a single positive number.
+#'
+#' @param value The value to validate.
+#' @param arg Argument name to use in the error message.
+#' @param call Environment used for the error's call context.
+#'
+#' @return Invisibly `NULL`. Called for side effects (errors).
+#' @keywords internal
+ensure_positive_scalar <- function(value, arg, call = rlang::caller_env()) {
+  if (
+    !is.numeric(value) ||
+      length(value) != 1L ||
+      is.na(value) ||
+      value <= 0 ||
+      is.infinite(value)
+  ) {
+    cli::cli_abort(
+      "{.arg {arg}} must be a single positive number.",
+      call = call
+    )
+  }
+  invisible(NULL)
+}

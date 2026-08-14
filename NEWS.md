@@ -23,6 +23,10 @@
 
 ## New features
 
+* New `filter_one_euro()`: the One Euro filter (Casiez, Roussel & Vogel, 2012), an adaptive low-pass whose cutoff rises with the estimated speed of the signal. A fixed cutoff forces one compromise on a whole recording — low enough to stop jitter while the animal is still is too low to track it moving. Making the cutoff a function of speed removes that trade-off, tuned with `min_cutoff` for the still end and `beta` for the moving end (#35).
+
+  Available as `"one_euro"` through `filter_with()` and `filter_across()`, which supplies `sampling_rate` from the aniframe's metadata.
+
 * New `filter_across()`, `filter_na_across()` and `replace_na_across()`: the aniframe-level tier of the interface, applying a named method to the columns given by `variables_where` within the frame's existing grouping (#30).
 
   ```r

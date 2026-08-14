@@ -26,8 +26,8 @@
 #' @param data An aniframe.
 #' @param method Filter to apply. One of `"gaussian"`, `"rollmean"`,
 #'   `"rollmedian"`, `"triangular"`, `"sgolay"`, `"lowpass"`, `"highpass"`,
-#'   `"lowpass_fft"`, `"highpass_fft"`, `"kalman"`, `"kalman_irregular"` or
-#'   `"ccma"`.
+#'   `"lowpass_fft"`, `"highpass_fft"`, `"kalman"`, `"kalman_irregular"`,
+#'   `"one_euro"` or `"ccma"`.
 #' @param variables Columns to filter, as a tidyselect expression.
 #'   Defaults to the `variables_where` metadata field.
 #' @param ... Arguments passed to the underlying filter.
@@ -69,6 +69,7 @@ filter_across <- function(
     "highpass_fft",
     "kalman",
     "kalman_irregular",
+    "one_euro",
     "ccma"
   ),
   variables = NULL,
@@ -161,7 +162,8 @@ filter_method_fn <- function(method) {
     lowpass_fft = filter_lowpass_fft,
     highpass_fft = filter_highpass_fft,
     kalman = filter_kalman,
-    kalman_irregular = filter_kalman_irregular
+    kalman_irregular = filter_kalman_irregular,
+    one_euro = filter_one_euro
   )
 }
 
@@ -176,7 +178,8 @@ filter_needs_sampling_rate <- function(method) {
       "highpass",
       "lowpass_fft",
       "highpass_fft",
-      "kalman"
+      "kalman",
+      "one_euro"
     )
 }
 

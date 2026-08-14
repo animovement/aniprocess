@@ -7,7 +7,8 @@
 filter_with(
   x,
   method = c("gaussian", "rollmean", "rollmedian", "triangular", "sgolay", "lowpass",
-    "highpass", "lowpass_fft", "highpass_fft", "kalman", "kalman_irregular", "ccma"),
+    "highpass", "lowpass_fft", "highpass_fft", "kalman", "kalman_irregular", "one_euro",
+    "ccma"),
   ...
 )
 }
@@ -16,8 +17,8 @@ filter_with(
 
 \item{method}{Filter to apply. One of \code{"gaussian"}, \code{"rollmean"},
 \code{"rollmedian"}, \code{"triangular"}, \code{"sgolay"}, \code{"lowpass"}, \code{"highpass"},
-\code{"lowpass_fft"}, \code{"highpass_fft"}, \code{"kalman"}, \code{"kalman_irregular"} or
-\code{"ccma"}.}
+\code{"lowpass_fft"}, \code{"highpass_fft"}, \code{"kalman"}, \code{"kalman_irregular"},
+\code{"one_euro"} or \code{"ccma"}.}
 
 \item{...}{Arguments passed to the underlying filter.}
 }
