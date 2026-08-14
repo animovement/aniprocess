@@ -11,7 +11,7 @@ and automatically adjusts process variance based on time intervals."></head><bod
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,7 +71,8 @@ and automatically adjusts process variance based on time intervals.</p>
 <span>  initial_state <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  initial_P <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  resample <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  resample_freq <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  resample_freq <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  keep_na <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -109,6 +110,16 @@ and automatically adjusts process variance based on time intervals.</p>
 
 <dt id="arg-resample-freq">resample_freq<a class="anchor" aria-label="anchor" href="#arg-resample-freq"></a></dt>
 <dd><p>Numeric. Desired sampling frequency in Hz for resampling (required if resample=TRUE).</p></dd>
+
+
+<dt id="arg-keep-na">keep_na<a class="anchor" aria-label="anchor" href="#arg-keep-na"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, positions that were <code>NA</code> in
+<code>measurements</code> are <code>NA</code> in the values reported on the original
+timestamps. Defaults to <code>FALSE</code>, for the reason given in
+<code><a href="filter_kalman.html">filter_kalman()</a></code>. When <code>resample = TRUE</code> this applies to
+<code>original_values</code> only — the resampled <code>values</code> sit on a different
+time grid, where input positions have no counterpart, so they are
+always interpolated from the complete filtered series.</p></dd>
 
 </dl></div>
     <div class="section level2">

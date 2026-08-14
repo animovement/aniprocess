@@ -14,7 +14,7 @@ filter_sgolay(
   window_size = ceiling(sampling_rate/10) * 2 + 1,
   order = 3,
   na_action = "linear",
-  keep_na = FALSE,
+  keep_na = TRUE,
   ...
 )
 ```
@@ -52,22 +52,19 @@ filter_sgolay(
 
 - na_action:
 
-  Method to handle NA values before filtering. One of:
-
-  - "linear": Linear interpolation (default)
-
-  - "spline": Spline interpolation for smoother curves
-
-  - "locf": Last observation carried forward
-
-  - "value": Replace with a constant value
-
-  - "error": Raise an error if NAs are present
+  Method used to fill `NA` values *before* filtering, so the filter sees
+  a complete series. One of `"linear"` (default), `"spline"`, `"stine"`,
+  `"locf"`, `"value"`, or `"error"` to abort when `NA`s are present.
+  Filling is internal: whether the filled values reach the output is
+  controlled by `keep_na`.
 
 - keep_na:
 
-  Logical indicating whether to restore NAs to their original positions
-  after filtering (default = FALSE)
+  Logical. If `TRUE` (default), positions that were `NA` in the input
+  are `NA` in the output — gaps stay gaps. If `FALSE`, the values used
+  to fill those gaps are kept, so the output has **fewer `NA`s than the
+  input** and genuinely-missing stretches come back as interpolated
+  estimates.
 
 - ...:
 

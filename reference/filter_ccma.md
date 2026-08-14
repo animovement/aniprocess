@@ -16,7 +16,7 @@ filter_ccma(
   boundary = c("padding"),
   cc_mode = TRUE,
   na_action = c("linear", "spline", "stine", "locf", "value", "error"),
-  keep_na = FALSE,
+  keep_na = TRUE,
   ...
 )
 ```
@@ -58,15 +58,19 @@ filter_ccma(
 
 - na_action:
 
-  How to fill `NA` values in the spatial columns before filtering. One
-  of `"linear"` (default), `"spline"`, `"stine"`, `"locf"`, `"value"`,
-  or `"error"` (abort if any `NA`s are present). See
-  [`replace_na()`](http://animovement.dev/aniprocess/reference/replace_na.md).
+  Method used to fill `NA` values *before* filtering, so the filter sees
+  a complete series. One of `"linear"` (default), `"spline"`, `"stine"`,
+  `"locf"`, `"value"`, or `"error"` to abort when `NA`s are present.
+  Filling is internal: whether the filled values reach the output is
+  controlled by `keep_na`.
 
 - keep_na:
 
-  If `TRUE`, restore `NA`s at their original positions in the output.
-  Defaults to `FALSE`.
+  Logical. If `TRUE` (default), positions that were `NA` in the input
+  are `NA` in the output — gaps stay gaps. If `FALSE`, the values used
+  to fill those gaps are kept, so the output has **fewer `NA`s than the
+  input** and genuinely-missing stretches come back as interpolated
+  estimates.
 
 - ...:
 

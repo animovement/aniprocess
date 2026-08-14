@@ -11,7 +11,7 @@ uses zero-phase filtering to prevent temporal shifts in the data."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,7 @@ uses zero-phase filtering to prevent temporal shifts in the data.</p>
 <span>  window_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">ceiling</a></span><span class="op">(</span><span class="va">sampling_rate</span><span class="op">/</span><span class="fl">10</span><span class="op">)</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">+</span> <span class="fl">1</span>,</span>
 <span>  order <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  na_action <span class="op">=</span> <span class="st">"linear"</span>,</span>
-<span>  keep_na <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  keep_na <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -104,17 +104,19 @@ higher-order moments in the data:</p><ul><li><p>order=2: Preserves position, vel
 
 
 <dt id="arg-na-action">na_action<a class="anchor" aria-label="anchor" href="#arg-na-action"></a></dt>
-<dd><p>Method to handle NA values before filtering. One of:</p><ul><li><p>"linear": Linear interpolation (default)</p></li>
-<li><p>"spline": Spline interpolation for smoother curves</p></li>
-<li><p>"locf": Last observation carried forward</p></li>
-<li><p>"value": Replace with a constant value</p></li>
-<li><p>"error": Raise an error if NAs are present</p></li>
-</ul></dd>
+<dd><p>Method used to fill <code>NA</code> values <em>before</em> filtering, so
+the filter sees a complete series. One of <code>"linear"</code> (default),
+<code>"spline"</code>, <code>"stine"</code>, <code>"locf"</code>, <code>"value"</code>, or <code>"error"</code> to abort when
+<code>NA</code>s are present. Filling is internal: whether the filled values reach
+the output is controlled by <code>keep_na</code>.</p></dd>
 
 
 <dt id="arg-keep-na">keep_na<a class="anchor" aria-label="anchor" href="#arg-keep-na"></a></dt>
-<dd><p>Logical indicating whether to restore NAs to their original positions
-after filtering (default = FALSE)</p></dd>
+<dd><p>Logical. If <code>TRUE</code> (default), positions that were <code>NA</code> in
+the input are <code>NA</code> in the output — gaps stay gaps. If <code>FALSE</code>, the
+values used to fill those gaps are kept, so the output has <strong>fewer
+<code>NA</code>s than the input</strong> and genuinely-missing stretches come back as
+interpolated estimates.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

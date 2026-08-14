@@ -2,6 +2,49 @@
 
 ## aniprocess (development version)
 
+### Breaking changes
+
+- Filters no longer fill gaps by default. `keep_na` now defaults to
+  `TRUE` in
+  [`filter_sgolay()`](http://animovement.dev/aniprocess/reference/filter_sgolay.md),
+  [`filter_lowpass()`](http://animovement.dev/aniprocess/reference/filter_lowpass.md),
+  [`filter_highpass()`](http://animovement.dev/aniprocess/reference/filter_highpass.md),
+  [`filter_lowpass_fft()`](http://animovement.dev/aniprocess/reference/filter_lowpass_fft.md),
+  [`filter_highpass_fft()`](http://animovement.dev/aniprocess/reference/filter_highpass_fft.md)
+  and
+  [`filter_ccma()`](http://animovement.dev/aniprocess/reference/filter_ccma.md),
+  so positions that were `NA` in the input are `NA` in the output.
+  Previously the default was `FALSE`, which meant genuinely-missing
+  stretches came back as smoothed interpolations with no indication that
+  any interpolation had happened. Pass `keep_na = FALSE` for the old
+  behaviour
+  ([\#38](https://github.com/animovement/aniprocess/issues/38)).
+- `keep_na` is now available on every filter.
+  [`filter_gaussian()`](http://animovement.dev/aniprocess/reference/filter_gaussian.md),
+  [`filter_rollmean()`](http://animovement.dev/aniprocess/reference/filter_rollmean.md),
+  [`filter_rollmedian()`](http://animovement.dev/aniprocess/reference/filter_rollmedian.md)
+  and
+  [`filter_triangular()`](http://animovement.dev/aniprocess/reference/filter_triangular.md)
+  gain the argument, defaulting to `TRUE`; they previously filled gaps —
+  fully or partially — with no way to opt out
+  ([\#38](https://github.com/animovement/aniprocess/issues/38)).
+- [`filter_kalman()`](http://animovement.dev/aniprocess/reference/filter_kalman.md)
+  and
+  [`filter_kalman_irregular()`](http://animovement.dev/aniprocess/reference/filter_kalman_irregular.md)
+  also gain `keep_na`, but default to `FALSE`. A Kalman filter’s predict
+  step is designed to carry the state estimate through missing
+  observations, so inferring across gaps is intended rather than
+  accidental. Pass `keep_na = TRUE` to leave gaps as gaps
+  ([\#38](https://github.com/animovement/aniprocess/issues/38)).
+
+### New features
+
+- `na_action` and `keep_na` are now documented from a single shared
+  source, so the contract is stated identically across the filter family
+  ([\#38](https://github.com/animovement/aniprocess/issues/38)).
+- `keep_na` is validated: a non-logical, `NA`, or non-scalar value now
+  aborts with a clear message rather than being silently coerced.
+
 ### Bug fixes
 
 - The `data.table (>= 1.18.0)` requirement is now enforced when the

@@ -15,7 +15,7 @@ aniframe metadata."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -121,7 +121,7 @@ ROI. For 3D data, provide all three; for 2D data, only x and y.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create sample 2D data</span></span></span>
-<span class="r-in"><span><span class="va">sample_data</span> <span class="op">&lt;-</span> <span class="fu">aniframe</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/aniframe/man/aniframe.html" class="external-link">aniframe</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">sample_data</span> <span class="op">&lt;-</span> <span class="fu">aniframe</span><span class="fu">::</span><span class="fu"><a href="http://animovement.dev/aniframe/reference/aniframe.html" class="external-link">aniframe</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  time <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">9</span>,</span></span>
 <span class="r-in"><span>  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">25</span>, <span class="fl">50</span>, <span class="fl">75</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">25</span>, <span class="fl">50</span>, <span class="fl">75</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
@@ -160,7 +160,7 @@ ROI. For 3D data, provide all three; for 2D data, only x and y.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span> centroid     9    <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># 3D cuboid ROI example</span></span></span>
-<span class="r-in"><span><span class="va">sample_3d</span> <span class="op">&lt;-</span> <span class="fu">aniframe</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/aniframe/man/aniframe.html" class="external-link">aniframe</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">sample_3d</span> <span class="op">&lt;-</span> <span class="fu">aniframe</span><span class="fu">::</span><span class="fu"><a href="http://animovement.dev/aniframe/reference/aniframe.html" class="external-link">aniframe</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  time <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">8</span>,</span></span>
 <span class="r-in"><span>  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">25</span>, <span class="fl">75</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">25</span>, <span class="fl">75</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2</span>, times <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span></span>

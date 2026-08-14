@@ -13,7 +13,7 @@ with peak weight at the centre."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,8 @@ with peak weight at the centre.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  window_width <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  min_obs <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  align <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"center"</span>, <span class="st">"right"</span>, <span class="st">"left"</span><span class="op">)</span></span>
+<span>  align <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"center"</span>, <span class="st">"right"</span>, <span class="st">"left"</span><span class="op">)</span>,</span>
+<span>  keep_na <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -96,6 +97,14 @@ per pass. Defaults to <code>1</code>.</p></dd>
 <dd><p>Window alignment, passed to <code><a href="filter_rollmean.html">filter_rollmean()</a></code>. One of
 <code>"center"</code> (default), <code>"right"</code>, or <code>"left"</code>.</p></dd>
 
+
+<dt id="arg-keep-na">keep_na<a class="anchor" aria-label="anchor" href="#arg-keep-na"></a></dt>
+<dd><p>Logical. If <code>TRUE</code> (default), positions that were <code>NA</code> in
+the input are <code>NA</code> in the output — gaps stay gaps. If <code>FALSE</code>, the
+values used to fill those gaps are kept, so the output has <strong>fewer
+<code>NA</code>s than the input</strong> and genuinely-missing stretches come back as
+interpolated estimates.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -107,6 +116,12 @@ per pass. Defaults to <code>1</code>.</p></dd>
 <code>NA</code> at the first and last <code>(window_width - 1) %/% 2</code> positions of
 each pass, so the output has roughly <code>window_width - 1</code> <code>NA</code> values
 at each edge.</p>
+<p><code>keep_na = TRUE</code> restores the positions that were <code>NA</code> in the input,
+but note that this filter fills gaps more aggressively than a single
+<code><a href="filter_rollmean.html">filter_rollmean()</a></code> pass: because the second pass smooths the output of
+the first, values interpolated across a gap propagate outward. <code>keep_na</code>
+blanks the original gap positions; it does not undo that spread into
+neighbouring positions. Raise <code>min_obs</code> to suppress it.</p>
 <p>Triangular smoothing is sometimes useful as a lightweight alternative
 to a Gaussian kernel when the kernel shape is less critical than the
 simplicity of the implementation.</p>

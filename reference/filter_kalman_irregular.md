@@ -16,7 +16,8 @@ filter_kalman_irregular(
   initial_state = NULL,
   initial_P = NULL,
   resample = FALSE,
-  resample_freq = NULL
+  resample_freq = NULL,
+  keep_na = FALSE
 )
 ```
 
@@ -57,6 +58,17 @@ filter_kalman_irregular(
 
   Numeric. Desired sampling frequency in Hz for resampling (required if
   resample=TRUE).
+
+- keep_na:
+
+  Logical. If `TRUE`, positions that were `NA` in `measurements` are
+  `NA` in the values reported on the original timestamps. Defaults to
+  `FALSE`, for the reason given in
+  [`filter_kalman()`](http://animovement.dev/aniprocess/reference/filter_kalman.md).
+  When `resample = TRUE` this applies to `original_values` only — the
+  resampled `values` sit on a different time grid, where input positions
+  have no counterpart, so they are always interpolated from the complete
+  filtered series.
 
 ## Value
 

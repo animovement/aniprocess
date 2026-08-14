@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,6 +52,21 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="aniprocess-development-version">aniprocess (development version)<a class="anchor" aria-label="anchor" href="#aniprocess-development-version"></a></h2>
+<div class="section level3">
+<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<ul><li>Filters no longer fill gaps by default. <code>keep_na</code> now defaults to <code>TRUE</code> in <code><a href="../reference/filter_sgolay.html">filter_sgolay()</a></code>, <code><a href="../reference/filter_lowpass.html">filter_lowpass()</a></code>, <code><a href="../reference/filter_highpass.html">filter_highpass()</a></code>, <code><a href="../reference/filter_lowpass_fft.html">filter_lowpass_fft()</a></code>, <code><a href="../reference/filter_highpass_fft.html">filter_highpass_fft()</a></code> and <code><a href="../reference/filter_ccma.html">filter_ccma()</a></code>, so positions that were <code>NA</code> in the input are <code>NA</code> in the output. Previously the default was <code>FALSE</code>, which meant genuinely-missing stretches came back as smoothed interpolations with no indication that any interpolation had happened. Pass <code>keep_na = FALSE</code> for the old behaviour (<a href="https://github.com/animovement/aniprocess/issues/38" class="external-link">#38</a>).</li>
+<li>
+<code>keep_na</code> is now available on every filter. <code><a href="../reference/filter_gaussian.html">filter_gaussian()</a></code>, <code><a href="../reference/filter_rollmean.html">filter_rollmean()</a></code>, <code><a href="../reference/filter_rollmedian.html">filter_rollmedian()</a></code> and <code><a href="../reference/filter_triangular.html">filter_triangular()</a></code> gain the argument, defaulting to <code>TRUE</code>; they previously filled gaps — fully or partially — with no way to opt out (<a href="https://github.com/animovement/aniprocess/issues/38" class="external-link">#38</a>).</li>
+<li>
+<code><a href="../reference/filter_kalman.html">filter_kalman()</a></code> and <code><a href="../reference/filter_kalman_irregular.html">filter_kalman_irregular()</a></code> also gain <code>keep_na</code>, but default to <code>FALSE</code>. A Kalman filter’s predict step is designed to carry the state estimate through missing observations, so inferring across gaps is intended rather than accidental. Pass <code>keep_na = TRUE</code> to leave gaps as gaps (<a href="https://github.com/animovement/aniprocess/issues/38" class="external-link">#38</a>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<ul><li>
+<code>na_action</code> and <code>keep_na</code> are now documented from a single shared source, so the contract is stated identically across the filter family (<a href="https://github.com/animovement/aniprocess/issues/38" class="external-link">#38</a>).</li>
+<li>
+<code>keep_na</code> is validated: a non-logical, <code>NA</code>, or non-scalar value now aborts with a clear message rather than being silently coerced.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
 <ul><li>The <code>data.table (&gt;= 1.18.0)</code> requirement is now enforced when the package loads, not only when it is installed. Because the rolling filters reached <code>data.table</code> solely via <code>data.table::</code>, R had no namespace import to version-check, so an older <code>data.table</code> arriving after installation (conda, a stale <code>renv</code> lockfile, a manual downgrade) failed with <code>unused argument (partial = use_partial)</code> from inside <code><a href="../reference/filter_rollmean.html">filter_rollmean()</a></code> rather than a version error naming <code>data.table</code> (<a href="https://github.com/animovement/aniprocess/issues/33" class="external-link">#33</a>).</li>

@@ -10,7 +10,8 @@ filter_rollmean(
   x,
   window_width = 5,
   min_obs = 1,
-  align = c("right", "left", "center")
+  align = c("right", "left", "center"),
+  keep_na = TRUE
 )
 ```
 
@@ -33,11 +34,27 @@ filter_rollmean(
 
   Window alignment. One of `"right"` (default), `"left"`, or `"center"`.
 
+- keep_na:
+
+  Logical. If `TRUE` (default), positions that were `NA` in the input
+  are `NA` in the output — gaps stay gaps. If `FALSE`, the values used
+  to fill those gaps are kept, so the output has **fewer `NA`s than the
+  input** and genuinely-missing stretches come back as interpolated
+  estimates.
+
 ## Value
 
 Filtered numeric vector, same length as `x`.
 
 ## Details
+
+`keep_na` and `min_obs` control different things and are usually worth
+setting together. `keep_na` governs positions that were `NA` in the
+*input*; `min_obs` governs positions that were observed but whose
+*window* is too sparse to trust. Neither substitutes for the other: with
+`min_obs = 1`, positions next to a gap still produce values drawn from
+very few observations, and no `min_obs` setting blanks the input gaps
+without also blanking their neighbours and the series edges.
 
 For `align = "right"` or `"left"`, partial windows at the edges of the
 series are computed (so position 1 with a width-5 right-aligned window

@@ -11,7 +11,7 @@ and provides noise reduction while preserving real signal changes."></head><body
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,8 @@ and provides noise reduction while preserving real signal changes.</p>
 <span>  base_Q <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  R <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  initial_state <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  initial_P <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  initial_P <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  keep_na <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -101,6 +102,15 @@ Represents the noise level in your measurements.</p></dd>
 
 <dt id="arg-initial-p">initial_P<a class="anchor" aria-label="anchor" href="#arg-initial-p"></a></dt>
 <dd><p>Optional. Initial state uncertainty. If NULL, calculated based on sampling_rate.</p></dd>
+
+
+<dt id="arg-keep-na">keep_na<a class="anchor" aria-label="anchor" href="#arg-keep-na"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, positions that were <code>NA</code> in
+<code>measurements</code> are <code>NA</code> in the output. Defaults to <code>FALSE</code>, unlike the
+rest of the filter family: a Kalman filter's predict step is designed
+to carry the state estimate through missing observations, so inferring
+across gaps is the intended behaviour rather than an accident. Set
+<code>TRUE</code> when you want gaps left as gaps.</p></dd>
 
 </dl></div>
     <div class="section level2">

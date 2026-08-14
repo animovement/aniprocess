@@ -9,7 +9,7 @@ data.table::frollmean()."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,8 @@ data.table::frollmean()."></head><body>
 <span>  <span class="va">x</span>,</span>
 <span>  window_width <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  min_obs <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  align <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"right"</span>, <span class="st">"left"</span>, <span class="st">"center"</span><span class="op">)</span></span>
+<span>  align <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"right"</span>, <span class="st">"left"</span>, <span class="st">"center"</span><span class="op">)</span>,</span>
+<span>  keep_na <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -90,6 +91,14 @@ Positions with fewer non-NA values return <code>NA</code>. Defaults to <code>1</
 <dd><p>Window alignment. One of <code>"right"</code> (default), <code>"left"</code>, or
 <code>"center"</code>.</p></dd>
 
+
+<dt id="arg-keep-na">keep_na<a class="anchor" aria-label="anchor" href="#arg-keep-na"></a></dt>
+<dd><p>Logical. If <code>TRUE</code> (default), positions that were <code>NA</code> in
+the input are <code>NA</code> in the output — gaps stay gaps. If <code>FALSE</code>, the
+values used to fill those gaps are kept, so the output has <strong>fewer
+<code>NA</code>s than the input</strong> and genuinely-missing stretches come back as
+interpolated estimates.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -97,7 +106,14 @@ Positions with fewer non-NA values return <code>NA</code>. Defaults to <code>1</
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>For <code>align = "right"</code> or <code>"left"</code>, partial windows at the edges of the
+    <p><code>keep_na</code> and <code>min_obs</code> control different things and are usually worth
+setting together. <code>keep_na</code> governs positions that were <code>NA</code> in the
+<em>input</em>; <code>min_obs</code> governs positions that were observed but whose
+<em>window</em> is too sparse to trust. Neither substitutes for the other:
+with <code>min_obs = 1</code>, positions next to a gap still produce values drawn
+from very few observations, and no <code>min_obs</code> setting blanks the input
+gaps without also blanking their neighbours and the series edges.</p>
+<p>For <code>align = "right"</code> or <code>"left"</code>, partial windows at the edges of the
 series are computed (so position 1 with a width-5 right-aligned window
 returns the value at position 1, not <code>NA</code>). For <code>align = "center"</code>,
 edges are not partial: the first and last <code>(window_width - 1) %/% 2</code>

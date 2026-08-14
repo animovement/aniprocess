@@ -5,7 +5,7 @@ Convolves a numeric vector with a discrete Gaussian kernel.
 ## Usage
 
 ``` r
-filter_gaussian(x, sigma = 1, window_width = NULL)
+filter_gaussian(x, sigma = 1, window_width = NULL, keep_na = TRUE)
 ```
 
 ## Arguments
@@ -24,6 +24,14 @@ filter_gaussian(x, sigma = 1, window_width = NULL)
   Integer kernel width in samples. Must be positive and is forced to be
   odd. Defaults to `2 * ceiling(3 * sigma) + 1`, which truncates the
   kernel at ±3σ.
+
+- keep_na:
+
+  Logical. If `TRUE` (default), positions that were `NA` in the input
+  are `NA` in the output — gaps stay gaps. If `FALSE`, the values used
+  to fill those gaps are kept, so the output has **fewer `NA`s than the
+  input** and genuinely-missing stretches come back as interpolated
+  estimates.
 
 ## Value
 

@@ -14,7 +14,8 @@ filter_kalman(
   base_Q = NULL,
   R = NULL,
   initial_state = NULL,
-  initial_P = NULL
+  initial_P = NULL,
+  keep_na = FALSE
 )
 ```
 
@@ -47,6 +48,15 @@ filter_kalman(
 
   Optional. Initial state uncertainty. If NULL, calculated based on
   sampling_rate.
+
+- keep_na:
+
+  Logical. If `TRUE`, positions that were `NA` in `measurements` are
+  `NA` in the output. Defaults to `FALSE`, unlike the rest of the filter
+  family: a Kalman filter's predict step is designed to carry the state
+  estimate through missing observations, so inferring across gaps is the
+  intended behaviour rather than an accident. Set `TRUE` when you want
+  gaps left as gaps.
 
 ## Value
 

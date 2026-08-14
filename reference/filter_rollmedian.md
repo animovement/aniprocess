@@ -10,7 +10,8 @@ filter_rollmedian(
   x,
   window_width = 5,
   min_obs = 1,
-  align = c("right", "left", "center")
+  align = c("right", "left", "center"),
+  keep_na = TRUE
 )
 ```
 
@@ -32,6 +33,14 @@ filter_rollmedian(
 - align:
 
   Window alignment. One of `"right"` (default), `"left"`, or `"center"`.
+
+- keep_na:
+
+  Logical. If `TRUE` (default), positions that were `NA` in the input
+  are `NA` in the output — gaps stay gaps. If `FALSE`, the values used
+  to fill those gaps are kept, so the output has **fewer `NA`s than the
+  input** and genuinely-missing stretches come back as interpolated
+  estimates.
 
 ## Value
 
