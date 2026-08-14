@@ -57,6 +57,9 @@ citation("aniprocess")
 
 These functions ensure that your data is ready for analysis.
 
+- [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
+  **\[experimental\]** : Mask values to NA across an aniframe's spatial
+  columns
 - [`filter_na_with()`](http://animovement.dev/aniprocess/reference/filter_na_with.md)
   : Mask values to NA by a named criterion
 - [`filter_na_confidence()`](http://animovement.dev/aniprocess/reference/filter_na_confidence.md)
@@ -74,6 +77,9 @@ These functions ensure that your data is ready for analysis.
 
 These functions ensure that your data is ready for analysis.
 
+- [`replace_na_across()`](http://animovement.dev/aniprocess/reference/replace_na_across.md)
+  **\[experimental\]** : Fill missing values across an aniframe's
+  spatial columns
 - [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
   : Fill missing values by a named method
 - [`replace_na()`](http://animovement.dev/aniprocess/reference/replace_na.md)
@@ -93,6 +99,9 @@ These functions ensure that your data is ready for analysis.
 
 These functions ensure that your data is ready for analysis.
 
+- [`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md)
+  **\[experimental\]** : Apply a filter across an aniframe's spatial
+  columns
 - [`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md)
   : Apply a filter by name
 - [`filter_aniframe()`](http://animovement.dev/aniprocess/reference/filter_aniframe.md)

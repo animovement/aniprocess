@@ -85,6 +85,39 @@
 ### New features
 
 - New
+  [`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md),
+  [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
+  and
+  [`replace_na_across()`](http://animovement.dev/aniprocess/reference/replace_na_across.md):
+  the aniframe-level tier of the interface, applying a named method to
+  the columns given by `variables_where` within the frame’s existing
+  grouping
+  ([\#30](https://github.com/animovement/aniprocess/issues/30)).
+
+  ``` r
+
+  filter_across(data, "lowpass", cutoff_freq = 5)          # sampling_rate from metadata
+  filter_across(data, "gaussian", variables = c(x, y), sigma = 2)
+  filter_na_across(data, "speed", threshold = "auto")      # time from variables_when
+  replace_na_across(data, "linear", max_gap = 5)
+  ```
+
+  They do more than loop over columns. `variables` is a tidyselect
+  expression defaulting to `variables_where`. Parameters the aniframe
+  already knows are filled in: `sampling_rate` for the filters that need
+  it, and the time column from `variables_when` for `"speed"` and
+  `"kalman_irregular"`. Multivariate methods — `"ccma"`, and everything
+  except `"range"` in
+  [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
+  — are applied jointly rather than column by column. And
+  [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
+  blanks `confidence` on the rows it masked, which the vector-level
+  functions cannot do because `confidence` is not a coordinate.
+
+  Per-row arguments such as `time` name a *column* at this level rather
+  than taking a vector, since each group needs its own slice.
+
+- New
   [`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md),
   [`filter_na_with()`](http://animovement.dev/aniprocess/reference/filter_na_with.md)
   and
