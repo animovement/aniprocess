@@ -13,6 +13,9 @@
 
 ## Bug fixes
 
+* `filter_na_speed()` now computes speed within each group of a grouped aniframe. It previously worked on the raw column vectors, so a step was formed between the last row of one track and the first row of the next. Where `time` restarts per track that step has a negative duration and yields a negative "speed", which inflated the `"auto"` threshold and caused genuine outliers to be **missed** — how badly depended on how far apart the tracks happened to be. The cross-track step never produced false positives, because per-row speed is the minimum of the backward and forward step and a track boundary is one-sided (#37).
+* `filter_na_speed()` no longer blanks rows belonging to groups shorter than two rows. Such a group has no step, so its speed is `NA`, and `dplyr::if_else()` propagates a missing condition (#37).
+
 * The `data.table (>= 1.18.0)` requirement is now enforced when the package loads, not only when it is installed. Because the rolling filters reached `data.table` solely via `data.table::`, R had no namespace import to version-check, so an older `data.table` arriving after installation (conda, a stale `renv` lockfile, a manual downgrade) failed with `unused argument (partial = use_partial)` from inside `filter_rollmean()` rather than a version error naming `data.table` (#33).
 
 # aniprocess 0.2.0
