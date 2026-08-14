@@ -1,0 +1,185 @@
+#' Apply a filter across an aniframe's spatial columns
+#'
+#' @description
+#' `r lifecycle::badge('experimental')`
+#'
+#' The aniframe-level entry point to the `filter_*()` family. Applies a
+#' named filter to the columns given by the `variables_where` metadata
+#' field, within the frame's existing grouping.
+#'
+#' @details
+#' This is the aniframe tier of the interface:
+#'
+#' * [filter_gaussian()] and friends filter one vector — use them inside
+#'   [dplyr::mutate()].
+#' * [filter_with()] does the same but picks the method by name.
+#' * `filter_across()` applies a method to a whole aniframe.
+#'
+#' Beyond looping over columns, it fills in what the frame already knows:
+#' `sampling_rate` comes from metadata for the methods that need it, and
+#' `"kalman_irregular"` takes its `times` from the column named by
+#' `variables_when`. Either can still be passed explicitly to override.
+#'
+#' `"ccma"` is multivariate — each output coordinate depends on all of
+#' them — so it is applied jointly rather than column by column.
+#'
+#' @param data An aniframe.
+#' @param method Filter to apply. One of `"gaussian"`, `"rollmean"`,
+#'   `"rollmedian"`, `"triangular"`, `"sgolay"`, `"lowpass"`, `"highpass"`,
+#'   `"lowpass_fft"`, `"highpass_fft"`, `"kalman"`, `"kalman_irregular"` or
+#'   `"ccma"`.
+#' @param variables Columns to filter, as a tidyselect expression.
+#'   Defaults to the `variables_where` metadata field.
+#' @param ... Arguments passed to the underlying filter.
+#' @param use_derivatives If `TRUE`, difference each column, filter the
+#'   differences, and re-integrate. For trackball data, where the raw
+#'   measurements are per-frame displacements and the coordinates were
+#'   integrated from them, smoothing belongs on the displacements.
+#'
+#' @return An aniframe of the same shape, with the selected columns
+#'   filtered.
+#'
+#' @examples
+#' \dontrun{
+#' # sampling_rate is taken from the aniframe's metadata
+#' filter_across(tracking_data, "lowpass", cutoff_freq = 5)
+#'
+#' # restrict to some of the spatial columns
+#' filter_across(tracking_data, "gaussian", variables = c(x, y), sigma = 2)
+#' }
+#'
+#' @seealso [filter_with()] for the vector-level generic.
+#' @export
+filter_across <- function(
+  data,
+  method = c(
+    "gaussian",
+    "rollmean",
+    "rollmedian",
+    "triangular",
+    "sgolay",
+    "lowpass",
+    "highpass",
+    "lowpass_fft",
+    "highpass_fft",
+    "kalman",
+    "kalman_irregular",
+    "ccma"
+  ),
+  variables = NULL,
+  ...,
+  use_derivatives = FALSE
+) {
+  method <- match.arg(method)
+  ensure_aniframe_spatial(data)
+
+  variables <- resolve_variables(data, rlang::enquo(variables))
+  args <- rlang::list2(...)
+
+  # ccma is multivariate: hand it all the columns at once.
+  if (method == "ccma") {
+    return(dplyr::mutate(
+      data,
+      do.call(
+        filter_ccma,
+        c(list(dplyr::pick(dplyr::all_of(variables))), args)
+      )
+    ))
+  }
+
+  # The frame knows its own sampling rate and time column.
+  if (!"sampling_rate" %in% names(args) && filter_needs_sampling_rate(method)) {
+    args$sampling_rate <- metadata_value(
+      data,
+      "sampling_rate",
+      "the sampling rate"
+    )
+  }
+
+  # `times` names a column here, not a vector: mutate() has to slice it per
+  # group alongside the coordinates.
+  helpers <- list()
+  if (method == "kalman_irregular") {
+    helpers$times <- helper_column(args$times, "times", "filter_with") %||%
+      metadata_value(data, "variables_when", "which column holds time")[1]
+    args$times <- NULL
+    if (!helpers$times %in% names(data)) {
+      cli::cli_abort("Missing time column: {.val {helpers$times}}.")
+    }
+  }
+
+  fn <- filter_method_fn(method)
+  if (isTRUE(use_derivatives)) {
+    fn <- derivative_wrapper(fn)
+  }
+
+  needed <- unique(c(variables, unlist(helpers, use.names = FALSE)))
+  dplyr::mutate(
+    data,
+    apply_across_columns(
+      dplyr::pick(dplyr::all_of(needed)),
+      variables = variables,
+      fn = fn,
+      args = args,
+      helpers = helpers
+    )
+  )
+}
+
+
+#' Look up the function implementing a filter method.
+#'
+#' "ccma" is handled before this lookup, being the only multivariate method.
+#'
+#' @keywords internal
+filter_method_fn <- function(method) {
+  switch(
+    method,
+    gaussian = filter_gaussian,
+    rollmean = filter_rollmean,
+    rollmedian = filter_rollmedian,
+    triangular = filter_triangular,
+    sgolay = filter_sgolay,
+    lowpass = filter_lowpass,
+    highpass = filter_highpass,
+    lowpass_fft = filter_lowpass_fft,
+    highpass_fft = filter_highpass_fft,
+    kalman = filter_kalman,
+    kalman_irregular = filter_kalman_irregular
+  )
+}
+
+
+#' Does a filter method require a sampling rate?
+#' @keywords internal
+filter_needs_sampling_rate <- function(method) {
+  method %in%
+    c(
+      "sgolay",
+      "lowpass",
+      "highpass",
+      "lowpass_fft",
+      "highpass_fft",
+      "kalman"
+    )
+}
+
+
+#' Wrap a filter so it acts on differences rather than on levels.
+#'
+#' Differences the column, filters the differences, then re-integrates.
+#'
+#' @param fn The filter to wrap.
+#'
+#' @return A function with the same interface as `fn`.
+#' @keywords internal
+derivative_wrapper <- function(fn) {
+  # `fn` is reassigned to this wrapper by the caller, so the promise has to
+  # be forced here or the closure would call itself.
+  force(fn)
+  function(col, ...) {
+    d <- col - dplyr::lag(col)
+    d <- fn(d, ...)
+    cumsum(dplyr::coalesce(d, 0)) + d * 0
+  }
+}

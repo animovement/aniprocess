@@ -12,6 +12,7 @@ reference:
 - title: "Remove observations of poor quality"
   desc: These functions ensure that your data is ready for analysis.
   contents:
+  - filter_na_across
   - filter_na_with
   - filter_na_confidence
   - filter_na_excursion
@@ -22,6 +23,7 @@ reference:
 - title: "Interpolate over missing values"
   desc: These functions ensure that your data is ready for analysis.
   contents:
+  - replace_na_across
   - replace_na_with
   - replace_na
   - replace_na_linear
@@ -33,6 +35,7 @@ reference:
 - title: "Smoothing/filtering functions"
   desc: These functions ensure that your data is ready for analysis.
   contents:
+  - filter_across
   - filter_with
   - filter_aniframe
   - filter_ccma
