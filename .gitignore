@@ -5,3 +5,7 @@
 docs
 .DS_Store
 .vscode
+
+# testthat failure artifacts
+tests/testthat/_problems/
+tests/testthat/testthat-problems.rds
