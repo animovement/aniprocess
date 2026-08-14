@@ -251,8 +251,16 @@ test_that("window size parameter works correctly", {
 
   # Test plateau handling with different window sizes
   x <- c(1, 3, 3, 3, 2, 4, 4, 4, 2)
-  peaks_w3 <- which(find_peaks(x, window_width = 3, plateau_handling = "middle"))
-  peaks_w5 <- which(find_peaks(x, window_width = 5, plateau_handling = "middle"))
+  peaks_w3 <- which(find_peaks(
+    x,
+    window_width = 3,
+    plateau_handling = "middle"
+  ))
+  peaks_w5 <- which(find_peaks(
+    x,
+    window_width = 5,
+    plateau_handling = "middle"
+  ))
   expect_equal(peaks_w3, c(3, 7)) # Both plateaus are peaks
   expect_equal(peaks_w5, 7) # Only second plateau is peak
 
