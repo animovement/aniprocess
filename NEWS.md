@@ -2,6 +2,8 @@
 
 ## Breaking changes
 
+* `replace_na()` is deprecated in favour of `replace_na_with()`. It still works and delegates to the new function, but warns. Internally the filters' `na_action` argument now calls `replace_na_with()`, so filtering data with `NA`s does not emit the deprecation warning (#30).
+
 * Argument names are now consistent across the package, so that a generic wrapper can forward them without special-casing. This is the first step towards the unified interface in #30 (#30).
   * `window_size` is now `window_width` in `filter_sgolay()`, `find_peaks()` and `find_troughs()`, matching `filter_gaussian()`, `filter_rollmean()`, `filter_rollmedian()` and `filter_triangular()`.
   * The first argument of `filter_kalman()` and `filter_kalman_irregular()` is now `x` rather than `measurements`. They were the only vector-level functions whose first argument was not `x`, which prevented their use with `dplyr::across()`.
@@ -14,6 +16,19 @@
 * `filter_kalman()` and `filter_kalman_irregular()` also gain `keep_na`, but default to `FALSE`. A Kalman filter's predict step is designed to carry the state estimate through missing observations, so inferring across gaps is intended rather than accidental. Pass `keep_na = TRUE` to leave gaps as gaps (#38).
 
 ## New features
+
+* New `filter_with()`, `filter_na_with()` and `replace_na_with()`: generic entry points that select a method by name rather than by choosing a function, which is the third step towards the unified interface in #30 (#30).
+
+  ```r
+  filter_with(x, "gaussian", sigma = 2)
+  filter_na_with(coords, "speed", threshold = 10, time = time)
+  replace_na_with(x, "linear", max_gap = 3)
+  ```
+
+  All three preserve shape: a vector gives a vector, a data frame of columns gives a data frame. Univariate methods are applied column by column, so `replace_na_with()` and most of `filter_with()` work with `dplyr::across()` as well as `dplyr::pick()`. The multivariate methods — `"ccma"` in `filter_with()`, and everything except `"range"` in `filter_na_with()` — require a data frame and say so when handed a bare vector.
+
+  They reject an aniframe. An aniframe *is* a data frame, so without that guard it would be filtered column by column, `time` and identity columns included.
+* `replace_na_with()` replaces `replace_na()`, which collides with `tidyr::replace_na()` — a function that does something different (it substitutes a fixed value per column rather than interpolating gaps).
 
 * The aniframe-aware filters now accept a data frame of coordinate columns as well as an aniframe, and return whichever shape they were given. This makes them usable inside `dplyr::mutate()` via `dplyr::pick()`, which is the second step towards the unified interface in #30 (#30).
   ```r

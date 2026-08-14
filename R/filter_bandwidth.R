@@ -15,7 +15,7 @@
 #'        - Common values in practice are 2-8
 #'        - Values above 8 are rarely used due to numerical instability
 #' @inheritParams filter-na-args
-#' @param ... Additional arguments passed to replace_na(). Common options include:
+#' @param ... Additional arguments passed to replace_na_with(). Common options include:
 #'        - value: Numeric value for replacement when na_action = "value"
 #'        - min_gap: Minimum gap size to interpolate/fill
 #'        - max_gap: Maximum gap size to interpolate/fill
@@ -42,7 +42,7 @@
 #' * Mechanical vibrations: order=2 to 4
 #'
 #' Missing Value Handling:
-#' The function uses replace_na() internally for handling missing values. See ?replace_na
+#' The function uses replace_na_with() internally for handling missing values. See ?replace_na_with
 #' for detailed information about each method and its parameters. NAs can optionally be
 #' restored to their original positions after filtering using keep_na = TRUE.
 #'
@@ -153,7 +153,7 @@ filter_lowpass <- function(
 #'        - Common values in practice are 2-8
 #'        - Values above 8 are rarely used due to numerical instability
 #' @inheritParams filter-na-args
-#' @param ... Additional arguments passed to replace_na(). Common options include:
+#' @param ... Additional arguments passed to replace_na_with(). Common options include:
 #'        - value: Numeric value for replacement when na_action = "value"
 #'        - min_gap: Minimum gap size to interpolate/fill
 #'        - max_gap: Maximum gap size to interpolate/fill
@@ -177,7 +177,7 @@ filter_lowpass <- function(
 #' * Mechanical vibrations: order=2, cutoff application-specific
 #'
 #' Missing Value Handling:
-#' The function uses replace_na() internally for handling missing values. See ?replace_na
+#' The function uses replace_na_with() internally for handling missing values. See ?replace_na_with
 #' for detailed information about each method and its parameters. NAs can optionally be
 #' restored to their original positions after filtering using keep_na = TRUE.
 #'

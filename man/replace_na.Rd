@@ -33,8 +33,11 @@ A numeric vector with NA values replaced according to the specified method
 where gap length criteria are met.
 }
 \description{
-A wrapper function that replaces missing values using various interpolation
-or filling methods.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+Use \code{\link[=replace_na_with]{replace_na_with()}} instead. This name collides with
+\code{\link[tidyr:replace_na]{tidyr::replace_na()}}, which does something different — it replaces \code{NA}
+with a fixed value per column, rather than interpolating gaps.
 }
 \examples{
 \dontrun{
@@ -56,6 +59,7 @@ replace_na(x, method = "linear", min_gap = 2, max_gap = 3)
 }
 \seealso{
 \itemize{
+\item \code{\link[=replace_na_with]{replace_na_with()}}, the replacement
 \item replace_na_linear() for linear interpolation details
 \item replace_na_spline() for spline interpolation details
 \item replace_na_stine() for Stineman interpolation details

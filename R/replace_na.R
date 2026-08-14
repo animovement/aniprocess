@@ -1,8 +1,11 @@
 #' Replace Missing Values Using Various Methods
 #'
 #' @description
-#' A wrapper function that replaces missing values using various interpolation
-#' or filling methods.
+#' `r lifecycle::badge('deprecated')`
+#'
+#' Use [replace_na_with()] instead. This name collides with
+#' [tidyr::replace_na()], which does something different — it replaces `NA`
+#' with a fixed value per column, rather than interpolating gaps.
 #'
 #' @param x A vector containing numeric data with missing values (NAs)
 #' @param method Character string specifying the replacement method:
@@ -39,6 +42,7 @@
 #' }
 #'
 #' @seealso
+#' - [replace_na_with()], the replacement
 #' - replace_na_linear() for linear interpolation details
 #' - replace_na_spline() for spline interpolation details
 #' - replace_na_stine() for Stineman interpolation details
@@ -54,33 +58,14 @@ replace_na <- function(
   max_gap = Inf,
   ...
 ) {
-  # Input validation
-  if (!is.numeric(x)) {
-    cli::cli_abort("Input must be numeric")
-  }
+  lifecycle::deprecate_warn("0.3.0", "replace_na()", "replace_na_with()")
 
-  valid_methods <- c("linear", "spline", "stine", "locf", "value")
-  method <- match.arg(method, valid_methods)
-
-  # Check if value is provided when needed
-  if (method == "value" && is.null(value)) {
-    cli::cli_abort("value must be specified when method = 'value'")
-  }
-
-  # Dispatch to appropriate method
-  result <- switch(
-    method,
-    "linear" = replace_na_linear(x, min_gap = min_gap, max_gap = max_gap, ...),
-    "spline" = replace_na_spline(x, min_gap = min_gap, max_gap = max_gap, ...),
-    "stine" = replace_na_stine(x, min_gap = min_gap, max_gap = max_gap, ...),
-    "locf" = replace_na_locf(x, min_gap = min_gap, max_gap = max_gap),
-    "value" = replace_na_value(
-      x,
-      value = value,
-      min_gap = min_gap,
-      max_gap = max_gap
-    )
+  replace_na_with(
+    x,
+    method = method,
+    value = value,
+    min_gap = min_gap,
+    max_gap = max_gap,
+    ...
   )
-
-  return(result)
 }

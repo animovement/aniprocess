@@ -9,7 +9,7 @@
 #' @param sampling_rate Sampling rate of the signal in Hz. Must be at
 #'        least twice the highest frequency component in the signal (Nyquist criterion).
 #' @inheritParams filter-na-args
-#' @param ... Additional arguments passed to replace_na(). Common options include:
+#' @param ... Additional arguments passed to replace_na_with(). Common options include:
 #'        - value: Numeric value for replacement when na_action = "value"
 #'        - min_gap: Minimum gap size to interpolate/fill
 #'        - max_gap: Maximum gap size to interpolate/fill
@@ -27,7 +27,7 @@
 #' * Less suitable for real-time processing
 #'
 #' Missing Value Handling:
-#' The function uses replace_na() internally for handling missing values. See ?replace_na
+#' The function uses replace_na_with() internally for handling missing values. See ?replace_na_with
 #' for detailed information about each method and its parameters. NAs can optionally be
 #' restored to their original positions after filtering using keep_na = TRUE.
 #'
@@ -141,7 +141,7 @@ filter_lowpass_fft <- function(
 #' @param sampling_rate Sampling rate of the signal in Hz. Must be at
 #'        least twice the highest frequency component in the signal (Nyquist criterion).
 #' @inheritParams filter-na-args
-#' @param ... Additional arguments passed to replace_na(). Common options include:
+#' @param ... Additional arguments passed to replace_na_with(). Common options include:
 #'        - value: Numeric value for replacement when na_action = "value"
 #'        - min_gap: Minimum gap size to interpolate/fill
 #'        - max_gap: Maximum gap size to interpolate/fill
@@ -164,7 +164,7 @@ filter_lowpass_fft <- function(
 #' * Less suitable for real-time processing
 #'
 #' Missing Value Handling:
-#' The function uses replace_na() internally for handling missing values. See ?replace_na
+#' The function uses replace_na_with() internally for handling missing values. See ?replace_na_with
 #' for detailed information about each method and its parameters. NAs can optionally be
 #' restored to their original positions after filtering using keep_na = TRUE.
 #'

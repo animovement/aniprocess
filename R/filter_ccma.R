@@ -68,7 +68,7 @@
 #' @param cc_mode If `FALSE`, returns just the moving-average result
 #'   without curvature correction. Useful for comparison.
 #' @inheritParams filter-na-args
-#' @param ... Additional arguments passed to [replace_na()] (e.g.
+#' @param ... Additional arguments passed to [replace_na_with()] (e.g.
 #'   `value`, `min_gap`, `max_gap`).
 #'
 #' @return An aniframe of the same shape as the input, with the

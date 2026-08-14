@@ -9,9 +9,9 @@ prepare_na(x, na_action, replace_na_args = list(), call = rlang::caller_env())
 \arguments{
 \item{x}{Numeric vector or matrix.}
 
-\item{na_action}{One of the \code{\link[=replace_na]{replace_na()}} methods, or \code{"error"}.}
+\item{na_action}{One of the \code{\link[=replace_na_with]{replace_na_with()}} methods, or \code{"error"}.}
 
-\item{replace_na_args}{Named list of extra arguments for \code{\link[=replace_na]{replace_na()}},
+\item{replace_na_args}{Named list of extra arguments for \code{\link[=replace_na_with]{replace_na_with()}},
 typically \code{list(...)} from the calling filter.}
 
 \item{call}{Environment used for the error's call context.}
@@ -22,7 +22,7 @@ vector or matrix, matching the shape of \code{x}, marking the original
 \code{NA}s).
 }
 \description{
-Captures where the \code{NA}s are, then fills them via \code{\link[=replace_na]{replace_na()}} so the
+Captures where the \code{NA}s are, then fills them via \code{\link[=replace_na_with]{replace_na_with()}} so the
 filter receives a complete series. Pair with \code{\link[=restore_na]{restore_na()}} to put the
 gaps back afterwards.
 }

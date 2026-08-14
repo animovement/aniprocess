@@ -18,6 +18,6 @@ Invisibly \code{NULL}. Called for side effects (errors).
 Aborts on a non-numeric \code{x}, \code{min_gap < 1}, or \code{max_gap < min_gap}.
 Used at the start of every \verb{replace_na_*()} function so the same
 messages and behaviour apply consistently when those functions are
-called directly (rather than via \code{\link[=replace_na]{replace_na()}}).
+called directly (rather than via \code{\link[=replace_na_with]{replace_na_with()}}).
 }
 \keyword{internal}

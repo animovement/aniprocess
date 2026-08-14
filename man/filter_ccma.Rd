@@ -53,7 +53,7 @@ values used to fill those gaps are kept, so the output has \strong{fewer
 \code{NA}s than the input} and genuinely-missing stretches come back as
 interpolated estimates.}
 
-\item{...}{Additional arguments passed to \code{\link[=replace_na]{replace_na()}} (e.g.
+\item{...}{Additional arguments passed to \code{\link[=replace_na_with]{replace_na_with()}} (e.g.
 \code{value}, \code{min_gap}, \code{max_gap}).}
 }
 \value{
