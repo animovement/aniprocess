@@ -31,11 +31,29 @@
 #' by `variables_what`), so each individual / track / keypoint is
 #' smoothed as its own trajectory.
 #'
+#' @section Input shape:
+#' Returns the same shape it is given.
+#'
+#' * Given an **aniframe**, the spatial columns named by `variables_where`
+#'   are smoothed and an aniframe is returned.
+#' * Given a **data frame of coordinate columns**, that frame is smoothed
+#'   and returned. This is the form to use inside [dplyr::mutate()], where
+#'   [dplyr::pick()] supplies the columns and the result is spliced back
+#'   over them:
+#'
+#' ```r
+#' data |> mutate(filter_ccma(pick(all_of(c("x", "y")))))
+#' ```
+#'
+#' CCMA is multivariate — each output coordinate depends on all of them —
+#' so it cannot be used with [dplyr::across()], which passes one column at
+#' a time.
+#'
 #' @param data An aniframe in Cartesian coordinates with 2 or 3 spatial
-#'   columns (set via the `variables_where` metadata field). The
-#'   curvature math is Cartesian-specific (cross products, Euclidean
-#'   norms, circumradius), so polar / cylindrical / spherical aniframes
-#'   are rejected.
+#'   columns (set via the `variables_where` metadata field), or a data
+#'   frame of 2 or 3 numeric coordinate columns. The curvature math is
+#'   Cartesian-specific (cross products, Euclidean norms, circumradius),
+#'   so polar / cylindrical / spherical aniframes are rejected.
 #' @param window_width_ma Integer width of the moving-average kernel
 #'   (must be odd; even values are rounded up). Larger = more smoothing.
 #'   Default `11`.
@@ -81,26 +99,39 @@ filter_ccma <- function(
   keep_na = TRUE,
   ...
 ) {
-  ensure_aniframe_spatial(data)
+  is_frame <- aniframe::is_aniframe(data)
 
-  coord_system <- as.character(
-    aniframe::get_metadata(data, "coordinate_system")
-  )
-  if (!startsWith(coord_system, "cartesian")) {
-    cli::cli_abort(
-      c(
-        "CCMA requires a Cartesian coordinate system; got {.val {coord_system}}.",
-        "i" = "The curvature math (cross product, Euclidean norm, circumradius) is Cartesian-specific."
-      )
+  if (is_frame) {
+    ensure_aniframe_spatial(data)
+
+    coord_system <- as.character(
+      aniframe::get_metadata(data, "coordinate_system")
     )
+    if (!startsWith(coord_system, "cartesian")) {
+      cli::cli_abort(
+        c(
+          "CCMA requires a Cartesian coordinate system; got {.val {coord_system}}.",
+          "i" = "The curvature math (cross product, Euclidean norm, circumradius) is Cartesian-specific."
+        )
+      )
+    }
+
+    variables_where <- aniframe::get_metadata(data, "variables_where")
+  } else {
+    ensure_coords(data)
+    variables_where <- names(data)
   }
 
-  variables_where <- aniframe::get_metadata(data, "variables_where")
   d <- length(variables_where)
   if (!d %in% c(2L, 3L)) {
-    cli::cli_abort(
-      "CCMA requires 2 or 3 spatial coordinates; got {.val {d}} from {.field variables_where}."
-    )
+    cli::cli_abort(c(
+      "CCMA requires 2 or 3 spatial coordinates; got {.val {d}}.",
+      "i" = if (is_frame) {
+        "Taken from the {.field variables_where} metadata field."
+      } else {
+        "Taken from the columns of {.arg data}."
+      }
+    ))
   }
 
   window_width_ma <- ccma_validate_window("window_width_ma", window_width_ma)
@@ -115,12 +146,9 @@ filter_ccma <- function(
 
   extra_args <- rlang::list2(...)
 
-  # Applied per group by mutate(): the returned data frame is spliced back
-  # over the spatial columns in place. Ungrouped data is simply one group.
-  dplyr::mutate(
-    data,
+  smooth <- function(coords) {
     ccma_filter_group(
-      dplyr::pick(dplyr::all_of(variables_where)),
+      coords,
       w_ma = w_ma,
       w_cc = w_cc,
       kernel = kernel,
@@ -130,7 +158,17 @@ filter_ccma <- function(
       keep_na = keep_na,
       replace_na_args = extra_args
     )
-  )
+  }
+
+  # Given a coordinate frame, smooth it directly: the caller has already
+  # decided which rows belong together (typically one group, via pick()).
+  if (!is_frame) {
+    return(smooth(data))
+  }
+
+  # Applied per group by mutate(): the returned data frame is spliced back
+  # over the spatial columns in place. Ungrouped data is simply one group.
+  dplyr::mutate(data, smooth(dplyr::pick(dplyr::all_of(variables_where))))
 }
 
 

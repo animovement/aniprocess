@@ -18,10 +18,10 @@ filter_ccma(
 }
 \arguments{
 \item{data}{An aniframe in Cartesian coordinates with 2 or 3 spatial
-columns (set via the \code{variables_where} metadata field). The
-curvature math is Cartesian-specific (cross products, Euclidean
-norms, circumradius), so polar / cylindrical / spherical aniframes
-are rejected.}
+columns (set via the \code{variables_where} metadata field), or a data
+frame of 2 or 3 numeric coordinate columns. The curvature math is
+Cartesian-specific (cross products, Euclidean norms, circumradius),
+so polar / cylindrical / spherical aniframes are rejected.}
 
 \item{window_width_ma}{Integer width of the moving-average kernel
 (must be odd; even values are rounded up). Larger = more smoothing.
@@ -93,6 +93,26 @@ Smoothing is applied within the aniframe's existing grouping (driven
 by \code{variables_what}), so each individual / track / keypoint is
 smoothed as its own trajectory.
 }
+\section{Input shape}{
+
+Returns the same shape it is given.
+\itemize{
+\item Given an \strong{aniframe}, the spatial columns named by \code{variables_where}
+are smoothed and an aniframe is returned.
+\item Given a \strong{data frame of coordinate columns}, that frame is smoothed
+and returned. This is the form to use inside \code{\link[dplyr:mutate]{dplyr::mutate()}}, where
+\code{\link[dplyr:pick]{dplyr::pick()}} supplies the columns and the result is spliced back
+over them:
+}
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{data |> mutate(filter_ccma(pick(all_of(c("x", "y")))))
+}\if{html}{\out{</div>}}
+
+CCMA is multivariate — each output coordinate depends on all of them —
+so it cannot be used with \code{\link[dplyr:across]{dplyr::across()}}, which passes one column at
+a time.
+}
+
 \examples{
 \dontrun{
 filter_ccma(tracking_data, window_width_ma = 11, window_width_cc = 7)

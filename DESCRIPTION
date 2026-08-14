@@ -1,7 +1,7 @@
 Package: aniprocess
 Type: Package
 Title: An R package for signal processing and filtering of movement data
-Version: 0.2.0.9003
+Version: 0.2.0.9004
 Authors@R: 
     person(
       "Mikkel", 

@@ -173,9 +173,25 @@ test_that("filter_na_excursion handles trajectories with no σ (constant data)",
   expect_false(any(is.na(out$y)))
 })
 
-test_that("filter_na_excursion rejects non-aniframe input", {
-  d <- data.frame(time = 1:5, x = 1:5, y = 1:5)
-  expect_error(filter_na_excursion(d), class = "rlang_error")
+test_that("filter_na_excursion rejects input that is neither aniframe nor data frame", {
+  expect_error(filter_na_excursion(1:5), "aniframe or a data frame")
+})
+
+test_that("filter_na_excursion coordinate-frame form matches the aniframe form", {
+  set.seed(4)
+  np <- 40
+  x <- rnorm(np, sd = 2)
+  x[10:12] <- x[10:12] + 40
+  y <- rnorm(np, sd = 2)
+
+  d <- aniframe::aniframe(
+    time = seq_len(np), x = x, y = y, variables_what = character(0)
+  )
+  expect_equal(
+    filter_na_excursion(data.frame(x = x, y = y)),
+    as.data.frame(filter_na_excursion(d))[, c("x", "y")],
+    ignore_attr = TRUE
+  )
 })
 
 test_that("filter_na_excursion errors when a variables_where column is missing", {

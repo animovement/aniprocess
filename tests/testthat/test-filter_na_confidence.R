@@ -395,3 +395,38 @@ test_that("filter_na_confidence validates confidence column is numeric", {
     "confidence.*must be numeric"
   )
 })
+
+# --- coordinate-frame form (#30 step 2) -------------------------------------
+
+test_that("filter_na_confidence requires confidence for a coordinate frame", {
+  expect_error(
+    filter_na_confidence(data.frame(x = 1:5, y = 1:5)),
+    "`confidence` is required"
+  )
+})
+
+test_that("filter_na_confidence coordinate-frame form masks the coordinates", {
+  coords <- data.frame(x = c(1, 2, 3, 4), y = c(5, 6, 7, 8))
+  conf <- c(0.9, 0.2, NA, 0.7)
+
+  res <- filter_na_confidence(coords, threshold = 0.6, confidence = conf)
+
+  # Below threshold and missing confidence both blank the row
+  expect_equal(which(is.na(res$x)), c(2L, 3L))
+  expect_equal(which(is.na(res$y)), c(2L, 3L))
+  # `confidence` is not a coordinate, so nothing is added to the output
+  expect_equal(names(res), c("x", "y"))
+})
+
+test_that("filter_na_confidence coordinate-frame form matches the aniframe form", {
+  conf <- c(0.9, 0.2, NA, 0.7)
+  d <- aniframe::aniframe(
+    time = 1:4, x = c(1, 2, 3, 4), y = c(5, 6, 7, 8), confidence = conf
+  )
+  expect_equal(
+    filter_na_confidence(data.frame(x = c(1, 2, 3, 4), y = c(5, 6, 7, 8)),
+                         threshold = 0.6, confidence = conf),
+    as.data.frame(filter_na_confidence(d, threshold = 0.6))[, c("x", "y")],
+    ignore_attr = TRUE
+  )
+})

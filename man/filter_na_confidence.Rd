@@ -4,25 +4,50 @@
 \alias{filter_na_confidence}
 \title{Filter low-confidence values in a dataset}
 \usage{
-filter_na_confidence(data, threshold = 0.6)
+filter_na_confidence(data, threshold = 0.6, confidence = NULL)
 }
 \arguments{
 \item{data}{An aniframe containing a \code{confidence} column and spatial columns
-as defined in the metadata's \code{variables_where}.}
+as defined in the metadata's \code{variables_where}, or a data frame of numeric
+coordinate columns.}
 
 \item{threshold}{A numeric value specifying the minimum confidence level to
 retain data. Must be a single value between 0 and 1. Default is 0.6.}
+
+\item{confidence}{Numeric vector of confidence values, one per row.
+Required when \code{data} is a coordinate frame. When \code{data} is an aniframe
+this defaults to its \code{confidence} column.}
 }
 \value{
-An aniframe with the same structure as the input, but where spatial
-and \code{confidence} values are replaced with \code{NA} if the confidence is below
-the threshold.
+The same shape as the input, with spatial values replaced by \code{NA}
+where confidence is below the threshold. A missing confidence counts as
+failing the threshold. For an aniframe the \code{confidence} column is
+filtered too.
 }
 \description{
 This function replaces spatial coordinate values with \code{NA} if the confidence
 values are below a specified threshold. The \code{confidence} column is also
 filtered.
 }
+\section{Input shape}{
+
+Returns the same shape it is given.
+\itemize{
+\item Given an \strong{aniframe}, the columns named by \code{variables_where} are masked,
+along with \code{confidence}.
+\item Given a \strong{data frame of coordinate columns}, that frame is masked and
+returned — the form to use inside \code{\link[dplyr:mutate]{dplyr::mutate()}}:
+}
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{data |> mutate(
+  filter_na_confidence(pick(all_of(c("x", "y"))), confidence = confidence)
+)
+}\if{html}{\out{</div>}}
+
+\code{confidence} is not a coordinate, so it is only filtered by the aniframe
+form; the coordinate-frame form returns just the masked coordinates.
+}
+
 \examples{
 # 2D example
 data <- aniframe::aniframe(

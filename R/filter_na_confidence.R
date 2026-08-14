@@ -5,13 +5,35 @@
 #' filtered.
 #'
 #' @param data An aniframe containing a `confidence` column and spatial columns
-#'   as defined in the metadata's `variables_where`.
+#'   as defined in the metadata's `variables_where`, or a data frame of numeric
+#'   coordinate columns.
 #' @param threshold A numeric value specifying the minimum confidence level to
 #'   retain data. Must be a single value between 0 and 1. Default is 0.6.
+#' @param confidence Numeric vector of confidence values, one per row.
+#'   Required when `data` is a coordinate frame. When `data` is an aniframe
+#'   this defaults to its `confidence` column.
 #'
-#' @return An aniframe with the same structure as the input, but where spatial
-#'   and `confidence` values are replaced with `NA` if the confidence is below
-#'   the threshold.
+#' @return The same shape as the input, with spatial values replaced by `NA`
+#'   where confidence is below the threshold. A missing confidence counts as
+#'   failing the threshold. For an aniframe the `confidence` column is
+#'   filtered too.
+#'
+#' @section Input shape:
+#' Returns the same shape it is given.
+#'
+#' * Given an **aniframe**, the columns named by `variables_where` are masked,
+#'   along with `confidence`.
+#' * Given a **data frame of coordinate columns**, that frame is masked and
+#'   returned — the form to use inside [dplyr::mutate()]:
+#'
+#' ```r
+#' data |> mutate(
+#'   filter_na_confidence(pick(all_of(c("x", "y"))), confidence = confidence)
+#' )
+#' ```
+#'
+#' `confidence` is not a coordinate, so it is only filtered by the aniframe
+#' form; the coordinate-frame form returns just the masked coordinates.
 #'
 #' @examples
 #' # 2D example
@@ -37,12 +59,29 @@
 #' filter_na_confidence(data_3d, threshold = 0.6)
 #'
 #' @export
-filter_na_confidence <- function(data, threshold = 0.6) {
-  ensure_aniframe_spatial(data)
-  variables_where <- aniframe::get_metadata(data, "variables_where")
+filter_na_confidence <- function(data, threshold = 0.6, confidence = NULL) {
+  is_frame <- aniframe::is_aniframe(data)
 
-  if (!"confidence" %in% names(data)) {
-    cli::cli_abort("Missing required column: {.val confidence}.")
+  if (is_frame) {
+    ensure_aniframe_spatial(data)
+    variables_where <- aniframe::get_metadata(data, "variables_where")
+
+    if (is.null(confidence)) {
+      if (!"confidence" %in% names(data)) {
+        cli::cli_abort("Missing required column: {.val confidence}.")
+      }
+      confidence <- data$confidence
+    }
+  } else {
+    ensure_coords(data)
+    variables_where <- names(data)
+
+    if (is.null(confidence)) {
+      cli::cli_abort(c(
+        "{.arg confidence} is required when {.arg data} is a coordinate frame.",
+        "i" = "Inside {.fn dplyr::mutate}: {.code filter_na_confidence(pick(all_of(...)), confidence = confidence)}."
+      ))
+    }
   }
 
   # Validate threshold
@@ -54,22 +93,29 @@ filter_na_confidence <- function(data, threshold = 0.6) {
     cli::cli_abort("{.arg threshold} must be between 0 and 1.")
   }
 
-  # Validate confidence column is numeric
-  if (!is.numeric(data$confidence)) {
-    cli::cli_abort("Column {.val confidence} must be numeric.")
+  if (!is.numeric(confidence)) {
+    cli::cli_abort("{.arg confidence} must be numeric.")
   }
-
-  # Replace spatial values with NA where confidence is below threshold
-  for (col in variables_where) {
-    data <- data |>
-      dplyr::mutate(
-        !!col := dplyr::if_else(.data$confidence < threshold, NA, .data[[col]])
-      )
-  }
-
-  # Filter confidence column
-  data |>
-    dplyr::mutate(
-      confidence = filter_na_range(.data$confidence, min_value = threshold)
+  if (length(confidence) != nrow(data)) {
+    cli::cli_abort(
+      "{.arg confidence} must have one value per row ({nrow(data)}); got {length(confidence)}."
     )
+  }
+
+  # Replace spatial values with NA where confidence is below threshold.
+  # A missing confidence is treated as failing the threshold, matching the
+  # `if_else()` semantics this replaced: an unknown confidence is not a
+  # trustworthy one.
+  below <- is.na(confidence) | confidence < threshold
+  for (col in variables_where) {
+    data[[col]][below] <- NA_real_
+  }
+
+  # `confidence` is not a coordinate, so it can only be masked when the
+  # input carries it — that is, for an aniframe.
+  if (is_frame && "confidence" %in% names(data)) {
+    data$confidence <- filter_na_range(data$confidence, min_value = threshold)
+  }
+
+  data
 }
