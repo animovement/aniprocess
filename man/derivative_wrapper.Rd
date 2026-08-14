@@ -13,6 +13,13 @@ derivative_wrapper(fn)
 A function with the same interface as \code{fn}.
 }
 \description{
-Differences the column, filters the differences, then re-integrates.
+Differences the column, filters the differences, then re-integrates from
+the original starting value — so with a filter that does nothing, the
+round trip returns the input unchanged.
+}
+\details{
+A \code{NA} among the filtered differences is treated as no movement for the
+purpose of accumulation, and restored as \code{NA} at its own position, so one
+missing step does not blank the rest of the series.
 }
 \keyword{internal}

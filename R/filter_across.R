@@ -31,10 +31,15 @@
 #' @param variables Columns to filter, as a tidyselect expression.
 #'   Defaults to the `variables_where` metadata field.
 #' @param ... Arguments passed to the underlying filter.
-#' @param use_derivatives If `TRUE`, difference each column, filter the
-#'   differences, and re-integrate. For trackball data, where the raw
-#'   measurements are per-frame displacements and the coordinates were
-#'   integrated from them, smoothing belongs on the displacements.
+#' @param on_deltas If `TRUE`, difference each column, filter the
+#'   differences, and re-integrate from the original starting value. For
+#'   trackball data, where the raw measurements are per-frame displacements
+#'   and the coordinates were integrated from them, smoothing belongs on
+#'   the displacements rather than on the integrated positions.
+#'
+#'   A `NA` among the filtered differences counts as no movement when
+#'   accumulating, and is restored as `NA` at its own position, so one
+#'   missing step does not blank the rest of the series.
 #'
 #' @return An aniframe of the same shape, with the selected columns
 #'   filtered.
@@ -68,7 +73,7 @@ filter_across <- function(
   ),
   variables = NULL,
   ...,
-  use_derivatives = FALSE
+  on_deltas = FALSE
 ) {
   method <- match.arg(method)
   ensure_aniframe_spatial(data)
@@ -109,7 +114,7 @@ filter_across <- function(
   }
 
   fn <- filter_method_fn(method)
-  if (isTRUE(use_derivatives)) {
+  if (isTRUE(on_deltas)) {
     fn <- derivative_wrapper(fn)
   }
 
@@ -167,7 +172,13 @@ filter_needs_sampling_rate <- function(method) {
 
 #' Wrap a filter so it acts on differences rather than on levels.
 #'
-#' Differences the column, filters the differences, then re-integrates.
+#' Differences the column, filters the differences, then re-integrates from
+#' the original starting value — so with a filter that does nothing, the
+#' round trip returns the input unchanged.
+#'
+#' A `NA` among the filtered differences is treated as no movement for the
+#' purpose of accumulation, and restored as `NA` at its own position, so one
+#' missing step does not blank the rest of the series.
 #'
 #' @param fn The filter to wrap.
 #'
@@ -180,6 +191,8 @@ derivative_wrapper <- function(fn) {
   function(col, ...) {
     d <- col - dplyr::lag(col)
     d <- fn(d, ...)
-    cumsum(dplyr::coalesce(d, 0)) + d * 0
+    # There is no step into the first sample; it *is* the starting point.
+    d[1] <- 0
+    col[1] + cumsum(dplyr::coalesce(d, 0)) + d * 0
   }
 }

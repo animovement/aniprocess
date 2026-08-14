@@ -10,7 +10,7 @@ filter_across(
     "highpass", "lowpass_fft", "highpass_fft", "kalman", "kalman_irregular", "ccma"),
   variables = NULL,
   ...,
-  use_derivatives = FALSE
+  on_deltas = FALSE
 )
 }
 \arguments{
@@ -26,10 +26,15 @@ Defaults to the \code{variables_where} metadata field.}
 
 \item{...}{Arguments passed to the underlying filter.}
 
-\item{use_derivatives}{If \code{TRUE}, difference each column, filter the
-differences, and re-integrate. For trackball data, where the raw
-measurements are per-frame displacements and the coordinates were
-integrated from them, smoothing belongs on the displacements.}
+\item{on_deltas}{If \code{TRUE}, difference each column, filter the
+differences, and re-integrate from the original starting value. For
+trackball data, where the raw measurements are per-frame displacements
+and the coordinates were integrated from them, smoothing belongs on
+the displacements rather than on the integrated positions.
+
+A \code{NA} among the filtered differences counts as no movement when
+accumulating, and is restored as \code{NA} at its own position, so one
+missing step does not blank the rest of the series.}
 }
 \value{
 An aniframe of the same shape, with the selected columns
