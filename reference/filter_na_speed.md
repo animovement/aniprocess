@@ -6,14 +6,15 @@ coordinates and confidence values at flagged rows are replaced with NA.
 ## Usage
 
 ``` r
-filter_na_speed(data, threshold = "auto")
+filter_na_speed(data, threshold = "auto", time = NULL)
 ```
 
 ## Arguments
 
 - data:
 
-  An aniframe containing spatial coordinates and a time column.
+  An aniframe containing spatial coordinates and a time column, or a
+  data frame of numeric coordinate columns.
 
 - threshold:
 
@@ -24,10 +25,17 @@ filter_na_speed(data, threshold = "auto")
 
   - If "auto": Sets threshold at mean speed + 3 standard deviations.
 
+- time:
+
+  Numeric vector of time values, one per row. Required when `data` is a
+  coordinate frame. When `data` is an aniframe this defaults to its
+  `time` column.
+
 ## Value
 
-An aniframe with the same structure as the input, but with spatial and
-confidence values replaced by NA where speed exceeds the threshold.
+The same shape as the input, with spatial values replaced by NA where
+speed exceeds the threshold. For an aniframe, `confidence` is blanked at
+those rows too.
 
 ## Details
 
@@ -54,6 +62,24 @@ When using `threshold = "auto"`, the threshold is set to the mean speed
 plus three standard deviations, pooled across groups. Because no
 cross-track step is ever formed, the estimate uses within-track speeds
 only.
+
+## Input shape
+
+Returns the same shape it is given.
+
+- Given an **aniframe**, the columns named by `variables_where` are
+  masked, along with `confidence` if present.
+
+- Given a **data frame of coordinate columns**, that frame is masked and
+  returned — the form to use inside
+  [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html):
+
+    data |> mutate(filter_na_speed(pick(all_of(c("x", "y"))), time = time))
+
+Speed depends on all coordinates jointly, so this cannot be used with
+[`dplyr::across()`](https://dplyr.tidyverse.org/reference/across.html).
+`confidence` is not a coordinate, so it can only be masked via the
+aniframe form.
 
 ## Examples
 

@@ -75,9 +75,63 @@
 
 ### New features
 
+- The aniframe-aware filters now accept a data frame of coordinate
+  columns as well as an aniframe, and return whichever shape they were
+  given. This makes them usable inside
+  [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html)
+  via
+  [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html),
+  which is the second step towards the unified interface in
+  [\#30](https://github.com/animovement/aniprocess/issues/30)
+  ([\#30](https://github.com/animovement/aniprocess/issues/30)).
+
+  ``` r
+
+  data |> mutate(filter_ccma(pick(all_of(c("x", "y")))))
+  data |> mutate(filter_na_speed(pick(all_of(c("x", "y"))), time = time))
+  ```
+
+  Applies to
+  [`filter_ccma()`](http://animovement.dev/aniprocess/reference/filter_ccma.md),
+  [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md),
+  [`filter_na_excursion()`](http://animovement.dev/aniprocess/reference/filter_na_excursion.md),
+  [`filter_na_roi()`](http://animovement.dev/aniprocess/reference/filter_na_roi.md)
+  and
+  [`filter_na_confidence()`](http://animovement.dev/aniprocess/reference/filter_na_confidence.md).
+  These operations are multivariate — each result depends on all
+  coordinates jointly — so they work with
+  [`pick()`](https://dplyr.tidyverse.org/reference/pick.html) but not
+  with
+  [`dplyr::across()`](https://dplyr.tidyverse.org/reference/across.html),
+  which passes one column at a time.
+
+- [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)
+  gains a `time` argument and
+  [`filter_na_confidence()`](http://animovement.dev/aniprocess/reference/filter_na_confidence.md)
+  a `confidence` argument. Both are required when the input is a
+  coordinate frame and default to the corresponding aniframe column
+  otherwise. Neither `time` nor `confidence` is a coordinate, so the
+  coordinate-frame form cannot mask `confidence`; only the aniframe form
+  does.
+
+- [`filter_na_roi()`](http://animovement.dev/aniprocess/reference/filter_na_roi.md)
+  now aborts with a clear message when the coordinates it needs (`x` and
+  `y`) are absent, rather than failing further in.
+
+- [`filter_na_confidence()`](http://animovement.dev/aniprocess/reference/filter_na_confidence.md)
+  no longer masks rows whose confidence is `NA`. A missing confidence
+  means *not scored* rather than *scored badly* — a human annotator has
+  no natural number to enter for “not assessed”, and tracker scores are
+  not bounded at 1 (SLEAP can exceed it), so `NA` is the sensible thing
+  to record. Those rows are left unfiltered and a rate-limited warning
+  reports how many there were. To drop them as well, filter `confidence`
+  directly with
+  [`filter_na_range()`](http://animovement.dev/aniprocess/reference/filter_na_range.md).
+
 - `na_action` and `keep_na` are now documented from a single shared
   source, so the contract is stated identically across the filter family
   ([\#38](https://github.com/animovement/aniprocess/issues/38)).
+
 - `keep_na` is validated: a non-logical, `NA`, or non-scalar value now
   aborts with a clear message rather than being silently coerced.
 

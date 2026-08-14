@@ -26,9 +26,10 @@ filter_ccma(
 - data:
 
   An aniframe in Cartesian coordinates with 2 or 3 spatial columns (set
-  via the `variables_where` metadata field). The curvature math is
-  Cartesian-specific (cross products, Euclidean norms, circumradius), so
-  polar / cylindrical / spherical aniframes are rejected.
+  via the `variables_where` metadata field), or a data frame of 2 or 3
+  numeric coordinate columns. The curvature math is Cartesian-specific
+  (cross products, Euclidean norms, circumradius), so polar /
+  cylindrical / spherical aniframes are rejected.
 
 - window_width_ma:
 
@@ -114,6 +115,27 @@ or
 Smoothing is applied within the aniframe's existing grouping (driven by
 `variables_what`), so each individual / track / keypoint is smoothed as
 its own trajectory.
+
+## Input shape
+
+Returns the same shape it is given.
+
+- Given an **aniframe**, the spatial columns named by `variables_where`
+  are smoothed and an aniframe is returned.
+
+- Given a **data frame of coordinate columns**, that frame is smoothed
+  and returned. This is the form to use inside
+  [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html),
+  where
+  [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html)
+  supplies the columns and the result is spliced back over them:
+
+    data |> mutate(filter_ccma(pick(all_of(c("x", "y")))))
+
+CCMA is multivariate — each output coordinate depends on all of them —
+so it cannot be used with
+[`dplyr::across()`](https://dplyr.tidyverse.org/reference/across.html),
+which passes one column at a time.
 
 ## References
 

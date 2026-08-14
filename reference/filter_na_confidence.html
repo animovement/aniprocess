@@ -11,7 +11,7 @@ filtered."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9004</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,7 +63,7 @@ filtered.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">filter_na_confidence</span><span class="op">(</span><span class="va">data</span>, threshold <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">filter_na_confidence</span><span class="op">(</span><span class="va">data</span>, threshold <span class="op">=</span> <span class="fl">0.6</span>, confidence <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -72,19 +72,50 @@ filtered.</p>
 
 <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
 <dd><p>An aniframe containing a <code>confidence</code> column and spatial columns
-as defined in the metadata's <code>variables_where</code>.</p></dd>
+as defined in the metadata's <code>variables_where</code>, or a data frame of numeric
+coordinate columns.</p></dd>
 
 
 <dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
 <dd><p>A numeric value specifying the minimum confidence level to
 retain data. Must be a single value between 0 and 1. Default is 0.6.</p></dd>
 
+
+<dt id="arg-confidence">confidence<a class="anchor" aria-label="anchor" href="#arg-confidence"></a></dt>
+<dd><p>Numeric vector of confidence values, one per row.
+Required when <code>data</code> is a coordinate frame. When <code>data</code> is an aniframe
+this defaults to its <code>confidence</code> column.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>An aniframe with the same structure as the input, but where spatial
-and <code>confidence</code> values are replaced with <code>NA</code> if the confidence is below
-the threshold.</p>
+    <p>The same shape as the input, with spatial values replaced by <code>NA</code>
+where confidence is below the threshold. For an aniframe the
+<code>confidence</code> column is filtered too.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>A missing confidence means <em>not scored</em>, not <em>scored badly</em>, so those rows
+are left unfiltered. A human annotator has no natural number to enter for
+"I did not assess this", and tracker scores are not bounded at 1 — SLEAP
+can exceed it — so <code>NA</code> is the sensible thing to record rather than a
+sentinel value. A warning reports how many were missing, since silently
+skipping them would hide that those rows were never checked. To drop them
+as well, filter <code>confidence</code> directly with <code><a href="filter_na_range.html">filter_na_range()</a></code>.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="input-shape">Input shape<a class="anchor" aria-label="anchor" href="#input-shape"></a></h2>
+
+
+<p>Returns the same shape it is given.</p><ul><li><p>Given an <strong>aniframe</strong>, the columns named by <code>variables_where</code> are masked,
+along with <code>confidence</code>.</p></li>
+<li><p>Given a <strong>data frame of coordinate columns</strong>, that frame is masked and
+returned — the form to use inside <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">dplyr::mutate()</a></code>:</p></li>
+</ul><p></p><div class="sourceCode r"><pre><code><span><span class="va">data</span> <span class="op">|&gt;</span> <span class="fu">mutate</span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/filter_na_confidence.html">filter_na_confidence</a></span><span class="op">(</span><span class="fu">pick</span><span class="op">(</span><span class="fu">all_of</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, confidence <span class="op">=</span> <span class="va">confidence</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre><p></p></div>
+<p><code>confidence</code> is not a coordinate, so it is only filtered by the aniframe
+form; the coordinate-frame form returns just the masked coordinates.</p>
     </div>
 
     <div class="section level2">

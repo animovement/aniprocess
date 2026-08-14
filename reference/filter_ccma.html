@@ -11,7 +11,7 @@ a plain moving average introduces on curved paths.'></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9004</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,10 +82,10 @@ a plain moving average introduces on curved paths.</p>
 
 <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
 <dd><p>An aniframe in Cartesian coordinates with 2 or 3 spatial
-columns (set via the <code>variables_where</code> metadata field). The
-curvature math is Cartesian-specific (cross products, Euclidean
-norms, circumradius), so polar / cylindrical / spherical aniframes
-are rejected.</p></dd>
+columns (set via the <code>variables_where</code> metadata field), or a data
+frame of 2 or 3 numeric coordinate columns. The curvature math is
+Cartesian-specific (cross products, Euclidean norms, circumradius),
+so polar / cylindrical / spherical aniframes are rejected.</p></dd>
 
 
 <dt id="arg-window-width-ma">window_width_ma<a class="anchor" aria-label="anchor" href="#arg-window-width-ma"></a></dt>
@@ -163,6 +163,21 @@ smoothing reach for <code><a href="filter_gaussian.html">filter_gaussian()</a></
 <p>Smoothing is applied within the aniframe's existing grouping (driven
 by <code>variables_what</code>), so each individual / track / keypoint is
 smoothed as its own trajectory.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="input-shape">Input shape<a class="anchor" aria-label="anchor" href="#input-shape"></a></h2>
+
+
+<p>Returns the same shape it is given.</p><ul><li><p>Given an <strong>aniframe</strong>, the spatial columns named by <code>variables_where</code>
+are smoothed and an aniframe is returned.</p></li>
+<li><p>Given a <strong>data frame of coordinate columns</strong>, that frame is smoothed
+and returned. This is the form to use inside <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">dplyr::mutate()</a></code>, where
+<code><a href="https://dplyr.tidyverse.org/reference/pick.html" class="external-link">dplyr::pick()</a></code> supplies the columns and the result is spliced back
+over them:</p></li>
+</ul><p></p><div class="sourceCode r"><pre><code><span><span class="va">data</span> <span class="op">|&gt;</span> <span class="fu">mutate</span><span class="op">(</span><span class="fu"><a href="../reference/filter_ccma.html">filter_ccma</a></span><span class="op">(</span><span class="fu">pick</span><span class="op">(</span><span class="fu">all_of</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre><p></p></div>
+<p>CCMA is multivariate — each output coordinate depends on all of them —
+so it cannot be used with <code><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">dplyr::across()</a></code>, which passes one column at
+a time.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
