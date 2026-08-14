@@ -16,6 +16,11 @@
 * `filter_na_speed()` now computes speed within each group of a grouped aniframe. It previously worked on the raw column vectors, so a step was formed between the last row of one track and the first row of the next. Where `time` restarts per track that step has a negative duration and yields a negative "speed", which inflated the `"auto"` threshold and caused genuine outliers to be **missed** — how badly depended on how far apart the tracks happened to be. The cross-track step never produced false positives, because per-row speed is the minimum of the backward and forward step and a track boundary is one-sided (#37).
 * `filter_na_speed()` no longer blanks rows belonging to groups shorter than two rows. Such a group has no step, so its speed is `NA`, and `dplyr::if_else()` propagates a missing condition (#37).
 
+## Internal
+
+* `filter_na_speed()`, `filter_na_excursion()` and `filter_ccma()` all resolve groups through `dplyr::mutate()` and `dplyr::pick()` rather than re-deriving row indices with `dplyr::group_indices()`. Only `filter_na_speed()` changes behaviour; for the other two the output is unchanged, verified byte-for-byte against the previous implementation. The manual loops rescanned the group vector on every iteration — and in `filter_ccma()` rebuilt the whole data frame — making them quadratic in group count. At 3,000 groups × 20 rows, `filter_ccma()` goes from 47.8s to 5.9s and `filter_na_excursion()` from 2.19s to 0.63s. `filter_na_speed()` becomes slower (0.02s to 0.31s) because it previously did no per-group work at all (#37).
+* `calculate_speed_2d()` and `calculate_speed_3d()` are replaced by a single dimension-agnostic `calculate_step_speed()`, which sums the squared step over whatever coordinate columns it is given.
+
 * The `data.table (>= 1.18.0)` requirement is now enforced when the package loads, not only when it is installed. Because the rolling filters reached `data.table` solely via `data.table::`, R had no namespace import to version-check, so an older `data.table` arriving after installation (conda, a stale `renv` lockfile, a manual downgrade) failed with `unused argument (partial = use_partial)` from inside `filter_rollmean()` rather than a version error naming `data.table` (#33).
 
 # aniprocess 0.2.0

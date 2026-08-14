@@ -279,3 +279,38 @@ test_that("filter_ccma rejects non-Cartesian coordinate systems", {
     expect_error(filter_ccma(bad), "Cartesian coordinate system")
   }
 })
+
+# --- grouping ---------------------------------------------------------------
+
+test_that("filter_ccma smooths each group independently", {
+  # Filtering a grouped frame must equal filtering each group on its own.
+  np <- 60
+  t <- seq(0, 2 * pi, length.out = np)
+  a <- data.frame(time = seq_len(np), x = cos(t), y = sin(t))
+  b <- data.frame(time = seq_len(np), x = cos(t) + 5000, y = sin(t) + 5000)
+
+  grouped <- aniframe::aniframe(
+    time = c(a$time, b$time),
+    individual = rep(c("a", "b"), each = np),
+    x = c(a$x, b$x),
+    y = c(a$y, b$y),
+    variables_what = "individual"
+  ) |>
+    dplyr::group_by(individual)
+
+  alone <- function(d) {
+    res <- filter_ccma(aniframe::aniframe(
+      time = d$time,
+      x = d$x,
+      y = d$y,
+      variables_what = character(0)
+    ))
+    as.data.frame(res)[, c("x", "y")]
+  }
+
+  expect_equal(
+    as.data.frame(filter_ccma(grouped))[, c("x", "y")],
+    rbind(alone(a), alone(b)),
+    ignore_attr = TRUE
+  )
+})

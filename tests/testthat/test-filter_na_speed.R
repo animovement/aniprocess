@@ -301,8 +301,10 @@ test_that("calculate_step_speed uses one-sided fallback at endpoints", {
 
 test_that("calculate_step_speed returns NA for groups too short to step", {
   expect_equal(calculate_step_speed(data.frame(x = 1), 1), NA_real_)
-  expect_equal(calculate_step_speed(data.frame(x = numeric(0)), numeric(0)),
-               numeric(0))
+  expect_equal(
+    calculate_step_speed(data.frame(x = numeric(0)), numeric(0)),
+    numeric(0)
+  )
 })
 
 test_that("filter_na_speed errors when time column is missing", {

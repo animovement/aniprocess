@@ -4,10 +4,10 @@
 \alias{excursion_mask_per_axis}
 \title{Per-axis excursion state machine.}
 \usage{
-excursion_mask_per_axis(data, rows, variables_where, outlier_sd, return_sd)
+excursion_mask_per_axis(coords, outlier_sd, return_sd)
 }
 \description{
-Returns a logical vector (length \code{length(rows)}) with \code{TRUE} at rows
+Returns a logical vector (length \code{nrow(coords)}) with \code{TRUE} at rows
 where any spatial axis is currently inside an excursion run.
 }
 \keyword{internal}
