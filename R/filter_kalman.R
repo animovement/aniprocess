@@ -5,7 +5,7 @@
 #' parameter selection based on sampling rate. The filter handles missing values (NA)
 #' and provides noise reduction while preserving real signal changes.
 #'
-#' @param measurements Numeric vector containing the measurements to be filtered.
+#' @param x Numeric vector of measurements to be filtered.
 #' @param sampling_rate Numeric value specifying the sampling rate in Hz (frames per second).
 #' @param base_Q Optional. Process variance. If NULL, automatically calculated based on sampling_rate.
 #'          Represents expected rate of change in the true state.
@@ -14,37 +14,37 @@
 #' @param initial_state Optional. Initial state estimate. If NULL, uses first non-NA measurement.
 #' @param initial_P Optional. Initial state uncertainty. If NULL, calculated based on sampling_rate.
 #' @param keep_na Logical. If `TRUE`, positions that were `NA` in
-#'   `measurements` are `NA` in the output. Defaults to `FALSE`, unlike the
+#'   `x` are `NA` in the output. Defaults to `FALSE`, unlike the
 #'   rest of the filter family: a Kalman filter's predict step is designed
 #'   to carry the state estimate through missing observations, so inferring
 #'   across gaps is the intended behaviour rather than an accident. Set
 #'   `TRUE` when you want gaps left as gaps.
 #'
 #' @return
-#' A numeric vector of the same length as measurements containing the filtered values.
+#' A numeric vector of the same length as x containing the filtered values.
 #'
 #' @details
 #' The function implements a simple Kalman filter with a constant position model.
 #' When parameters are not explicitly provided, they are automatically configured based
 #' on the sampling rate:
 #'
-#' * `base_Q` defaults to `var(measurements) / sampling_rate` (so the
+#' * `base_Q` defaults to `var(x) / sampling_rate` (so the
 #'   per-step process noise `Q = base_Q / sampling_rate` shrinks at higher
 #'   sampling rates, where consecutive samples are closer together).
 #' * `R` defaults to `min(mean(diff(x)^2) / 2, var(x) / 4)` if there are
 #'   enough observations, else `0.1`.
-#' * `initial_P` defaults to `var(measurements)` if there are enough
+#' * `initial_P` defaults to `var(x)` if there are enough
 #'   observations, else `1`.
 #'
 #' Missing values (NA) are handled by relying on the prediction step without measurement updates.
 #'
 #' @examples
 #' # Basic usage with 60 Hz data
-#' measurements <- c(1, 1.1, NA, 0.9, 1.2, NA, 0.8, 1.1)
-#' filtered <- filter_kalman(measurements, sampling_rate = 60)
+#' x <- c(1, 1.1, NA, 0.9, 1.2, NA, 0.8, 1.1)
+#' filtered <- filter_kalman(x, sampling_rate = 60)
 #'
 #' # Custom parameters for more aggressive filtering
-#' filtered_custom <- filter_kalman(measurements,
+#' filtered_custom <- filter_kalman(x,
 #'                                 sampling_rate = 60,
 #'                                 base_Q = 0.001,
 #'                                 R = 0.2)
@@ -61,7 +61,7 @@
 #'
 #' @export
 filter_kalman <- function(
-  measurements,
+  x,
   sampling_rate,
   base_Q = NULL,
   R = NULL,
@@ -79,19 +79,19 @@ filter_kalman <- function(
   ) {
     stop("sampling_rate must be finite and positive")
   }
-  if (length(measurements) == 0) {
-    stop("measurements cannot be empty")
+  if (length(x) == 0) {
+    stop("x cannot be empty")
   }
-  if (all(is.na(measurements))) {
+  if (all(is.na(x))) {
     stop("At least one non-NA measurement is required")
   }
 
-  # Get valid measurements for parameter estimation
-  valid_measurements <- measurements[!is.na(measurements)]
+  # Get valid x for parameter estimation
+  valid_measurements <- x[!is.na(x)]
 
   # Improved parameter auto-configuration
   if (is.null(base_Q)) {
-    # If we have enough valid measurements for variance
+    # If we have enough valid x for variance
     if (length(valid_measurements) > 1) {
       signal_var <- stats::var(valid_measurements)
     } else {
@@ -101,7 +101,7 @@ filter_kalman <- function(
   }
 
   if (is.null(R)) {
-    # If we have enough measurements for local differences
+    # If we have enough x for local differences
     if (length(valid_measurements) > 1) {
       local_diff_var <- mean(diff(valid_measurements)^2) / 2
       R <- min(local_diff_var, stats::var(valid_measurements) / 4)
@@ -118,7 +118,7 @@ filter_kalman <- function(
     }
   }
 
-  n <- length(measurements)
+  n <- length(x)
   filtered <- numeric(n)
 
   # Initialize state
@@ -141,12 +141,12 @@ filter_kalman <- function(
     P_minus <- P + Q
 
     # Update step
-    if (!is.na(measurements[i])) {
+    if (!is.na(x[i])) {
       # Kalman gain
       K <- P_minus / (P_minus + R)
 
       # Update state estimate
-      x_hat <- x_hat_minus + K * (measurements[i] - x_hat_minus)
+      x_hat <- x_hat_minus + K * (x[i] - x_hat_minus)
 
       # Update error covariance
       P <- (1 - K) * P_minus
@@ -159,7 +159,7 @@ filter_kalman <- function(
     filtered[i] <- x_hat
   }
 
-  restore_na(filtered, is.na(measurements), keep_na)
+  restore_na(filtered, is.na(x), keep_na)
 }
 
 #' Kalman Filter for Irregular Time Series with Optional Resampling
@@ -169,8 +169,8 @@ filter_kalman <- function(
 #' resampling to regular intervals. Handles variable sampling rates, missing values,
 #' and automatically adjusts process variance based on time intervals.
 #'
-#' @param measurements Numeric vector containing the measurements to be filtered.
-#' @param times Numeric vector of timestamps corresponding to measurements.
+#' @param x Numeric vector of measurements to be filtered.
+#' @param times Numeric vector of timestamps corresponding to x.
 #' @param base_Q Optional. Base process variance per second. If NULL, automatically calculated.
 #' @param R Optional. Measurement variance. If NULL, defaults to 0.1.
 #' @param initial_state Optional. Initial state estimate. If NULL, uses first non-NA measurement.
@@ -178,7 +178,7 @@ filter_kalman <- function(
 #' @param resample Logical. Whether to return regularly resampled data (default: FALSE).
 #' @param resample_freq Numeric. Desired sampling frequency in Hz for resampling (required if resample=TRUE).
 #' @param keep_na Logical. If `TRUE`, positions that were `NA` in
-#'   `measurements` are `NA` in the values reported on the original
+#'   `x` are `NA` in the values reported on the original
 #'   timestamps. Defaults to `FALSE`, for the reason given in
 #'   [filter_kalman()]. When `resample = TRUE` this applies to
 #'   `original_values` only — the resampled `values` sit on a different
@@ -212,19 +212,19 @@ filter_kalman <- function(
 #'
 #' @examples
 #' # Example with irregular sampling
-#' measurements <- c(1, 1.1, NA, 0.9, 1.2, NA, 0.8, 1.1)
+#' x <- c(1, 1.1, NA, 0.9, 1.2, NA, 0.8, 1.1)
 #' times <- c(0, 0.1, 0.3, 0.35, 0.5, 0.8, 0.81, 1.0)
 #'
 #' # Basic filtering with irregular samples
-#' filtered <- filter_kalman_irregular(measurements, times)
+#' filtered <- filter_kalman_irregular(x, times)
 #'
 #' # Filtering with resampling to 50 Hz
-#' filtered_resampled <- filter_kalman_irregular(measurements, times,
+#' filtered_resampled <- filter_kalman_irregular(x, times,
 #'                                              resample = TRUE,
 #'                                              resample_freq = 50)
 #'
 #' # Plot results
-#' plot(times, measurements, type="p", col="blue")
+#' plot(times, x, type="p", col="blue")
 #' lines(filtered_resampled$time, filtered_resampled$values, col="red")
 #'
 #' @note
@@ -237,14 +237,14 @@ filter_kalman <- function(
 #' * base_Q controls the expected rate of change per second
 #' * R should reflect your measurement noise level
 #' * For slow-changing signals, reduce base_Q
-#' * For noisy measurements, increase R
+#' * For noisy x, increase R
 #'
 #' @seealso
 #' filter_kalman for regularly sampled data
 #'
 #' @export
 filter_kalman_irregular <- function(
-  measurements,
+  x,
   times,
   base_Q = NULL,
   R = NULL,
@@ -256,8 +256,8 @@ filter_kalman_irregular <- function(
 ) {
   ensure_keep_na(keep_na)
   # Previous input validation remains the same
-  if (length(measurements) != length(times)) {
-    stop("measurements and times must have the same length")
+  if (length(x) != length(times)) {
+    stop("x and times must have the same length")
   }
   if (!is.numeric(times)) {
     stop("times must be numeric")
@@ -265,10 +265,10 @@ filter_kalman_irregular <- function(
   if (any(is.na(times)) || any(is.infinite(times))) {
     stop("times must be finite and not NA")
   }
-  if (length(measurements) == 0) {
-    stop("measurements cannot be empty")
+  if (length(x) == 0) {
+    stop("x cannot be empty")
   }
-  if (all(is.na(measurements))) {
+  if (all(is.na(x))) {
     stop("At least one non-NA measurement is required")
   }
   if (resample && is.null(resample_freq)) {
@@ -281,12 +281,12 @@ filter_kalman_irregular <- function(
   }
   if (any(diff(times) == 0)) {
     warning(
-      "Duplicate time points detected. Using measurements in order provided."
+      "Duplicate time points detected. Using x in order provided."
     )
   }
 
-  # Get valid measurements for parameter estimation
-  valid_measurements <- measurements[!is.na(measurements)]
+  # Get valid x for parameter estimation
+  valid_measurements <- x[!is.na(x)]
 
   # Calculate median sampling rate
   time_diffs <- diff(times)
@@ -299,7 +299,7 @@ filter_kalman_irregular <- function(
 
   # Improved parameter auto-configuration
   if (is.null(base_Q)) {
-    # If we have enough valid measurements for variance
+    # If we have enough valid x for variance
     if (length(valid_measurements) > 1) {
       signal_var <- stats::var(valid_measurements)
       # Scale base_Q based on both variance and rate, but more conservative
@@ -310,7 +310,7 @@ filter_kalman_irregular <- function(
   }
 
   if (is.null(R)) {
-    # If we have enough measurements for local differences
+    # If we have enough x for local differences
     if (length(valid_measurements) > 1) {
       # Use both local differences and overall variance to estimate noise
       local_diff_var <- mean(diff(valid_measurements)^2) / 2
@@ -339,7 +339,7 @@ filter_kalman_irregular <- function(
     ))
   }
 
-  n <- length(measurements)
+  n <- length(x)
   filtered <- numeric(n)
 
   # Initialize state
@@ -360,9 +360,9 @@ filter_kalman_irregular <- function(
     x_hat_minus <- x_hat
     P_minus <- P + Q
 
-    if (!is.na(measurements[i])) {
+    if (!is.na(x[i])) {
       K <- P_minus / (P_minus + R)
-      x_hat <- x_hat_minus + K * (measurements[i] - x_hat_minus)
+      x_hat <- x_hat_minus + K * (x[i] - x_hat_minus)
       P <- (1 - K) * P_minus
       last_time <- times[i]
     } else {
@@ -390,9 +390,9 @@ filter_kalman_irregular <- function(
       time = regular_times,
       values = regular_filtered,
       original_time = times,
-      original_values = restore_na(filtered, is.na(measurements), keep_na)
+      original_values = restore_na(filtered, is.na(x), keep_na)
     ))
   } else {
-    return(restore_na(filtered, is.na(measurements), keep_na))
+    return(restore_na(filtered, is.na(x), keep_na))
   }
 }

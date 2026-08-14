@@ -7,7 +7,7 @@
 filter_sgolay(
   x,
   sampling_rate,
-  window_size = ceiling(sampling_rate/10) * 2 + 1,
+  window_width = ceiling(sampling_rate/10) * 2 + 1,
   order = 3,
   na_action = "linear",
   keep_na = TRUE,
@@ -20,7 +20,7 @@ filter_sgolay(
 \item{sampling_rate}{Sampling rate of the data in Hz. Must match your data
 collection rate (e.g., 60 for 60 FPS motion capture).}
 
-\item{window_size}{Window size in samples (must be odd). Controls the amount of
+\item{window_width}{Window size in samples (must be odd). Controls the amount of
 smoothing. Larger windows give more smoothing but may over-attenuate
 genuine movement features. Default is automatically calculated as
 sampling_rate/10 (rounded up to nearest odd number).}
@@ -68,12 +68,12 @@ edge convention.
 
 Parameter Selection Guidelines:
 \itemize{
-\item window_size:
+\item window_width:
 \itemize{
 \item For 60 FPS: 5-15 frames (83-250ms) for quick movements, 15-31 for slow movements
 \item For 120 FPS: 7-21 frames (58-175ms) for quick movements, 21-51 for slow movements
 \item For 500 FPS: 25-75 frames (50-150ms) for quick movements, 75-151 for slow movements
-The default window_size = sampling_rate/10 works well for typical human movement.
+The default window_width = sampling_rate/10 works well for typical human movement.
 }
 \item order:
 \itemize{
@@ -81,16 +81,16 @@ The default window_size = sampling_rate/10 works well for typical human movement
 \item order=3: Most movement analysis (default)
 \item order=4: Quick movements, sports analysis
 \item order=5: Very quick movements, impact analysis
-Note: order must be less than window_size
+Note: order must be less than window_width
 }
 }
 
 Common values by application:
 \itemize{
-\item Gait analysis (60 FPS): window_size=15, order=3
-\item Sports biomechanics (120 FPS): window_size=21, order=4
-\item Impact analysis (500 FPS): window_size=51, order=4
-\item Posture analysis (60 FPS): window_size=31, order=2
+\item Gait analysis (60 FPS): window_width=15, order=3
+\item Sports biomechanics (120 FPS): window_width=21, order=4
+\item Impact analysis (500 FPS): window_width=51, order=4
+\item Posture analysis (60 FPS): window_width=31, order=2
 }
 }
 \examples{
@@ -103,11 +103,11 @@ filtered <- filter_sgolay(x, sampling_rate = 60)
 
 # Adjusting parameters for quick movements
 filtered_quick <- filter_sgolay(x, sampling_rate = 60,
-                               window_size = 11, order = 4)
+                               window_width = 11, order = 4)
 
 # High-speed camera data (500 FPS) with larger window
 filtered_high <- filter_sgolay(x, sampling_rate = 500,
-                              window_size = 51, order = 3)
+                              window_width = 51, order = 3)
 
 }
 \references{

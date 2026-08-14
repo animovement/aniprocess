@@ -5,7 +5,7 @@
 \title{Kalman Filter for Regular Time Series}
 \usage{
 filter_kalman(
-  measurements,
+  x,
   sampling_rate,
   base_Q = NULL,
   R = NULL,
@@ -15,7 +15,7 @@ filter_kalman(
 )
 }
 \arguments{
-\item{measurements}{Numeric vector containing the measurements to be filtered.}
+\item{x}{Numeric vector of measurements to be filtered.}
 
 \item{sampling_rate}{Numeric value specifying the sampling rate in Hz (frames per second).}
 
@@ -30,14 +30,14 @@ Represents the noise level in your measurements.}
 \item{initial_P}{Optional. Initial state uncertainty. If NULL, calculated based on sampling_rate.}
 
 \item{keep_na}{Logical. If \code{TRUE}, positions that were \code{NA} in
-\code{measurements} are \code{NA} in the output. Defaults to \code{FALSE}, unlike the
+\code{x} are \code{NA} in the output. Defaults to \code{FALSE}, unlike the
 rest of the filter family: a Kalman filter's predict step is designed
 to carry the state estimate through missing observations, so inferring
 across gaps is the intended behaviour rather than an accident. Set
 \code{TRUE} when you want gaps left as gaps.}
 }
 \value{
-A numeric vector of the same length as measurements containing the filtered values.
+A numeric vector of the same length as x containing the filtered values.
 }
 \description{
 Implements a Kalman filter for regularly sampled time series data with automatic
@@ -49,12 +49,12 @@ The function implements a simple Kalman filter with a constant position model.
 When parameters are not explicitly provided, they are automatically configured based
 on the sampling rate:
 \itemize{
-\item \code{base_Q} defaults to \code{var(measurements) / sampling_rate} (so the
+\item \code{base_Q} defaults to \code{var(x) / sampling_rate} (so the
 per-step process noise \code{Q = base_Q / sampling_rate} shrinks at higher
 sampling rates, where consecutive samples are closer together).
 \item \code{R} defaults to \code{min(mean(diff(x)^2) / 2, var(x) / 4)} if there are
 enough observations, else \code{0.1}.
-\item \code{initial_P} defaults to \code{var(measurements)} if there are enough
+\item \code{initial_P} defaults to \code{var(x)} if there are enough
 observations, else \code{1}.
 }
 
@@ -71,11 +71,11 @@ Parameter selection guidelines:
 }
 \examples{
 # Basic usage with 60 Hz data
-measurements <- c(1, 1.1, NA, 0.9, 1.2, NA, 0.8, 1.1)
-filtered <- filter_kalman(measurements, sampling_rate = 60)
+x <- c(1, 1.1, NA, 0.9, 1.2, NA, 0.8, 1.1)
+filtered <- filter_kalman(x, sampling_rate = 60)
 
 # Custom parameters for more aggressive filtering
-filtered_custom <- filter_kalman(measurements,
+filtered_custom <- filter_kalman(x,
                                 sampling_rate = 60,
                                 base_Q = 0.001,
                                 R = 0.2)

@@ -8,7 +8,7 @@ test_that("filter reproduces polynomials of degree <= order (defining property)"
     out <- filter_sgolay(
       x,
       sampling_rate = 60,
-      window_size = 11,
+      window_width = 11,
       order = max(deg, 2)
     )
     # Tolerance loosens with degree because the Vandermonde-like fit gets
@@ -54,17 +54,17 @@ test_that("parameter validation works", {
 
   # Invalid window size
   expect_error(
-    filter_sgolay(x, sampling_rate = 60, window_size = 4),
+    filter_sgolay(x, sampling_rate = 60, window_width = 4),
     "Window size must be odd"
   )
   expect_error(
-    filter_sgolay(x, sampling_rate = 60, window_size = 101),
+    filter_sgolay(x, sampling_rate = 60, window_width = 101),
     "Window size cannot be larger than data length"
   )
 
   # Invalid polynomial order
   expect_error(
-    filter_sgolay(x, sampling_rate = 60, window_size = 11, order = 11),
+    filter_sgolay(x, sampling_rate = 60, window_width = 11, order = 11),
     "Polynomial order must be less than window size"
   )
 })
@@ -115,8 +115,8 @@ test_that("window size affects smoothing appropriately", {
   x <- sin(2 * pi * 2 * t) + rnorm(length(t), 0, 0.1)
 
   # Test different window sizes
-  filtered_small <- filter_sgolay(x, sampling_rate = 60, window_size = 5)
-  filtered_large <- filter_sgolay(x, sampling_rate = 60, window_size = 21)
+  filtered_small <- filter_sgolay(x, sampling_rate = 60, window_width = 5)
+  filtered_large <- filter_sgolay(x, sampling_rate = 60, window_width = 21)
 
   # Larger window should result in smoother output
   expect_gt(var(diff(filtered_small)), var(diff(filtered_large)))
@@ -136,7 +136,7 @@ test_that("default parameters are reasonable", {
   explicit_result <- filter_sgolay(
     x,
     sampling_rate = 60,
-    window_size = expected_window
+    window_width = expected_window
   )
   expect_equal(default_result, explicit_result)
 })

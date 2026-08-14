@@ -9,7 +9,7 @@ find_troughs(
   max_height = Inf,
   min_prominence = 0,
   plateau_handling = c("strict", "middle", "first", "last", "all"),
-  window_size = 3
+  window_width = 3
 )
 }
 \arguments{
@@ -28,7 +28,7 @@ find_troughs(
 \item "all": All points in plateau are troughs
 }}
 
-\item{window_size}{Integer specifying the size of the window to use for trough detection (default: 3).
+\item{window_width}{Integer specifying the size of the window to use for trough detection (default: 3).
 Must be odd and >= 3. Larger values detect troughs over wider ranges.}
 }
 \value{
@@ -45,21 +45,21 @@ height and prominence. The function handles missing values (NA) appropriately an
 with dplyr's mutate. Includes flexible handling of plateaus and adjustable window size for trough detection.
 }
 \details{
-The function uses a sliding window algorithm for trough detection (window size specified by window_size parameter),
+The function uses a sliding window algorithm for trough detection (window size specified by window_width parameter),
 combined with a region-based prominence calculation method similar to that described in Palshikar (2009).
 }
 \note{
 \itemize{
 \item The function is optimized for use with dplyr's mutate
-\item For noisy data, consider using a larger window_size or smoothing the series before trough detection
+\item For noisy data, consider using a larger window_width or smoothing the series before trough detection
 \item Adjust max_height and min_prominence to filter out unwanted troughs
 \item Choose plateau_handling based on your specific needs
-\item Larger window_size values result in more stringent trough detection
+\item Larger window_width values result in more stringent trough detection
 }
 }
 \section{Trough Detection}{
-A point is considered a trough if it is the lowest point within its window (default window_size of 3
-compares each point with its immediate neighbors). The first and last (window_size-1)/2 points in the
+A point is considered a trough if it is the lowest point within its window (default window_width of 3
+compares each point with its immediate neighbors). The first and last (window_width-1)/2 points in the
 series cannot be troughs and are marked as NA. Larger window sizes will identify troughs that dominate over
 a wider range, typically resulting in fewer troughs being detected.
 }
@@ -91,7 +91,7 @@ The function uses the following rules for handling NAs:
 \item If a point is NA, it cannot be a trough (returns NA)
 \item If any point in the window is NA, trough status cannot be determined (returns NA)
 \item For prominence calculations, stretches of NAs are handled appropriately
-\item A minimum of window_size points is required; shorter series return all NAs
+\item A minimum of window_width points is required; shorter series return all NAs
 }
 }
 
@@ -101,15 +101,15 @@ x <- c(5, 3, 4, 1, 4, 2, 5)
 find_troughs(x)
 
 # With larger window size
-find_troughs(x, window_size = 5)  # More stringent trough detection
+find_troughs(x, window_width = 5)  # More stringent trough detection
 
 # With maximum height
-find_troughs(x, max_height = 3, window_size = 3)
+find_troughs(x, max_height = 3, window_width = 3)
 
 # With plateau handling
 x <- c(5, 2, 2, 2, 3, 1, 1, 4)
-find_troughs(x, plateau_handling = "middle", window_size = 3)  # Middle of plateaus
-find_troughs(x, plateau_handling = "all", window_size = 5)     # All plateau points
+find_troughs(x, plateau_handling = "middle", window_width = 3)  # Middle of plateaus
+find_troughs(x, plateau_handling = "all", window_width = 5)     # All plateau points
 
 # With missing values
 x <- c(5, 3, NA, 1, 4, NA, 5)
@@ -121,7 +121,7 @@ data_frame(
   time = 1:10,
   value = c(5, 3, 1, 4, 2, 1, 3, 0, 4, 5)
 ) \%>\%
-  mutate(troughs = find_troughs(value, window_size = 3))
+  mutate(troughs = find_troughs(value, window_width = 3))
 
 }
 \references{

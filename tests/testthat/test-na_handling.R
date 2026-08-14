@@ -120,7 +120,7 @@ test_that("filter_kalman fills by default but honours keep_na = TRUE", {
 })
 
 test_that("every filter rejects an invalid keep_na", {
-  # Long enough that sgolay's derived window_size stays valid, so the
+  # Long enough that sgolay's derived window_width stays valid, so the
   # keep_na check is what aborts rather than a geometry check.
   x <- as.numeric(seq_len(60))
   x[10] <- NA

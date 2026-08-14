@@ -4,8 +4,8 @@ library(testthat)
 generate_sine_data <- function(n = 100, freq = 0.1, noise_sd = 0.1) {
   t <- seq(0, n - 1)
   true_signal <- sin(2 * pi * freq * t)
-  measurements <- true_signal + rnorm(n, 0, noise_sd)
-  return(list(time = t, measurements = measurements, true_signal = true_signal))
+  x <- true_signal + rnorm(n, 0, noise_sd)
+  return(list(time = t, x = x, true_signal = true_signal))
 }
 
 test_that("First update matches the standard scalar Kalman equations", {
@@ -14,7 +14,7 @@ test_that("First update matches the standard scalar Kalman equations", {
   # K = 1.1 / (1.1 + 0.5) = 0.6875
   # x_hat = 0 + 0.6875 * (2 - 0) = 1.375
   out <- filter_kalman(
-    measurements = 2,
+    x = 2,
     sampling_rate = 10,
     base_Q = 1.0,
     R = 0.5,
@@ -24,9 +24,9 @@ test_that("First update matches the standard scalar Kalman equations", {
   expect_equal(out[1], 1.375)
 })
 
-test_that("Huge R makes the filter ignore measurements", {
+test_that("Huge R makes the filter ignore x", {
   out <- filter_kalman(
-    measurements = c(10, 20, 30, 40, 50),
+    x = c(10, 20, 30, 40, 50),
     sampling_rate = 10,
     base_Q = 0,
     R = 1e12,
@@ -37,9 +37,9 @@ test_that("Huge R makes the filter ignore measurements", {
   expect_true(all(abs(out) < 1e-9))
 })
 
-test_that("Tiny R makes the filter track measurements", {
+test_that("Tiny R makes the filter track x", {
   out <- filter_kalman(
-    measurements = c(1, 2, 3, 4, 5),
+    x = c(1, 2, 3, 4, 5),
     sampling_rate = 10,
     base_Q = 0.5,
     R = 1e-8
@@ -219,13 +219,13 @@ test_that("filter_kalman_irregular accepts an explicit initial_state", {
 #   data <- generate_sine_data(n = 1000, freq = 0.05, noise_sd = 0.1)
 #
 #   # Regular sampling
-#   filtered_reg <- filter_kalman(data$measurements, sampling_rate = 1)
+#   filtered_reg <- filter_kalman(data$x, sampling_rate = 1)
 #   mse_reg <- mean((filtered_reg - data$true_signal)^2)
 #   noise_var <- 0.1^2
 #   expect_true(mse_reg < noise_var)
 #
 #   # Irregular sampling
-#   filtered_irreg <- filter_kalman_irregular(data$measurements, data$time)
+#   filtered_irreg <- filter_kalman_irregular(data$x, data$time)
 #   mse_irreg <- mean((filtered_irreg - data$true_signal)^2)
 #   expect_true(mse_irreg < noise_var)
 # })
@@ -237,13 +237,13 @@ test_that("Performance benchmarks", {
 
   # Regular sampling
   time_reg <- system.time({
-    filtered_reg <- filter_kalman(data$measurements, sampling_rate = 1)
+    filtered_reg <- filter_kalman(data$x, sampling_rate = 1)
   })
   expect_true(time_reg["elapsed"] < 1) # Should complete in under 1 second
 
   # Irregular sampling
   time_irreg <- system.time({
-    filtered_irreg <- filter_kalman_irregular(data$measurements, data$time)
+    filtered_irreg <- filter_kalman_irregular(data$x, data$time)
   })
   expect_true(time_irreg["elapsed"] < 1)
 })
@@ -275,7 +275,7 @@ test_that("Parameter sensitivity", {
   # Test different base_Q values
   q_values <- 10^seq(-6, 0, by = 2)
   filtered_q <- lapply(q_values, function(q) {
-    filter_kalman(data$measurements, sampling_rate = 1, base_Q = q)
+    filter_kalman(data$x, sampling_rate = 1, base_Q = q)
   })
 
   # Verify that larger Q leads to more responsive filtering
@@ -285,7 +285,7 @@ test_that("Parameter sensitivity", {
   # Test different R values
   r_values <- 10^seq(-6, 0, by = 2)
   filtered_r <- lapply(r_values, function(r) {
-    filter_kalman(data$measurements, sampling_rate = 1, R = r)
+    filter_kalman(data$x, sampling_rate = 1, R = r)
   })
 
   # Verify that larger R leads to more smoothing

@@ -7,7 +7,7 @@
 #' @param x Numeric vector containing the movement data to be filtered
 #' @param sampling_rate Sampling rate of the data in Hz. Must match your data
 #'        collection rate (e.g., 60 for 60 FPS motion capture).
-#' @param window_size Window size in samples (must be odd). Controls the amount of
+#' @param window_width Window size in samples (must be odd). Controls the amount of
 #'        smoothing. Larger windows give more smoothing but may over-attenuate
 #'        genuine movement features. Default is automatically calculated as
 #'        sampling_rate/10 (rounded up to nearest odd number).
@@ -31,24 +31,24 @@
 #' edge convention.
 #'
 #' Parameter Selection Guidelines:
-#' * window_size:
+#' * window_width:
 #'   - For 60 FPS: 5-15 frames (83-250ms) for quick movements, 15-31 for slow movements
 #'   - For 120 FPS: 7-21 frames (58-175ms) for quick movements, 21-51 for slow movements
 #'   - For 500 FPS: 25-75 frames (50-150ms) for quick movements, 75-151 for slow movements
-#'   The default window_size = sampling_rate/10 works well for typical human movement.
+#'   The default window_width = sampling_rate/10 works well for typical human movement.
 #'
 #' * order:
 #'   - order=2: Smooth movements, position analysis
 #'   - order=3: Most movement analysis (default)
 #'   - order=4: Quick movements, sports analysis
 #'   - order=5: Very quick movements, impact analysis
-#'   Note: order must be less than window_size
+#'   Note: order must be less than window_width
 #'
 #' Common values by application:
-#' * Gait analysis (60 FPS): window_size=15, order=3
-#' * Sports biomechanics (120 FPS): window_size=21, order=4
-#' * Impact analysis (500 FPS): window_size=51, order=4
-#' * Posture analysis (60 FPS): window_size=31, order=2
+#' * Gait analysis (60 FPS): window_width=15, order=3
+#' * Sports biomechanics (120 FPS): window_width=21, order=4
+#' * Impact analysis (500 FPS): window_width=51, order=4
+#' * Posture analysis (60 FPS): window_width=31, order=2
 #'
 #' @return Numeric vector containing the filtered movement data
 #'
@@ -62,11 +62,11 @@
 #'
 #' # Adjusting parameters for quick movements
 #' filtered_quick <- filter_sgolay(x, sampling_rate = 60,
-#'                                window_size = 11, order = 4)
+#'                                window_width = 11, order = 4)
 #'
 #' # High-speed camera data (500 FPS) with larger window
 #' filtered_high <- filter_sgolay(x, sampling_rate = 500,
-#'                               window_size = 51, order = 3)
+#'                               window_width = 51, order = 3)
 #'
 #' @seealso
 #' \code{\link{filter_lowpass}} for frequency-based filtering
@@ -80,7 +80,7 @@
 filter_sgolay <- function(
   x,
   sampling_rate,
-  window_size = ceiling(sampling_rate / 10) * 2 + 1,
+  window_width = ceiling(sampling_rate / 10) * 2 + 1,
   order = 3,
   na_action = "linear",
   keep_na = TRUE,
@@ -96,19 +96,19 @@ filter_sgolay <- function(
   if (!is.numeric(sampling_rate) || sampling_rate <= 0) {
     cli::cli_abort("Sampling rate must be a positive number")
   }
-  if (window_size %% 2 != 1) {
+  if (window_width %% 2 != 1) {
     cli::cli_abort("Window size must be odd")
   }
-  if (window_size > length(x)) {
+  if (window_width > length(x)) {
     cli::cli_abort("Window size cannot be larger than data length")
   }
-  if (order >= window_size) {
+  if (order >= window_width) {
     cli::cli_abort("Polynomial order must be less than window size")
   }
   ensure_keep_na(keep_na)
 
   prepared <- prepare_na(x, na_action, list(...))
-  result <- signal::sgolayfilt(prepared$x, p = order, n = window_size)
+  result <- signal::sgolayfilt(prepared$x, p = order, n = window_width)
 
   restore_na(result, prepared$na_positions, keep_na)
 }

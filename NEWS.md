@@ -2,6 +2,13 @@
 
 ## Breaking changes
 
+* Argument names are now consistent across the package, so that a generic wrapper can forward them without special-casing. This is the first step towards the unified interface in #30 (#30).
+  * `window_size` is now `window_width` in `filter_sgolay()`, `find_peaks()` and `find_troughs()`, matching `filter_gaussian()`, `filter_rollmean()`, `filter_rollmedian()` and `filter_triangular()`.
+  * The first argument of `filter_kalman()` and `filter_kalman_irregular()` is now `x` rather than `measurements`. They were the only vector-level functions whose first argument was not `x`, which prevented their use with `dplyr::across()`.
+  * `filter_na_range()` takes `min_value`/`max_value` rather than `min`/`max`, which shadowed the base functions of those names and did not match the `min_gap`/`max_gap`/`min_obs` convention used elsewhere.
+
+  No deprecation cycle: nothing in the animovement org passes these names, verified across `aniread`, `animetric`, `aniframe`, `anicheck`, `anispace`, `anivis` and the `animovement` meta-package.
+
 * Filters no longer fill gaps by default. `keep_na` now defaults to `TRUE` in `filter_sgolay()`, `filter_lowpass()`, `filter_highpass()`, `filter_lowpass_fft()`, `filter_highpass_fft()` and `filter_ccma()`, so positions that were `NA` in the input are `NA` in the output. Previously the default was `FALSE`, which meant genuinely-missing stretches came back as smoothed interpolations with no indication that any interpolation had happened. Pass `keep_na = FALSE` for the old behaviour (#38).
 * `keep_na` is now available on every filter. `filter_gaussian()`, `filter_rollmean()`, `filter_rollmedian()` and `filter_triangular()` gain the argument, defaulting to `TRUE`; they previously filled gaps — fully or partially — with no way to opt out (#38).
 * `filter_kalman()` and `filter_kalman_irregular()` also gain `keep_na`, but default to `FALSE`. A Kalman filter's predict step is designed to carry the state estimate through missing observations, so inferring across gaps is intended rather than accidental. Pass `keep_na = TRUE` to leave gaps as gaps (#38).

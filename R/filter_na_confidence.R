@@ -70,6 +70,6 @@ filter_na_confidence <- function(data, threshold = 0.6) {
   # Filter confidence column
   data |>
     dplyr::mutate(
-      confidence = filter_na_range(.data$confidence, min = threshold)
+      confidence = filter_na_range(.data$confidence, min_value = threshold)
     )
 }
