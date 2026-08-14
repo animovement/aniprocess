@@ -8,7 +8,9 @@
 #' close to the pre-excursion position or close to the overall median
 #' position.
 #'
-#' @param data An aniframe.
+#' @param data A data frame of numeric coordinate columns — typically supplied
+#'   by [dplyr::pick()] inside [dplyr::mutate()]. To filter a whole aniframe,
+#'   use [filter_na_across()].
 #' @param outlier_sd Threshold (in standard deviations) for flagging
 #'   frame-to-frame jumps and for the "return to pre-excursion position"
 #'   acceptance check. Todd's default is `5`.
@@ -22,9 +24,7 @@
 #'   joint Euclidean displacement (consistent with [filter_na_speed()]).
 #'
 #' @details
-#' For each spatial coordinate listed in the metadata field
-#' `variables_where` (and within each existing aniframe group), the
-#' algorithm:
+#' For each coordinate column, the algorithm:
 #'
 #' 1. Computes the standard deviation `σ` of the coordinate over the
 #'    full series and the overall median `m`.
@@ -41,10 +41,11 @@
 #' the return condition unless the new region happens to be near the
 #' median, in which case it is accepted via the second criterion.
 #'
-#' Spatial columns and `confidence` (if present) are set to `NA` at
-#' flagged rows, matching the convention used by [filter_na_speed()].
+#' Every coordinate column is set to `NA` at a flagged row. `confidence` is
+#' not a coordinate and so is never modified here; [filter_na_across()]
+#' blanks it too.
 #'
-#' @return An aniframe of the same shape, with flagged rows blanked.
+#' @return `data`, with flagged rows blanked.
 #'
 #' @references
 #' Todd, J. G., Kain, J. S., & de Bivort, B. L. (2017). Systematic
@@ -55,10 +56,10 @@
 #' @examples
 #' \dontrun{
 #' # Default Todd thresholds, per-axis.
-#' filter_na_excursion(tracking_data)
+#' filter_na_excursion(coords)
 #'
 #' # Joint Euclidean variant, looser thresholds.
-#' filter_na_excursion(tracking_data, outlier_sd = 4, by_axis = FALSE)
+#' filter_na_excursion(coords, outlier_sd = 4, by_axis = FALSE)
 #' }
 #'
 #' @seealso [filter_na_speed()] for single-frame outliers.
@@ -70,14 +71,7 @@ filter_na_excursion <- function(
   return_sd = 1,
   by_axis = TRUE
 ) {
-  is_frame <- aniframe::is_aniframe(data)
-  if (is_frame) {
-    ensure_aniframe_spatial(data)
-    variables_where <- aniframe::get_metadata(data, "variables_where")
-  } else {
-    ensure_coords(data)
-    variables_where <- names(data)
-  }
+  ensure_coords(data)
 
   for (sd_arg in c("outlier_sd", "return_sd")) {
     val <- get(sd_arg)
@@ -86,35 +80,9 @@ filter_na_excursion <- function(
     }
   }
 
-  # Given a coordinate frame, the caller has already decided which rows
-  # belong together, so the state machine runs over it directly.
-  if (!is_frame) {
-    flagged <- excursion_mask(data, outlier_sd, return_sd, by_axis)
-    data[flagged, ] <- NA_real_
-    return(data)
-  }
-
-  # The mask is built inside mutate() so that each group's state machine
-  # sees only its own rows. Ungrouped data is simply one group.
-  flagged <- dplyr::mutate(
-    data,
-    .aniprocess_flag = excursion_mask(
-      dplyr::pick(dplyr::all_of(variables_where)),
-      outlier_sd,
-      return_sd,
-      by_axis
-    )
-  )$.aniprocess_flag
-
-  if (any(flagged)) {
-    for (col in variables_where) {
-      data[[col]][flagged] <- NA_real_
-    }
-    if ("confidence" %in% names(data)) {
-      data$confidence[flagged] <- NA_real_
-    }
-  }
-
+  # The caller has already decided which rows belong together.
+  flagged <- excursion_mask(data, outlier_sd, return_sd, by_axis)
+  data[flagged, ] <- NA_real_
   data
 }
 

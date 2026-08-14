@@ -18,7 +18,7 @@ test_that("filter_na_roi filters rectangular ROI with x_min", {
     y = c(0, 5, 10, 15)
   )
 
-  result <- filter_na_roi(data, x_min = 7)
+  result <- filter_na_across(data, "roi", x_min = 7)
 
   expect_equal(result$x, c(NA, NA, 10, 15))
   expect_equal(result$y, c(NA, NA, 10, 15))
@@ -31,7 +31,7 @@ test_that("filter_na_roi filters rectangular ROI with x_max", {
     y = c(0, 5, 10, 15)
   )
 
-  result <- filter_na_roi(data, x_max = 7)
+  result <- filter_na_across(data, "roi", x_max = 7)
 
   expect_equal(result$x, c(0, 5, NA, NA))
   expect_equal(result$y, c(0, 5, NA, NA))
@@ -44,7 +44,7 @@ test_that("filter_na_roi filters rectangular ROI with y_min", {
     y = c(0, 5, 10, 15)
   )
 
-  result <- filter_na_roi(data, y_min = 7)
+  result <- filter_na_across(data, "roi", y_min = 7)
 
   expect_equal(result$x, c(NA, NA, 10, 15))
   expect_equal(result$y, c(NA, NA, 10, 15))
@@ -57,7 +57,7 @@ test_that("filter_na_roi filters rectangular ROI with y_max", {
     y = c(0, 5, 10, 15)
   )
 
-  result <- filter_na_roi(data, y_max = 7)
+  result <- filter_na_across(data, "roi", y_max = 7)
 
   expect_equal(result$x, c(0, 5, NA, NA))
   expect_equal(result$y, c(0, 5, NA, NA))
@@ -70,7 +70,14 @@ test_that("filter_na_roi filters rectangular ROI with multiple boundaries", {
     y = c(0, 5, 10, 15, 20)
   )
 
-  result <- filter_na_roi(data, x_min = 5, x_max = 15, y_min = 5, y_max = 15)
+  result <- filter_na_across(
+    data,
+    "roi",
+    x_min = 5,
+    x_max = 15,
+    y_min = 5,
+    y_max = 15
+  )
 
   expect_equal(result$x, c(NA, 5, 10, 15, NA))
   expect_equal(result$y, c(NA, 5, 10, 15, NA))
@@ -83,7 +90,14 @@ test_that("filter_na_roi handles points on rectangular boundary correctly", {
     y = c(5, 10, 15)
   )
 
-  result <- filter_na_roi(data, x_min = 5, x_max = 15, y_min = 5, y_max = 15)
+  result <- filter_na_across(
+    data,
+    "roi",
+    x_min = 5,
+    x_max = 15,
+    y_min = 5,
+    y_max = 15
+  )
 
   # Boundary points should be included
   expect_equal(result$x, c(5, 10, 15))
@@ -99,7 +113,7 @@ test_that("filter_na_roi filters cuboid ROI with z_min", {
     variables_where = c("x", "y", "z")
   )
 
-  result <- filter_na_roi(data, z_min = 7)
+  result <- filter_na_across(data, "roi", z_min = 7)
 
   expect_equal(result$x, c(NA, NA, 10, 10))
   expect_equal(result$y, c(NA, NA, 10, 10))
@@ -115,7 +129,7 @@ test_that("filter_na_roi filters cuboid ROI with z_max", {
     variables_where = c("x", "y", "z")
   )
 
-  result <- filter_na_roi(data, z_max = 7)
+  result <- filter_na_across(data, "roi", z_max = 7)
 
   expect_equal(result$x, c(10, 10, NA, NA))
   expect_equal(result$y, c(10, 10, NA, NA))
@@ -131,8 +145,9 @@ test_that("filter_na_roi filters cuboid ROI with all boundaries", {
     variables_where = c("x", "y", "z")
   )
 
-  result <- filter_na_roi(
+  result <- filter_na_across(
     data,
+    "roi",
     x_min = 5,
     x_max = 15,
     y_min = 5,
@@ -155,7 +170,13 @@ test_that("filter_na_roi filters circular ROI correctly", {
     y = c(0, 0, 0, 0)
   )
 
-  result <- filter_na_roi(data, x_center = 5, y_center = 0, radius = 3)
+  result <- filter_na_across(
+    data,
+    "roi",
+    x_center = 5,
+    y_center = 0,
+    radius = 3
+  )
 
   # Points at x=0 and x=9 are outside (distance > 3)
   # Points at x=3 and x=6 are inside
@@ -171,7 +192,13 @@ test_that("filter_na_roi handles circular ROI with various distances", {
   )
 
   # Circle centered at (5, 5) with radius 4
-  result <- filter_na_roi(data, x_center = 5, y_center = 5, radius = 4)
+  result <- filter_na_across(
+    data,
+    "roi",
+    x_center = 5,
+    y_center = 5,
+    radius = 4
+  )
 
   # (5, 5): distance = 0, inside
   # (8, 5): distance = 3, inside
@@ -190,8 +217,9 @@ test_that("filter_na_roi filters spherical ROI correctly", {
   )
 
   # Sphere centered at (5, 5, 5) with radius 4
-  result <- filter_na_roi(
+  result <- filter_na_across(
     data,
+    "roi",
     x_center = 5,
     y_center = 5,
     z_center = 5,
@@ -218,8 +246,9 @@ test_that("filter_na_roi handles spherical ROI boundary", {
   )
 
   # Sphere at (5, 5, 5) with radius 2
-  result <- filter_na_roi(
+  result <- filter_na_across(
     data,
+    "roi",
     x_center = 5,
     y_center = 5,
     z_center = 5,
@@ -239,7 +268,7 @@ test_that("filter_na_roi preserves existing NAs in rectangular ROI", {
     y = c(0, 5, NA, 15)
   )
 
-  result <- filter_na_roi(data, x_min = 5, x_max = 12)
+  result <- filter_na_across(data, "roi", x_min = 5, x_max = 12)
 
   expect_equal(result$x, c(NA, NA, 10, NA))
   expect_true(is.na(result$y[2]))
@@ -253,7 +282,13 @@ test_that("filter_na_roi preserves existing NAs in circular ROI", {
     y = c(5, 5, NA)
   )
 
-  result <- filter_na_roi(data, x_center = 5, y_center = 5, radius = 2)
+  result <- filter_na_across(
+    data,
+    "roi",
+    x_center = 5,
+    y_center = 5,
+    radius = 2
+  )
 
   expect_true(is.na(result$x[2]))
   expect_true(is.na(result$y[3]))
@@ -268,7 +303,7 @@ test_that("filter_na_roi preserves existing NAs in 3D ROI", {
     variables_where = c("x", "y", "z")
   )
 
-  result <- filter_na_roi(data, x_min = 5)
+  result <- filter_na_across(data, "roi", x_min = 5)
 
   expect_true(is.na(result$x[2]))
   expect_true(is.na(result$y[3]))
@@ -283,7 +318,7 @@ test_that("filter_na_roi errors when no parameters provided", {
   )
 
   expect_error(
-    filter_na_roi(data),
+    filter_na_across(data, "roi"),
     "No ROI parameters provided"
   )
 })
@@ -297,19 +332,19 @@ test_that("filter_na_roi errors when circular ROI parameters incomplete", {
 
   # Only x_center provided
   expect_error(
-    filter_na_roi(data, x_center = 5),
+    filter_na_across(data, "roi", x_center = 5),
     class = "rlang_error"
   )
 
   # Only x_center and y_center provided
   expect_error(
-    filter_na_roi(data, x_center = 5, y_center = 5),
+    filter_na_across(data, "roi", x_center = 5, y_center = 5),
     "radius"
   )
 
   # Only radius provided
   expect_error(
-    filter_na_roi(data, radius = 5),
+    filter_na_across(data, "roi", radius = 5),
     class = "rlang_error"
   )
 })
@@ -324,7 +359,7 @@ test_that("filter_na_roi errors when spherical ROI missing z_center for 3D data"
   )
 
   expect_error(
-    filter_na_roi(data, x_center = 5, y_center = 5, radius = 3),
+    filter_na_across(data, "roi", x_center = 5, y_center = 5, radius = 3),
     "z_center.*must be provided for 3D data"
   )
 })
@@ -337,12 +372,19 @@ test_that("filter_na_roi errors when z parameters used with 2D data", {
   )
 
   expect_error(
-    filter_na_roi(data, z_min = 0),
+    filter_na_across(data, "roi", z_min = 0),
     "Cannot use.*z_min.*with 2D data"
   )
 
   expect_error(
-    filter_na_roi(data, x_center = 5, y_center = 5, z_center = 5, radius = 3),
+    filter_na_across(
+      data,
+      "roi",
+      x_center = 5,
+      y_center = 5,
+      z_center = 5,
+      radius = 3
+    ),
     "Cannot use.*z_center.*with 2D data"
   )
 })
@@ -355,7 +397,14 @@ test_that("filter_na_roi errors when mixing rectangular and circular params", {
   )
 
   expect_error(
-    filter_na_roi(data, x_min = 0, x_center = 5, y_center = 5, radius = 3),
+    filter_na_across(
+      data,
+      "roi",
+      x_min = 0,
+      x_center = 5,
+      y_center = 5,
+      radius = 3
+    ),
     "Cannot mix rectangular and circular"
   )
 })
@@ -374,7 +423,10 @@ test_that("filter_na_roi coordinate-frame form matches the aniframe form", {
   )
   expect_equal(
     filter_na_roi(coords, x_min = 5, x_max = 15),
-    as.data.frame(filter_na_roi(d, x_min = 5, x_max = 15))[, c("x", "y")],
+    as.data.frame(filter_na_across(d, "roi", x_min = 5, x_max = 15))[, c(
+      "x",
+      "y"
+    )],
     ignore_attr = TRUE
   )
 })
@@ -538,7 +590,7 @@ test_that("filter_na_roi returns an aniframe", {
     y = c(1, 5, 10)
   )
 
-  result <- filter_na_roi(data, x_min = 3)
+  result <- filter_na_across(data, "roi", x_min = 3)
 
   expect_s3_class(result, "aniframe")
 })
@@ -550,7 +602,14 @@ test_that("filter_na_roi works with grid data", {
     y = rep(c(0, 5, 10), each = 3)
   )
 
-  result <- filter_na_roi(data, x_min = 3, x_max = 8, y_min = 3, y_max = 8)
+  result <- filter_na_across(
+    data,
+    "roi",
+    x_min = 3,
+    x_max = 8,
+    y_min = 3,
+    y_max = 8
+  )
 
   # Only (5, 5) should remain
   non_na_rows <- result[!is.na(result$x) & !is.na(result$y), ]
@@ -568,5 +627,5 @@ test_that("filter_na_roi errors when no ROI parameters are given (3D)", {
     variables_where = c("x", "y", "z"),
     variables_what = character(0)
   )
-  expect_error(filter_na_roi(data), "No ROI parameters provided")
+  expect_error(filter_na_across(data, "roi"), "No ROI parameters provided")
 })

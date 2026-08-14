@@ -83,6 +83,17 @@ filter_across <- function(
 
   # ccma is multivariate: hand it all the columns at once.
   if (method == "ccma") {
+    # The curvature math is Cartesian-specific, and only the aniframe knows
+    # its coordinate system -- filter_ccma() sees bare columns.
+    coord_system <- as.character(
+      aniframe::get_metadata(data, "coordinate_system")
+    )
+    if (length(coord_system) > 0L && !startsWith(coord_system, "cartesian")) {
+      cli::cli_abort(c(
+        "CCMA requires a Cartesian coordinate system; got {.val {coord_system}}.",
+        "i" = "The curvature math (cross product, Euclidean norm, circumradius) is Cartesian-specific."
+      ))
+    }
     return(dplyr::mutate(
       data,
       do.call(

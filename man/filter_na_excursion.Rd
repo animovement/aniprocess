@@ -7,7 +7,9 @@
 filter_na_excursion(data, outlier_sd = 5, return_sd = 1, by_axis = TRUE)
 }
 \arguments{
-\item{data}{An aniframe.}
+\item{data}{A data frame of numeric coordinate columns — typically supplied
+by \code{\link[dplyr:pick]{dplyr::pick()}} inside \code{\link[dplyr:mutate]{dplyr::mutate()}}. To filter a whole aniframe,
+use \code{\link[=filter_na_across]{filter_na_across()}}.}
 
 \item{outlier_sd}{Threshold (in standard deviations) for flagging
 frame-to-frame jumps and for the "return to pre-excursion position"
@@ -24,7 +26,7 @@ axis flags it. If \code{FALSE}, a single state machine runs on the
 joint Euclidean displacement (consistent with \code{\link[=filter_na_speed]{filter_na_speed()}}).}
 }
 \value{
-An aniframe of the same shape, with flagged rows blanked.
+\code{data}, with flagged rows blanked.
 }
 \description{
 Flags multi-frame tracking errors as \code{NA} using the criterion from
@@ -35,9 +37,7 @@ close to the pre-excursion position or close to the overall median
 position.
 }
 \details{
-For each spatial coordinate listed in the metadata field
-\code{variables_where} (and within each existing aniframe group), the
-algorithm:
+For each coordinate column, the algorithm:
 \enumerate{
 \item Computes the standard deviation \code{σ} of the coordinate over the
 full series and the overall median \code{m}.
@@ -55,16 +55,17 @@ animal genuinely moved to a new region) — the latter never satisfy
 the return condition unless the new region happens to be near the
 median, in which case it is accepted via the second criterion.
 
-Spatial columns and \code{confidence} (if present) are set to \code{NA} at
-flagged rows, matching the convention used by \code{\link[=filter_na_speed]{filter_na_speed()}}.
+Every coordinate column is set to \code{NA} at a flagged row. \code{confidence} is
+not a coordinate and so is never modified here; \code{\link[=filter_na_across]{filter_na_across()}}
+blanks it too.
 }
 \examples{
 \dontrun{
 # Default Todd thresholds, per-axis.
-filter_na_excursion(tracking_data)
+filter_na_excursion(coords)
 
 # Joint Euclidean variant, looser thresholds.
-filter_na_excursion(tracking_data, outlier_sd = 4, by_axis = FALSE)
+filter_na_excursion(coords, outlier_sd = 4, by_axis = FALSE)
 }
 
 }

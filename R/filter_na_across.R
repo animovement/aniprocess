@@ -92,6 +92,23 @@ filter_na_across <- function(
   fn <- filter_na_method_fn(method)
   needed <- unique(c(variables, unlist(helpers, use.names = FALSE)))
 
+  # An "auto" speed threshold is pooled across groups. Handing the job to
+  # filter_na_speed() per group would give each track its own threshold,
+  # estimated from however few speeds that track happens to have -- a short
+  # track's mean + 3 sd can sit above its own outlier. So the speeds are
+  # computed first, pooled, and passed down as a number.
+  if (method == "speed" && identical(args$threshold %||% "auto", "auto")) {
+    speeds <- dplyr::mutate(
+      data,
+      .aniprocess_speed = calculate_step_speed(
+        dplyr::pick(dplyr::all_of(variables)),
+        .data[[helpers$time]]
+      )
+    )$.aniprocess_speed
+    args$threshold <- mean(speeds, na.rm = TRUE) +
+      3 * stats::sd(speeds, na.rm = TRUE)
+  }
+
   out <- dplyr::mutate(
     data,
     mask_across_columns(

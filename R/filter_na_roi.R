@@ -4,10 +4,11 @@
 #' Filters out coordinates that fall outside a specified region of interest by
 #' setting them to NA. The ROI can be either rectangular/cuboid (defined by
 #' min/max coordinates) or circular/spherical (defined by center and radius).
-#' Automatically handles 2D or 3D data based on the spatial variables in the
-#' aniframe metadata.
+#' Handles 2D or 3D data according to whether a `z` column is present.
 #'
-#' @param data An aniframe containing spatial coordinates.
+#' @param data A data frame with numeric `x` and `y` columns (and optionally
+#'   `z`) — typically supplied by [dplyr::pick()] inside [dplyr::mutate()].
+#'   To filter a whole aniframe, use [filter_na_across()].
 #' @param x_min,x_max Bounds for x-coordinate (rectangular/cuboid ROI).
 #' @param y_min,y_max Bounds for y-coordinate (rectangular/cuboid ROI).
 #' @param z_min,z_max Bounds for z-coordinate (cuboid ROI, 3D only).
@@ -15,36 +16,34 @@
 #'   ROI. For 3D data, provide all three; for 2D data, only x and y.
 #' @param radius Radius of circular (2D) or spherical (3D) ROI.
 #'
-#' @return An aniframe with coordinates outside ROI set to NA.
+#' @return `data`, with coordinates outside the ROI set to `NA`.
 #' @export
 #'
 #' @examples
-#' # Create sample 2D data
-#' sample_data <- aniframe::aniframe(
-#'   time = 1:9,
+#' coords <- data.frame(
 #'   x = rep(c(25, 50, 75), 3),
 #'   y = rep(c(25, 50, 75), each = 3)
 #' )
 #'
-#' # Rectangular ROI example
-#' sample_data |>
-#'   filter_na_roi(x_min = 20, x_max = 60, y_min = 20, y_max = 60)
+#' # Rectangular ROI
+#' filter_na_roi(coords, x_min = 20, x_max = 60, y_min = 20, y_max = 60)
 #'
-#' # Circular ROI example
-#' sample_data |>
-#'   filter_na_roi(x_center = 50, y_center = 50, radius = 30)
+#' # Circular ROI
+#' filter_na_roi(coords, x_center = 50, y_center = 50, radius = 30)
 #'
-#' # 3D cuboid ROI example
-#' sample_3d <- aniframe::aniframe(
-#'   time = 1:8,
+#' # 3D cuboid ROI
+#' coords_3d <- data.frame(
 #'   x = rep(c(25, 75), 4),
 #'   y = rep(c(25, 75), each = 2, times = 2),
-#'   z = rep(c(25, 75), each = 4),
-#'   variables_where = c("x", "y", "z")
+#'   z = rep(c(25, 75), each = 4)
 #' )
 #'
-#' sample_3d |>
-#'   filter_na_roi(x_min = 20, x_max = 60, y_min = 20, y_max = 60, z_min = 20, z_max = 60)
+#' filter_na_roi(
+#'   coords_3d,
+#'   x_min = 20, x_max = 60,
+#'   y_min = 20, y_max = 60,
+#'   z_min = 20, z_max = 60
+#' )
 filter_na_roi <- function(
   data,
   x_min = NULL,
@@ -58,14 +57,8 @@ filter_na_roi <- function(
   z_center = NULL,
   radius = NULL
 ) {
-  is_frame <- aniframe::is_aniframe(data)
-  if (is_frame) {
-    ensure_aniframe_spatial(data)
-    variables_where <- aniframe::get_metadata(data, "variables_where")
-  } else {
-    ensure_coords(data)
-    variables_where <- names(data)
-  }
+  ensure_coords(data)
+  variables_where <- names(data)
   missing_axes <- setdiff(c("x", "y"), variables_where)
   if (length(missing_axes) > 0L) {
     cli::cli_abort(c(
@@ -186,7 +179,9 @@ filter_na_roi <- function(
 #' cuboid (3D) ROIs. Sets coordinates to NA if they fall outside the
 #' specified bounds.
 #'
-#' @param data An aniframe containing spatial coordinates.
+#' @param data A data frame with numeric `x` and `y` columns (and optionally
+#'   `z`) — typically supplied by [dplyr::pick()] inside [dplyr::mutate()].
+#'   To filter a whole aniframe, use [filter_na_across()].
 #' @param x_min,x_max,y_min,y_max,z_min,z_max Bounds of the ROI.
 #' @param has_z Logical indicating whether data has z coordinate.
 #'

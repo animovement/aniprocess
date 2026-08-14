@@ -145,3 +145,25 @@ test_that("filter_na_across returns an aniframe and preserves grouping", {
   expect_s3_class(out, "aniframe")
   expect_equal(dplyr::group_vars(out), "individual")
 })
+
+test_that("filter_na_across pools the auto speed threshold across groups", {
+  # Two tracks, one outlier in the first. Per-group thresholds would be
+  # estimated from 10 speeds each -- mean + 3 sd then sits above the very
+  # outlier we want caught. Pooling over both tracks catches it.
+  d <- aniframe::aniframe(
+    time = rep(1:10, 2),
+    individual = rep(c("a", "b"), each = 10),
+    x = c(c(0:3, 500, 5:9), (0:9) + 1e4),
+    y = rep(0, 20),
+    variables_what = "individual"
+  ) |>
+    dplyr::group_by(individual)
+
+  expect_equal(which(is.na(filter_na_across(d, "speed")$x)), 5L)
+
+  # An explicit threshold is passed through untouched
+  expect_equal(
+    which(is.na(filter_na_across(d, "speed", threshold = 100)$x)),
+    5L
+  )
+})

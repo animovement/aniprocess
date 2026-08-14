@@ -4,35 +4,29 @@
 #' Filters out single-frame outliers based on movement speed. Spatial
 #' coordinates and confidence values at flagged rows are replaced with NA.
 #'
-#' @param data An aniframe containing spatial coordinates and a time column,
-#'   or a data frame of numeric coordinate columns.
-#' @param time Numeric vector of time values, one per row. Required when
-#'   `data` is a coordinate frame. When `data` is an aniframe this defaults
-#'   to its `time` column.
+#' @param data A data frame of numeric coordinate columns — typically supplied
+#'   by [dplyr::pick()] inside [dplyr::mutate()]. To filter a whole aniframe,
+#'   use [filter_na_across()].
+#' @param time Numeric vector of time values, one per row.
 #' @param threshold A numeric value specifying the speed threshold, or "auto".
 #'   - If numeric: Rows whose speed exceeds this value have their spatial and
 #'     confidence values replaced with NA.
 #'   - If "auto": Sets threshold at mean speed + 3 standard deviations.
 #'
-#' @return The same shape as the input, with spatial values replaced by NA
-#'   where speed exceeds the threshold. For an aniframe, `confidence` is
-#'   blanked at those rows too.
+#' @return `data`, with coordinates replaced by `NA` where speed exceeds the
+#'   threshold.
 #'
 #' @section Input shape:
-#' Returns the same shape it is given.
-#'
-#' * Given an **aniframe**, the columns named by `variables_where` are
-#'   masked, along with `confidence` if present.
-#' * Given a **data frame of coordinate columns**, that frame is masked and
-#'   returned — the form to use inside [dplyr::mutate()]:
+#' Takes and returns a frame of coordinate columns, so it composes inside
+#' [dplyr::mutate()]:
 #'
 #' ```r
 #' data |> mutate(filter_na_speed(pick(all_of(c("x", "y"))), time = time))
 #' ```
 #'
 #' Speed depends on all coordinates jointly, so this cannot be used with
-#' [dplyr::across()]. `confidence` is not a coordinate, so it can only be
-#' masked via the aniframe form.
+#' [dplyr::across()]. `confidence` is not a coordinate and so is never
+#' modified here; [filter_na_across()] blanks it on masked rows.
 #'
 #' @details
 #' For each row, two step speeds are computed: the backward step (from the
@@ -48,54 +42,31 @@
 #' one-sided step. NAs in inputs do not contaminate adjacent rows: a missing
 #' coordinate at row `i` only affects row `i`'s speed estimate.
 #'
-#' Speed is computed **within each group** of a grouped aniframe, so a step
-#' is never formed between the last row of one track and the first row of
-#' the next. Each group's first and last rows are treated as endpoints. On
-#' ungrouped data the whole frame is a single track.
+#' Every row of `data` is treated as one continuous track: a step is formed
+#' between each consecutive pair. Called via [filter_na_across()] or with
+#' [dplyr::pick()] inside a grouped [dplyr::mutate()], that means one group,
+#' so a step is never formed across a track boundary.
 #'
-#' When using `threshold = "auto"`, the threshold is set to the mean speed
-#' plus three standard deviations, pooled across groups. Because no
-#' cross-track step is ever formed, the estimate uses within-track speeds
-#' only.
+#' When using `threshold = "auto"`, the threshold is the mean speed plus
+#' three standard deviations.
 #'
 #' @examples
-#' data <- aniframe::aniframe(
-#'   time = 1:5,
-#'   x = c(1, 2, 4, 7, 11),
-#'   y = c(1, 1, 2, 3, 5),
-#'   confidence = c(0.8, 0.9, 0.7, 0.85, 0.6)
-#' )
+#' coords <- data.frame(x = c(1, 2, 4, 7, 11), y = c(1, 1, 2, 3, 5))
 #'
-#' # Filter data by a speed threshold of 3
-#' filter_na_speed(data, threshold = 3)
-#'
-#' # Use automatic threshold
-#' filter_na_speed(data, threshold = "auto")
+#' filter_na_speed(coords, threshold = 3, time = 1:5)
+#' filter_na_speed(coords, threshold = "auto", time = 1:5)
 #'
 #' @export
 filter_na_speed <- function(data, threshold = "auto", time = NULL) {
-  is_frame <- aniframe::is_aniframe(data)
+  ensure_coords(data)
+  variables_where <- names(data)
 
-  if (is_frame) {
-    ensure_aniframe_spatial(data)
-    variables_where <- aniframe::get_metadata(data, "variables_where")
-
-    if (is.null(time)) {
-      if (!"time" %in% names(data)) {
-        cli::cli_abort("Missing required column: {.val time}.")
-      }
-      time <- data$time
-    }
-  } else {
-    ensure_coords(data)
-    variables_where <- names(data)
-
-    if (is.null(time)) {
-      cli::cli_abort(c(
-        "{.arg time} is required when {.arg data} is a coordinate frame.",
-        "i" = "Inside {.fn dplyr::mutate}, pass the time column: {.code filter_na_speed(pick(all_of(...)), time = time)}."
-      ))
-    }
+  if (is.null(time)) {
+    cli::cli_abort(c(
+      "{.arg time} is required.",
+      "i" = "Inside {.fn dplyr::mutate}: {.code filter_na_speed(pick(all_of(...)), time = time)}.",
+      "i" = "For a whole aniframe, use {.fn filter_na_across}."
+    ))
   }
 
   if (!is.numeric(time)) {
@@ -118,24 +89,8 @@ filter_na_speed <- function(data, threshold = "auto", time = NULL) {
     cli::cli_abort("{.arg threshold} must be a single numeric value.")
   }
 
-  if (is_frame) {
-    # Speed is computed inside mutate() so that grouping is respected: a
-    # step is never formed between the last row of one track and the first
-    # row of the next. `time` is attached as a column rather than passed as
-    # a vector, so that it is sliced per group alongside the coordinates.
-    work <- data
-    work$.aniprocess_time <- time
-    speed <- dplyr::mutate(
-      work,
-      .aniprocess_speed = calculate_step_speed(
-        dplyr::pick(dplyr::all_of(variables_where)),
-        .data$.aniprocess_time
-      )
-    )$.aniprocess_speed
-  } else {
-    # The caller has already decided which rows belong together.
-    speed <- calculate_step_speed(data, time)
-  }
+  # The caller has already decided which rows belong together.
+  speed <- calculate_step_speed(data, time)
 
   # Determine threshold if auto. Estimated from within-track speeds only,
   # since no cross-track step ever enters `speed`.
@@ -151,11 +106,6 @@ filter_na_speed <- function(data, threshold = "auto", time = NULL) {
   # Filter spatial variables
   for (col in variables_where) {
     data[[col]] <- dplyr::if_else(exceeds, NA_real_, data[[col]])
-  }
-
-  # Filter confidence if present
-  if ("confidence" %in% names(data)) {
-    data$confidence <- dplyr::if_else(exceeds, NA_real_, data$confidence)
   }
 
   data

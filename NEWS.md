@@ -2,6 +2,10 @@
 
 ## Breaking changes
 
+* `filter_ccma()`, `filter_na_speed()`, `filter_na_excursion()`, `filter_na_roi()` and `filter_na_confidence()` now take a data frame of coordinate columns rather than an aniframe. Use `filter_across()` / `filter_na_across()` for a whole aniframe, or `dplyr::pick()` inside `dplyr::mutate()` for the columns directly. `filter_na_speed()` requires `time` and `filter_na_confidence()` requires `confidence`, which the `*_across()` verbs supply from the frame (#30).
+
+  This completes the tier separation: each level now works strictly at its own level, rather than one function trying to serve both.
+
 * `replace_na()` is removed; use `replace_na_with()`. The old name collided with `tidyr::replace_na()`, which substitutes a fixed value per column rather than interpolating gaps (#30).
 * `filter_aniframe()` is removed; use `filter_across()`, which does the same job and additionally reads `sampling_rate` and the time column from the aniframe's metadata (#30).
 

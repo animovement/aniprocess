@@ -9,11 +9,23 @@ template:
   package: animovementtemplate
 
 reference:
+- title: "Work on a whole aniframe"
+  desc: Apply a named method across the spatial columns, within groups.
+  contents:
+  - filter_across
+  - filter_na_across
+  - replace_na_across
+
+- title: "Choose a method by name"
+  desc: The same, for a vector or a frame of coordinates inside `mutate()`.
+  contents:
+  - filter_with
+  - filter_na_with
+  - replace_na_with
+
 - title: "Mask unreliable observations"
   desc: Replace values that fail a quality criterion with `NA`.
   contents:
-  - filter_na_across
-  - filter_na_with
   - filter_na_confidence
   - filter_na_excursion
   - filter_na_range
@@ -23,8 +35,6 @@ reference:
 - title: "Fill missing values"
   desc: Fill gaps by interpolation, carrying forward, or a constant.
   contents:
-  - replace_na_across
-  - replace_na_with
   - replace_na_linear
   - replace_na_locf
   - replace_na_spline
@@ -34,8 +44,6 @@ reference:
 - title: "Smooth and filter signals"
   desc: Suppress noise while preserving the movement you care about.
   contents:
-  - filter_across
-  - filter_with
   - filter_ccma
   - filter_gaussian
   - filter_highpass

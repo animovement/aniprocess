@@ -19,7 +19,9 @@ filter_na_roi(
 )
 }
 \arguments{
-\item{data}{An aniframe containing spatial coordinates.}
+\item{data}{A data frame with numeric \code{x} and \code{y} columns (and optionally
+\code{z}) — typically supplied by \code{\link[dplyr:pick]{dplyr::pick()}} inside \code{\link[dplyr:mutate]{dplyr::mutate()}}.
+To filter a whole aniframe, use \code{\link[=filter_na_across]{filter_na_across()}}.}
 
 \item{x_min, x_max}{Bounds for x-coordinate (rectangular/cuboid ROI).}
 
@@ -33,40 +35,37 @@ ROI. For 3D data, provide all three; for 2D data, only x and y.}
 \item{radius}{Radius of circular (2D) or spherical (3D) ROI.}
 }
 \value{
-An aniframe with coordinates outside ROI set to NA.
+\code{data}, with coordinates outside the ROI set to \code{NA}.
 }
 \description{
 Filters out coordinates that fall outside a specified region of interest by
 setting them to NA. The ROI can be either rectangular/cuboid (defined by
 min/max coordinates) or circular/spherical (defined by center and radius).
-Automatically handles 2D or 3D data based on the spatial variables in the
-aniframe metadata.
+Handles 2D or 3D data according to whether a \code{z} column is present.
 }
 \examples{
-# Create sample 2D data
-sample_data <- aniframe::aniframe(
-  time = 1:9,
+coords <- data.frame(
   x = rep(c(25, 50, 75), 3),
   y = rep(c(25, 50, 75), each = 3)
 )
 
-# Rectangular ROI example
-sample_data |>
-  filter_na_roi(x_min = 20, x_max = 60, y_min = 20, y_max = 60)
+# Rectangular ROI
+filter_na_roi(coords, x_min = 20, x_max = 60, y_min = 20, y_max = 60)
 
-# Circular ROI example
-sample_data |>
-  filter_na_roi(x_center = 50, y_center = 50, radius = 30)
+# Circular ROI
+filter_na_roi(coords, x_center = 50, y_center = 50, radius = 30)
 
-# 3D cuboid ROI example
-sample_3d <- aniframe::aniframe(
-  time = 1:8,
+# 3D cuboid ROI
+coords_3d <- data.frame(
   x = rep(c(25, 75), 4),
   y = rep(c(25, 75), each = 2, times = 2),
-  z = rep(c(25, 75), each = 4),
-  variables_where = c("x", "y", "z")
+  z = rep(c(25, 75), each = 4)
 )
 
-sample_3d |>
-  filter_na_roi(x_min = 20, x_max = 60, y_min = 20, y_max = 60, z_min = 20, z_max = 60)
+filter_na_roi(
+  coords_3d,
+  x_min = 20, x_max = 60,
+  y_min = 20, y_max = 60,
+  z_min = 20, z_max = 60
+)
 }

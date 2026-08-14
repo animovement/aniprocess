@@ -99,38 +99,13 @@ filter_ccma <- function(
   keep_na = TRUE,
   ...
 ) {
-  is_frame <- aniframe::is_aniframe(data)
+  ensure_coords(data)
 
-  if (is_frame) {
-    ensure_aniframe_spatial(data)
-
-    coord_system <- as.character(
-      aniframe::get_metadata(data, "coordinate_system")
-    )
-    if (!startsWith(coord_system, "cartesian")) {
-      cli::cli_abort(
-        c(
-          "CCMA requires a Cartesian coordinate system; got {.val {coord_system}}.",
-          "i" = "The curvature math (cross product, Euclidean norm, circumradius) is Cartesian-specific."
-        )
-      )
-    }
-
-    variables_where <- aniframe::get_metadata(data, "variables_where")
-  } else {
-    ensure_coords(data)
-    variables_where <- names(data)
-  }
-
-  d <- length(variables_where)
+  d <- ncol(data)
   if (!d %in% c(2L, 3L)) {
     cli::cli_abort(c(
-      "CCMA requires 2 or 3 spatial coordinates; got {.val {d}}.",
-      "i" = if (is_frame) {
-        "Taken from the {.field variables_where} metadata field."
-      } else {
-        "Taken from the columns of {.arg data}."
-      }
+      "CCMA requires 2 or 3 coordinate columns; got {.val {d}}.",
+      "i" = "The curvature math is defined in 2D and 3D only."
     ))
   }
 
@@ -160,15 +135,7 @@ filter_ccma <- function(
     )
   }
 
-  # Given a coordinate frame, smooth it directly: the caller has already
-  # decided which rows belong together (typically one group, via pick()).
-  if (!is_frame) {
-    return(smooth(data))
-  }
-
-  # Applied per group by mutate(): the returned data frame is spliced back
-  # over the spatial columns in place. Ungrouped data is simply one group.
-  dplyr::mutate(data, smooth(dplyr::pick(dplyr::all_of(variables_where))))
+  smooth(data)
 }
 
 
