@@ -88,7 +88,11 @@ test_that("every smoothing filter preserves input NAs by default", {
 
   expect_true(preserved(filter_sgolay(x, sampling_rate = 60)))
   expect_true(preserved(filter_lowpass(x, sampling_rate = 60, cutoff_freq = 5)))
-  expect_true(preserved(filter_highpass(x, sampling_rate = 60, cutoff_freq = 5)))
+  expect_true(preserved(filter_highpass(
+    x,
+    sampling_rate = 60,
+    cutoff_freq = 5
+  )))
   expect_true(preserved(
     filter_lowpass_fft(x, sampling_rate = 60, cutoff_freq = 5)
   ))
