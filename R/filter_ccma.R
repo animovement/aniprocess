@@ -22,7 +22,7 @@
 #'
 #' Because curvature is intrinsically multi-dimensional, this filter
 #' operates on all spatial coordinates jointly (unlike the per-column
-#' filters dispatched through [filter_aniframe()]). It is most useful
+#' filters dispatched through [filter_across()]). It is most useful
 #' for smoothing curved 2D or 3D trajectories where a plain moving
 #' average visibly cuts corners; for general-purpose time-series
 #' smoothing reach for [filter_gaussian()] or [filter_sgolay()].

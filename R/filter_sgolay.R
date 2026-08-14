@@ -70,7 +70,7 @@
 #'
 #' @seealso
 #' \code{\link{filter_lowpass}} for frequency-based filtering
-#' \code{\link{replace_na}} for details on NA handling methods
+#' [replace_na_with()] for details on NA handling methods
 #'
 #' @references
 #' Savitzky, A., & Golay, M.J.E. (1964). Smoothing and Differentiation of Data by

@@ -119,6 +119,6 @@ Butterworth, S. (1930). On the Theory of Filter Amplifiers.
 Wireless Engineer, 7, 536-541.
 }
 \seealso{
-\code{\link{replace_na}} for details on NA handling methods
+\code{\link[=replace_na_with]{replace_na_with()}} for details on NA handling methods
 \code{\link{filter_highpass}} for high-pass filtering
 }

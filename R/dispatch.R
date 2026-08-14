@@ -34,7 +34,7 @@ dispatch_method <- function(
       c(
         "{.arg x} is an aniframe, but {.fn {generic}} works on a vector or a frame of coordinate columns.",
         "i" = "Inside {.fn dplyr::mutate}, use {.code pick(all_of(...))}.",
-        "i" = "To filter a whole aniframe, use {.fn filter_aniframe}."
+        "i" = "To filter a whole aniframe, use {.fn filter_across}."
       ),
       call = call
     )

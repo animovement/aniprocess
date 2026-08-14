@@ -1,5 +1,5 @@
 # Tests for filter_across()
-# - Parity with filter_aniframe() for the methods both support
+# - Each method applied column by column, within groups
 # - sampling_rate and the time column come from metadata
 # - `variables` restricts which columns are touched
 # - ccma is applied jointly, not column by column
@@ -18,12 +18,20 @@ grouped_fixture <- function(np = 30, sampling_rate = 30) {
   aniframe::set_metadata(d, sampling_rate = sampling_rate)
 }
 
-test_that("filter_across matches filter_aniframe for the shared methods", {
+test_that("filter_across applies each method column by column", {
   d <- grouped_fixture()
+  rows <- split(seq_len(nrow(d)), d$individual)
 
   for (m in c("gaussian", "rollmean", "rollmedian", "triangular")) {
-    expect_equal(filter_across(d, m)$x, filter_aniframe(d, m)$x, info = m)
-    expect_equal(filter_across(d, m)$y, filter_aniframe(d, m)$y, info = m)
+    fn <- switch(
+      m,
+      gaussian = filter_gaussian,
+      rollmean = filter_rollmean,
+      rollmedian = filter_rollmedian,
+      triangular = filter_triangular
+    )
+    expected <- unlist(lapply(rows, function(i) fn(d$x[i])), use.names = FALSE)
+    expect_equal(filter_across(d, m)$x, expected, info = m)
   }
 })
 
@@ -137,15 +145,6 @@ test_that("filter_across returns an aniframe and preserves grouping", {
   expect_equal(dplyr::group_vars(out), "individual")
 })
 
-test_that("filter_across on_deltas matches filter_aniframe use_derivatives", {
-  d <- grouped_fixture(np = 20)
-
-  expect_equal(
-    filter_across(d, "rollmean", window_width = 3, on_deltas = TRUE)$x,
-    filter_aniframe(d, "rollmean", window_width = 3, use_derivatives = TRUE)$x
-  )
-})
-
 test_that("on_deltas round trips when the filter does nothing", {
   # window_width = 1 makes rollmean the identity, so differencing and
   # re-integrating must return the input unchanged.
@@ -244,4 +243,62 @@ test_that("filter_across errors when variables_when names a missing column", {
   d <- aniframe::set_metadata(d, variables_when = "frame")
 
   expect_error(filter_across(d, "kalman_irregular"), "Missing time column")
+})
+
+# --- aniframe shapes: identity columns, metadata edge cases, 3D ------------
+
+test_that("filter_across works with the default example aniframe", {
+  d <- aniframe::example_aniframe()
+  expect_no_error(filter_across(d))
+  expect_s3_class(filter_across(d), "aniframe")
+})
+
+test_that("filter_across inherits the grouping aniframe derives from variables_what", {
+  # aniframe() groups by variables_what at construction, so filter_across()
+  # never has to read that metadata itself -- it just honours the grouping
+  # that is already on the frame.
+  n <- 10
+  d <- aniframe::aniframe(
+    track = rep(c("a", "b"), each = n / 2),
+    time = rep(seq_len(n / 2), 2),
+    x = c(seq_len(n / 2), seq_len(n / 2) + 1000),
+    y = rep(0, n),
+    variables_what = "track"
+  )
+  expect_true(inherits(d, "grouped_df"))
+  expect_equal(dplyr::group_vars(d), "track")
+
+  out <- filter_across(d, "rollmean", window_width = 3)
+
+  # Filtered within each track, not across the boundary between them
+  rows <- split(seq_len(n), d$track)
+  expected <- unlist(
+    lapply(rows, function(i) filter_rollmean(d$x[i], window_width = 3)),
+    use.names = FALSE
+  )
+  expect_equal(out$x, expected)
+  expect_false(isTRUE(all.equal(
+    out$x,
+    filter_rollmean(d$x, window_width = 3)
+  )))
+})
+
+test_that("filter_across works when variables_what names a missing column", {
+  # aniframe can carry a default variables_what (e.g. "keypoint") even when
+  # the column is absent. Nothing reads it, so this must simply work.
+  d <- aniframe::aniframe(time = 1:20, x = rnorm(20), y = rnorm(20))
+  expect_no_error(filter_across(d, "rollmean", window_width = 3))
+})
+
+test_that("filter_across filters z when it is a spatial variable", {
+  d <- aniframe::aniframe(
+    time = 1:20,
+    x = rnorm(20),
+    y = rnorm(20),
+    z = rnorm(20),
+    variables_where = c("x", "y", "z"),
+    variables_what = character(0)
+  )
+  out <- filter_across(d, "rollmean", window_width = 3, min_obs = 1)
+  expect_false(identical(out$z, d$z))
 })

@@ -72,7 +72,7 @@
 #'                           na_action = "linear", keep_na = TRUE)
 #'
 #' @seealso
-#' \code{\link{replace_na}} for details on NA handling methods
+#' [replace_na_with()] for details on NA handling methods
 #' \code{\link{filter_highpass}} for high-pass filtering
 #'
 #' @references
@@ -209,7 +209,7 @@ filter_lowpass <- function(
 #'                            na_action = "linear", keep_na = TRUE)
 #'
 #' @seealso
-#' \code{\link{replace_na}} for details on NA handling methods
+#' [replace_na_with()] for details on NA handling methods
 #' \code{\link{filter_lowpass}} for low-pass filtering
 #'
 #' @references

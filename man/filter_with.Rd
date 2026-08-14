@@ -54,6 +54,6 @@ filter_with(data.frame(x = x, y = rev(x)), "rollmean", window_width = 3)
 
 }
 \seealso{
-\code{\link[=filter_aniframe]{filter_aniframe()}} to apply a filter across an aniframe's
+\code{\link[=filter_across]{filter_across()}} to apply a filter across an aniframe's
 spatial columns.
 }

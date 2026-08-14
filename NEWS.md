@@ -2,7 +2,8 @@
 
 ## Breaking changes
 
-* `replace_na()` is deprecated in favour of `replace_na_with()`. It still works and delegates to the new function, but warns. Internally the filters' `na_action` argument now calls `replace_na_with()`, so filtering data with `NA`s does not emit the deprecation warning (#30).
+* `replace_na()` is removed; use `replace_na_with()`. The old name collided with `tidyr::replace_na()`, which substitutes a fixed value per column rather than interpolating gaps (#30).
+* `filter_aniframe()` is removed; use `filter_across()`, which does the same job and additionally reads `sampling_rate` and the time column from the aniframe's metadata (#30).
 
 * Argument names are now consistent across the package, so that a generic wrapper can forward them without special-casing. This is the first step towards the unified interface in #30 (#30).
   * `window_size` is now `window_width` in `filter_sgolay()`, `find_peaks()` and `find_troughs()`, matching `filter_gaussian()`, `filter_rollmean()`, `filter_rollmedian()` and `filter_triangular()`.
