@@ -14,9 +14,17 @@
 #'   this defaults to its `confidence` column.
 #'
 #' @return The same shape as the input, with spatial values replaced by `NA`
-#'   where confidence is below the threshold. A missing confidence counts as
-#'   failing the threshold. For an aniframe the `confidence` column is
-#'   filtered too.
+#'   where confidence is below the threshold. For an aniframe the
+#'   `confidence` column is filtered too.
+#'
+#' @details
+#' A missing confidence means *not scored*, not *scored badly*, so those rows
+#' are left unfiltered. A human annotator has no natural number to enter for
+#' "I did not assess this", and tracker scores are not bounded at 1 — SLEAP
+#' can exceed it — so `NA` is the sensible thing to record rather than a
+#' sentinel value. A warning reports how many were missing, since silently
+#' skipping them would hide that those rows were never checked. To drop them
+#' as well, filter `confidence` directly with [filter_na_range()].
 #'
 #' @section Input shape:
 #' Returns the same shape it is given.
@@ -102,11 +110,25 @@ filter_na_confidence <- function(data, threshold = 0.6, confidence = NULL) {
     )
   }
 
-  # Replace spatial values with NA where confidence is below threshold.
-  # A missing confidence is treated as failing the threshold, matching the
-  # `if_else()` semantics this replaced: an unknown confidence is not a
-  # trustworthy one.
-  below <- is.na(confidence) | confidence < threshold
+  # A missing confidence means "not scored", not "scored badly" -- a human
+  # annotator has no natural numeric value to enter, and tracker scores are
+  # not bounded at 1 (SLEAP can exceed it), so NA is the sensible thing to
+  # record. Those rows are left alone, but flagged, since silently skipping
+  # them would hide that they were never checked.
+  n_missing <- sum(is.na(confidence))
+  if (n_missing > 0L) {
+    cli::cli_warn(
+      c(
+        "{n_missing} confidence value{?s} {?is/are} missing.",
+        "i" = "Those rows are left unfiltered. Use {.fn filter_na_range} on {.field confidence} to drop them."
+      ),
+      .frequency = "regularly",
+      .frequency_id = "aniprocess_confidence_na"
+    )
+  }
+
+  # Replace spatial values with NA where confidence is below threshold
+  below <- !is.na(confidence) & confidence < threshold
   for (col in variables_where) {
     data[[col]][below] <- NA_real_
   }

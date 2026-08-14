@@ -20,14 +20,22 @@ this defaults to its \code{confidence} column.}
 }
 \value{
 The same shape as the input, with spatial values replaced by \code{NA}
-where confidence is below the threshold. A missing confidence counts as
-failing the threshold. For an aniframe the \code{confidence} column is
-filtered too.
+where confidence is below the threshold. For an aniframe the
+\code{confidence} column is filtered too.
 }
 \description{
 This function replaces spatial coordinate values with \code{NA} if the confidence
 values are below a specified threshold. The \code{confidence} column is also
 filtered.
+}
+\details{
+A missing confidence means \emph{not scored}, not \emph{scored badly}, so those rows
+are left unfiltered. A human annotator has no natural number to enter for
+"I did not assess this", and tracker scores are not bounded at 1 — SLEAP
+can exceed it — so \code{NA} is the sensible thing to record rather than a
+sentinel value. A warning reports how many were missing, since silently
+skipping them would hide that those rows were never checked. To drop them
+as well, filter \code{confidence} directly with \code{\link[=filter_na_range]{filter_na_range()}}.
 }
 \section{Input shape}{
 
