@@ -7,7 +7,8 @@
 filter_across(
   data,
   method = c("gaussian", "rollmean", "rollmedian", "triangular", "sgolay", "lowpass",
-    "highpass", "lowpass_fft", "highpass_fft", "kalman", "kalman_irregular", "ccma"),
+    "highpass", "lowpass_fft", "highpass_fft", "kalman", "kalman_irregular", "one_euro",
+    "ccma"),
   variables = NULL,
   ...,
   on_deltas = FALSE
@@ -18,8 +19,8 @@ filter_across(
 
 \item{method}{Filter to apply. One of \code{"gaussian"}, \code{"rollmean"},
 \code{"rollmedian"}, \code{"triangular"}, \code{"sgolay"}, \code{"lowpass"}, \code{"highpass"},
-\code{"lowpass_fft"}, \code{"highpass_fft"}, \code{"kalman"}, \code{"kalman_irregular"} or
-\code{"ccma"}.}
+\code{"lowpass_fft"}, \code{"highpass_fft"}, \code{"kalman"}, \code{"kalman_irregular"},
+\code{"one_euro"} or \code{"ccma"}.}
 
 \item{variables}{Columns to filter, as a tidyselect expression.
 Defaults to the \code{variables_where} metadata field.}

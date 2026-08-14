@@ -22,8 +22,8 @@
 #' @param x A numeric vector, or a data frame of numeric coordinate columns.
 #' @param method Filter to apply. One of `"gaussian"`, `"rollmean"`,
 #'   `"rollmedian"`, `"triangular"`, `"sgolay"`, `"lowpass"`, `"highpass"`,
-#'   `"lowpass_fft"`, `"highpass_fft"`, `"kalman"`, `"kalman_irregular"` or
-#'   `"ccma"`.
+#'   `"lowpass_fft"`, `"highpass_fft"`, `"kalman"`, `"kalman_irregular"`,
+#'   `"one_euro"` or `"ccma"`.
 #' @param ... Arguments passed to the underlying filter.
 #'
 #' @return The same shape as `x`, filtered.
@@ -54,6 +54,7 @@ filter_with <- function(
     "highpass_fft",
     "kalman",
     "kalman_irregular",
+    "one_euro",
     "ccma"
   ),
   ...
@@ -73,6 +74,7 @@ filter_with <- function(
     highpass_fft = filter_highpass_fft,
     kalman = filter_kalman,
     kalman_irregular = filter_kalman_irregular,
+    one_euro = filter_one_euro,
     ccma = filter_ccma
   )
 
