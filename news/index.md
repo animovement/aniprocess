@@ -4,6 +4,40 @@
 
 ### Breaking changes
 
+- Argument names are now consistent across the package, so that a
+  generic wrapper can forward them without special-casing. This is the
+  first step towards the unified interface in
+  [\#30](https://github.com/animovement/aniprocess/issues/30)
+  ([\#30](https://github.com/animovement/aniprocess/issues/30)).
+
+  - `window_size` is now `window_width` in
+    [`filter_sgolay()`](http://animovement.dev/aniprocess/reference/filter_sgolay.md),
+    [`find_peaks()`](http://animovement.dev/aniprocess/reference/find_peaks.md)
+    and
+    [`find_troughs()`](http://animovement.dev/aniprocess/reference/find_troughs.md),
+    matching
+    [`filter_gaussian()`](http://animovement.dev/aniprocess/reference/filter_gaussian.md),
+    [`filter_rollmean()`](http://animovement.dev/aniprocess/reference/filter_rollmean.md),
+    [`filter_rollmedian()`](http://animovement.dev/aniprocess/reference/filter_rollmedian.md)
+    and
+    [`filter_triangular()`](http://animovement.dev/aniprocess/reference/filter_triangular.md).
+  - The first argument of
+    [`filter_kalman()`](http://animovement.dev/aniprocess/reference/filter_kalman.md)
+    and
+    [`filter_kalman_irregular()`](http://animovement.dev/aniprocess/reference/filter_kalman_irregular.md)
+    is now `x` rather than `measurements`. They were the only
+    vector-level functions whose first argument was not `x`, which
+    prevented their use with
+    [`dplyr::across()`](https://dplyr.tidyverse.org/reference/across.html).
+  - [`filter_na_range()`](http://animovement.dev/aniprocess/reference/filter_na_range.md)
+    takes `min_value`/`max_value` rather than `min`/`max`, which
+    shadowed the base functions of those names and did not match the
+    `min_gap`/`max_gap`/`min_obs` convention used elsewhere.
+
+  No deprecation cycle: nothing in the animovement org passes these
+  names, verified across `aniread`, `animetric`, `aniframe`, `anicheck`,
+  `anispace`, `anivis` and the `animovement` meta-package.
+
 - Filters no longer fill gaps by default. `keep_na` now defaults to
   `TRUE` in
   [`filter_sgolay()`](http://animovement.dev/aniprocess/reference/filter_sgolay.md),
@@ -19,6 +53,7 @@
   any interpolation had happened. Pass `keep_na = FALSE` for the old
   behaviour
   ([\#38](https://github.com/animovement/aniprocess/issues/38)).
+
 - `keep_na` is now available on every filter.
   [`filter_gaussian()`](http://animovement.dev/aniprocess/reference/filter_gaussian.md),
   [`filter_rollmean()`](http://animovement.dev/aniprocess/reference/filter_rollmean.md),
@@ -28,6 +63,7 @@
   gain the argument, defaulting to `TRUE`; they previously filled gaps —
   fully or partially — with no way to opt out
   ([\#38](https://github.com/animovement/aniprocess/issues/38)).
+
 - [`filter_kalman()`](http://animovement.dev/aniprocess/reference/filter_kalman.md)
   and
   [`filter_kalman_irregular()`](http://animovement.dev/aniprocess/reference/filter_kalman_irregular.md)

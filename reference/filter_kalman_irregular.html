@@ -11,7 +11,7 @@ and automatically adjusts process variance based on time intervals."></head><bod
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,7 @@ and automatically adjusts process variance based on time intervals.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">filter_kalman_irregular</span><span class="op">(</span></span>
-<span>  <span class="va">measurements</span>,</span>
+<span>  <span class="va">x</span>,</span>
 <span>  <span class="va">times</span>,</span>
 <span>  base_Q <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  R <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -80,12 +80,12 @@ and automatically adjusts process variance based on time intervals.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-measurements">measurements<a class="anchor" aria-label="anchor" href="#arg-measurements"></a></dt>
-<dd><p>Numeric vector containing the measurements to be filtered.</p></dd>
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
+<dd><p>Numeric vector of measurements to be filtered.</p></dd>
 
 
 <dt id="arg-times">times<a class="anchor" aria-label="anchor" href="#arg-times"></a></dt>
-<dd><p>Numeric vector of timestamps corresponding to measurements.</p></dd>
+<dd><p>Numeric vector of timestamps corresponding to x.</p></dd>
 
 
 <dt id="arg-base-q">base_Q<a class="anchor" aria-label="anchor" href="#arg-base-q"></a></dt>
@@ -114,7 +114,7 @@ and automatically adjusts process variance based on time intervals.</p>
 
 <dt id="arg-keep-na">keep_na<a class="anchor" aria-label="anchor" href="#arg-keep-na"></a></dt>
 <dd><p>Logical. If <code>TRUE</code>, positions that were <code>NA</code> in
-<code>measurements</code> are <code>NA</code> in the values reported on the original
+<code>x</code> are <code>NA</code> in the values reported on the original
 timestamps. Defaults to <code>FALSE</code>, for the reason given in
 <code><a href="filter_kalman.html">filter_kalman()</a></code>. When <code>resample = TRUE</code> this applies to
 <code>original_values</code> only — the resampled <code>values</code> sit on a different
@@ -153,7 +153,7 @@ sampling frequency exceeds twice the median original sampling rate (Nyquist freq
 </ul><p>Parameter selection guidelines:</p><ul><li><p>base_Q controls the expected rate of change per second</p></li>
 <li><p>R should reflect your measurement noise level</p></li>
 <li><p>For slow-changing signals, reduce base_Q</p></li>
-<li><p>For noisy measurements, increase R</p></li>
+<li><p>For noisy x, increase R</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -163,21 +163,21 @@ sampling frequency exceeds twice the median original sampling rate (Nyquist freq
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Example with irregular sampling</span></span></span>
-<span class="r-in"><span><span class="va">measurements</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1.1</span>, <span class="cn">NA</span>, <span class="fl">0.9</span>, <span class="fl">1.2</span>, <span class="cn">NA</span>, <span class="fl">0.8</span>, <span class="fl">1.1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1.1</span>, <span class="cn">NA</span>, <span class="fl">0.9</span>, <span class="fl">1.2</span>, <span class="cn">NA</span>, <span class="fl">0.8</span>, <span class="fl">1.1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">times</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.35</span>, <span class="fl">0.5</span>, <span class="fl">0.8</span>, <span class="fl">0.81</span>, <span class="fl">1.0</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Basic filtering with irregular samples</span></span></span>
-<span class="r-in"><span><span class="va">filtered</span> <span class="op">&lt;-</span> <span class="fu">filter_kalman_irregular</span><span class="op">(</span><span class="va">measurements</span>, <span class="va">times</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">filtered</span> <span class="op">&lt;-</span> <span class="fu">filter_kalman_irregular</span><span class="op">(</span><span class="va">x</span>, <span class="va">times</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Filtering with resampling to 50 Hz</span></span></span>
-<span class="r-in"><span><span class="va">filtered_resampled</span> <span class="op">&lt;-</span> <span class="fu">filter_kalman_irregular</span><span class="op">(</span><span class="va">measurements</span>, <span class="va">times</span>,</span></span>
+<span class="r-in"><span><span class="va">filtered_resampled</span> <span class="op">&lt;-</span> <span class="fu">filter_kalman_irregular</span><span class="op">(</span><span class="va">x</span>, <span class="va">times</span>,</span></span>
 <span class="r-in"><span>                                             resample <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>                                             resample_freq <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Requested resampling frequency (50 Hz) exceeds twice the median sampling rate (6.66667 Hz).</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>             This may lead to poor interpolation.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot results</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">times</span>, <span class="va">measurements</span>, type<span class="op">=</span><span class="st">"p"</span>, col<span class="op">=</span><span class="st">"blue"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">times</span>, <span class="va">x</span>, type<span class="op">=</span><span class="st">"p"</span>, col<span class="op">=</span><span class="st">"blue"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">filtered_resampled</span><span class="op">$</span><span class="va">time</span>, <span class="va">filtered_resampled</span><span class="op">$</span><span class="va">values</span>, col<span class="op">=</span><span class="st">"red"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="filter_kalman_irregular-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>

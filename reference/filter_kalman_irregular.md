@@ -9,7 +9,7 @@ on time intervals.
 
 ``` r
 filter_kalman_irregular(
-  measurements,
+  x,
   times,
   base_Q = NULL,
   R = NULL,
@@ -23,13 +23,13 @@ filter_kalman_irregular(
 
 ## Arguments
 
-- measurements:
+- x:
 
-  Numeric vector containing the measurements to be filtered.
+  Numeric vector of measurements to be filtered.
 
 - times:
 
-  Numeric vector of timestamps corresponding to measurements.
+  Numeric vector of timestamps corresponding to x.
 
 - base_Q:
 
@@ -61,9 +61,9 @@ filter_kalman_irregular(
 
 - keep_na:
 
-  Logical. If `TRUE`, positions that were `NA` in `measurements` are
-  `NA` in the values reported on the original timestamps. Defaults to
-  `FALSE`, for the reason given in
+  Logical. If `TRUE`, positions that were `NA` in `x` are `NA` in the
+  values reported on the original timestamps. Defaults to `FALSE`, for
+  the reason given in
   [`filter_kalman()`](http://animovement.dev/aniprocess/reference/filter_kalman.md).
   When `resample = TRUE` this applies to `original_values` only — the
   resampled `values` sit on a different time grid, where input positions
@@ -124,7 +124,7 @@ Parameter selection guidelines:
 
 - For slow-changing signals, reduce base_Q
 
-- For noisy measurements, increase R
+- For noisy x, increase R
 
 ## See also
 
@@ -134,21 +134,21 @@ filter_kalman for regularly sampled data
 
 ``` r
 # Example with irregular sampling
-measurements <- c(1, 1.1, NA, 0.9, 1.2, NA, 0.8, 1.1)
+x <- c(1, 1.1, NA, 0.9, 1.2, NA, 0.8, 1.1)
 times <- c(0, 0.1, 0.3, 0.35, 0.5, 0.8, 0.81, 1.0)
 
 # Basic filtering with irregular samples
-filtered <- filter_kalman_irregular(measurements, times)
+filtered <- filter_kalman_irregular(x, times)
 
 # Filtering with resampling to 50 Hz
-filtered_resampled <- filter_kalman_irregular(measurements, times,
+filtered_resampled <- filter_kalman_irregular(x, times,
                                              resample = TRUE,
                                              resample_freq = 50)
 #> Warning: Requested resampling frequency (50 Hz) exceeds twice the median sampling rate (6.66667 Hz).
 #>             This may lead to poor interpolation.
 
 # Plot results
-plot(times, measurements, type="p", col="blue")
+plot(times, x, type="p", col="blue")
 lines(filtered_resampled$time, filtered_resampled$values, col="red")
 
 ```

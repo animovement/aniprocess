@@ -9,7 +9,7 @@ signal changes.
 
 ``` r
 filter_kalman(
-  measurements,
+  x,
   sampling_rate,
   base_Q = NULL,
   R = NULL,
@@ -21,9 +21,9 @@ filter_kalman(
 
 ## Arguments
 
-- measurements:
+- x:
 
-  Numeric vector containing the measurements to be filtered.
+  Numeric vector of measurements to be filtered.
 
 - sampling_rate:
 
@@ -51,17 +51,16 @@ filter_kalman(
 
 - keep_na:
 
-  Logical. If `TRUE`, positions that were `NA` in `measurements` are
-  `NA` in the output. Defaults to `FALSE`, unlike the rest of the filter
-  family: a Kalman filter's predict step is designed to carry the state
-  estimate through missing observations, so inferring across gaps is the
-  intended behaviour rather than an accident. Set `TRUE` when you want
-  gaps left as gaps.
+  Logical. If `TRUE`, positions that were `NA` in `x` are `NA` in the
+  output. Defaults to `FALSE`, unlike the rest of the filter family: a
+  Kalman filter's predict step is designed to carry the state estimate
+  through missing observations, so inferring across gaps is the intended
+  behaviour rather than an accident. Set `TRUE` when you want gaps left
+  as gaps.
 
 ## Value
 
-A numeric vector of the same length as measurements containing the
-filtered values.
+A numeric vector of the same length as x containing the filtered values.
 
 ## Details
 
@@ -69,15 +68,15 @@ The function implements a simple Kalman filter with a constant position
 model. When parameters are not explicitly provided, they are
 automatically configured based on the sampling rate:
 
-- `base_Q` defaults to `var(measurements) / sampling_rate` (so the
-  per-step process noise `Q = base_Q / sampling_rate` shrinks at higher
-  sampling rates, where consecutive samples are closer together).
+- `base_Q` defaults to `var(x) / sampling_rate` (so the per-step process
+  noise `Q = base_Q / sampling_rate` shrinks at higher sampling rates,
+  where consecutive samples are closer together).
 
 - `R` defaults to `min(mean(diff(x)^2) / 2, var(x) / 4)` if there are
   enough observations, else `0.1`.
 
-- `initial_P` defaults to `var(measurements)` if there are enough
-  observations, else `1`.
+- `initial_P` defaults to `var(x)` if there are enough observations,
+  else `1`.
 
 Missing values (NA) are handled by relying on the prediction step
 without measurement updates.
@@ -103,11 +102,11 @@ filter_kalman_irregular for handling irregularly sampled data
 
 ``` r
 # Basic usage with 60 Hz data
-measurements <- c(1, 1.1, NA, 0.9, 1.2, NA, 0.8, 1.1)
-filtered <- filter_kalman(measurements, sampling_rate = 60)
+x <- c(1, 1.1, NA, 0.9, 1.2, NA, 0.8, 1.1)
+filtered <- filter_kalman(x, sampling_rate = 60)
 
 # Custom parameters for more aggressive filtering
-filtered_custom <- filter_kalman(measurements,
+filtered_custom <- filter_kalman(x,
                                 sampling_rate = 60,
                                 base_Q = 0.001,
                                 R = 0.2)

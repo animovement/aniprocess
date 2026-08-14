@@ -11,7 +11,7 @@ uses zero-phase filtering to prevent temporal shifts in the data."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,7 +66,7 @@ uses zero-phase filtering to prevent temporal shifts in the data.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">filter_sgolay</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">sampling_rate</span>,</span>
-<span>  window_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">ceiling</a></span><span class="op">(</span><span class="va">sampling_rate</span><span class="op">/</span><span class="fl">10</span><span class="op">)</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">+</span> <span class="fl">1</span>,</span>
+<span>  window_width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">ceiling</a></span><span class="op">(</span><span class="va">sampling_rate</span><span class="op">/</span><span class="fl">10</span><span class="op">)</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">+</span> <span class="fl">1</span>,</span>
 <span>  order <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  na_action <span class="op">=</span> <span class="st">"linear"</span>,</span>
 <span>  keep_na <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -87,7 +87,7 @@ uses zero-phase filtering to prevent temporal shifts in the data.</p>
 collection rate (e.g., 60 for 60 FPS motion capture).</p></dd>
 
 
-<dt id="arg-window-size">window_size<a class="anchor" aria-label="anchor" href="#arg-window-size"></a></dt>
+<dt id="arg-window-width">window_width<a class="anchor" aria-label="anchor" href="#arg-window-width"></a></dt>
 <dd><p>Window size in samples (must be odd). Controls the amount of
 smoothing. Larger windows give more smoothing but may over-attenuate
 genuine movement features. Default is automatically calculated as
@@ -136,21 +136,21 @@ preserving features like peaks and valleys is important.</p>
 <p>Edges are handled by <code><a href="https://rdrr.io/pkg/signal/man/sgolayfilt.html" class="external-link">signal::sgolayfilt()</a></code> using extrapolation from the
 nearest interior polynomial fit, which is the standard Savitzky-Golay
 edge convention.</p>
-<p>Parameter Selection Guidelines:</p><ul><li><p>window_size:</p><ul><li><p>For 60 FPS: 5-15 frames (83-250ms) for quick movements, 15-31 for slow movements</p></li>
+<p>Parameter Selection Guidelines:</p><ul><li><p>window_width:</p><ul><li><p>For 60 FPS: 5-15 frames (83-250ms) for quick movements, 15-31 for slow movements</p></li>
 <li><p>For 120 FPS: 7-21 frames (58-175ms) for quick movements, 21-51 for slow movements</p></li>
 <li><p>For 500 FPS: 25-75 frames (50-150ms) for quick movements, 75-151 for slow movements
-The default window_size = sampling_rate/10 works well for typical human movement.</p></li>
+The default window_width = sampling_rate/10 works well for typical human movement.</p></li>
 </ul></li>
 <li><p>order:</p><ul><li><p>order=2: Smooth movements, position analysis</p></li>
 <li><p>order=3: Most movement analysis (default)</p></li>
 <li><p>order=4: Quick movements, sports analysis</p></li>
 <li><p>order=5: Very quick movements, impact analysis
-Note: order must be less than window_size</p></li>
+Note: order must be less than window_width</p></li>
 </ul></li>
-</ul><p>Common values by application:</p><ul><li><p>Gait analysis (60 FPS): window_size=15, order=3</p></li>
-<li><p>Sports biomechanics (120 FPS): window_size=21, order=4</p></li>
-<li><p>Impact analysis (500 FPS): window_size=51, order=4</p></li>
-<li><p>Posture analysis (60 FPS): window_size=31, order=2</p></li>
+</ul><p>Common values by application:</p><ul><li><p>Gait analysis (60 FPS): window_width=15, order=3</p></li>
+<li><p>Sports biomechanics (120 FPS): window_width=21, order=4</p></li>
+<li><p>Impact analysis (500 FPS): window_width=51, order=4</p></li>
+<li><p>Posture analysis (60 FPS): window_width=31, order=2</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -174,11 +174,11 @@ Simplified Least Squares Procedures. Analytical Chemistry, 36(8), 1627-1639.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Adjusting parameters for quick movements</span></span></span>
 <span class="r-in"><span><span class="va">filtered_quick</span> <span class="op">&lt;-</span> <span class="fu">filter_sgolay</span><span class="op">(</span><span class="va">x</span>, sampling_rate <span class="op">=</span> <span class="fl">60</span>,</span></span>
-<span class="r-in"><span>                               window_size <span class="op">=</span> <span class="fl">11</span>, order <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                               window_width <span class="op">=</span> <span class="fl">11</span>, order <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># High-speed camera data (500 FPS) with larger window</span></span></span>
 <span class="r-in"><span><span class="va">filtered_high</span> <span class="op">&lt;-</span> <span class="fu">filter_sgolay</span><span class="op">(</span><span class="va">x</span>, sampling_rate <span class="op">=</span> <span class="fl">500</span>,</span></span>
-<span class="r-in"><span>                              window_size <span class="op">=</span> <span class="fl">51</span>, order <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                              window_width <span class="op">=</span> <span class="fl">51</span>, order <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

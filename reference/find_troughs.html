@@ -11,7 +11,7 @@ with dplyr's mutate. Includes flexible handling of plateaus and adjustable windo
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,7 +68,7 @@ with dplyr's mutate. Includes flexible handling of plateaus and adjustable windo
 <span>  max_height <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  min_prominence <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  plateau_handling <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"strict"</span>, <span class="st">"middle"</span>, <span class="st">"first"</span>, <span class="st">"last"</span>, <span class="st">"all"</span><span class="op">)</span>,</span>
-<span>  window_size <span class="op">=</span> <span class="fl">3</span></span>
+<span>  window_width <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -97,7 +97,7 @@ with dplyr's mutate. Includes flexible handling of plateaus and adjustable windo
 </ul></dd>
 
 
-<dt id="arg-window-size">window_size<a class="anchor" aria-label="anchor" href="#arg-window-size"></a></dt>
+<dt id="arg-window-width">window_width<a class="anchor" aria-label="anchor" href="#arg-window-width"></a></dt>
 <dd><p>Integer specifying the size of the window to use for trough detection (default: 3).
 Must be odd and &gt;= 3. Larger values detect troughs over wider ranges.</p></dd>
 
@@ -110,22 +110,22 @@ Must be odd and &gt;= 3. Larger values detect troughs over wider ranges.</p></dd
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The function uses a sliding window algorithm for trough detection (window size specified by window_size parameter),
+    <p>The function uses a sliding window algorithm for trough detection (window size specified by window_width parameter),
 combined with a region-based prominence calculation method similar to that described in Palshikar (2009).</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
 
 <ul><li><p>The function is optimized for use with dplyr's mutate</p></li>
-<li><p>For noisy data, consider using a larger window_size or smoothing the series before trough detection</p></li>
+<li><p>For noisy data, consider using a larger window_width or smoothing the series before trough detection</p></li>
 <li><p>Adjust max_height and min_prominence to filter out unwanted troughs</p></li>
 <li><p>Choose plateau_handling based on your specific needs</p></li>
-<li><p>Larger window_size values result in more stringent trough detection</p></li>
+<li><p>Larger window_width values result in more stringent trough detection</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="trough-detection">Trough Detection<a class="anchor" aria-label="anchor" href="#trough-detection"></a></h2>
-    <p>A point is considered a trough if it is the lowest point within its window (default window_size of 3
-compares each point with its immediate neighbors). The first and last (window_size-1)/2 points in the
+    <p>A point is considered a trough if it is the lowest point within its window (default window_width of 3
+compares each point with its immediate neighbors). The first and last (window_width-1)/2 points in the
 series cannot be troughs and are marked as NA. Larger window sizes will identify troughs that dominate over
 a wider range, typically resulting in fewer troughs being detected.</p>
     </div>
@@ -151,7 +151,7 @@ surrounding window (i.e., lower than all other points in the window).</p>
     <p>The function uses the following rules for handling NAs:</p><ul><li><p>If a point is NA, it cannot be a trough (returns NA)</p></li>
 <li><p>If any point in the window is NA, trough status cannot be determined (returns NA)</p></li>
 <li><p>For prominence calculations, stretches of NAs are handled appropriately</p></li>
-<li><p>A minimum of window_size points is required; shorter series return all NAs</p></li>
+<li><p>A minimum of window_width points is required; shorter series return all NAs</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -173,18 +173,18 @@ Proc. 1st Int. Conf. Advanced Data Analysis, Business Analytics and Intelligence
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]    NA  TRUE FALSE  TRUE FALSE  TRUE    NA</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># With larger window size</span></span></span>
-<span class="r-in"><span><span class="fu">find_troughs</span><span class="op">(</span><span class="va">x</span>, window_size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>  <span class="co"># More stringent trough detection</span></span></span>
+<span class="r-in"><span><span class="fu">find_troughs</span><span class="op">(</span><span class="va">x</span>, window_width <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>  <span class="co"># More stringent trough detection</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]    NA    NA FALSE  TRUE FALSE    NA    NA</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># With maximum height</span></span></span>
-<span class="r-in"><span><span class="fu">find_troughs</span><span class="op">(</span><span class="va">x</span>, max_height <span class="op">=</span> <span class="fl">3</span>, window_size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">find_troughs</span><span class="op">(</span><span class="va">x</span>, max_height <span class="op">=</span> <span class="fl">3</span>, window_width <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]    NA FALSE FALSE  TRUE FALSE  TRUE    NA</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># With plateau handling</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">find_troughs</span><span class="op">(</span><span class="va">x</span>, plateau_handling <span class="op">=</span> <span class="st">"middle"</span>, window_size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>  <span class="co"># Middle of plateaus</span></span></span>
+<span class="r-in"><span><span class="fu">find_troughs</span><span class="op">(</span><span class="va">x</span>, plateau_handling <span class="op">=</span> <span class="st">"middle"</span>, window_width <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>  <span class="co"># Middle of plateaus</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]    NA FALSE  TRUE FALSE FALSE  TRUE  TRUE    NA</span>
-<span class="r-in"><span><span class="fu">find_troughs</span><span class="op">(</span><span class="va">x</span>, plateau_handling <span class="op">=</span> <span class="st">"all"</span>, window_size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>     <span class="co"># All plateau points</span></span></span>
+<span class="r-in"><span><span class="fu">find_troughs</span><span class="op">(</span><span class="va">x</span>, plateau_handling <span class="op">=</span> <span class="st">"all"</span>, window_width <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>     <span class="co"># All plateau points</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]    NA    NA FALSE FALSE FALSE  TRUE  TRUE    NA</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># With missing values</span></span></span>
@@ -198,7 +198,7 @@ Proc. 1st Int. Conf. Advanced Data Analysis, Business Analytics and Intelligence
 <span class="r-in"><span>  time <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span></span>
 <span class="r-in"><span>  value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">3</span>, <span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">2</span>, <span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">0</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>troughs <span class="op">=</span> <span class="fu">find_troughs</span><span class="op">(</span><span class="va">value</span>, window_size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>troughs <span class="op">=</span> <span class="fu">find_troughs</span><span class="op">(</span><span class="va">value</span>, window_width <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     time value troughs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  </span>

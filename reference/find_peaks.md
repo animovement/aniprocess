@@ -14,7 +14,7 @@ find_peaks(
   min_height = -Inf,
   min_prominence = 0,
   plateau_handling = c("strict", "middle", "first", "last", "all"),
-  window_size = 3
+  window_width = 3
 )
 ```
 
@@ -46,7 +46,7 @@ find_peaks(
 
   - "all": All points in plateau are peaks
 
-- window_size:
+- window_width:
 
   Integer specifying the size of the window to use for peak detection
   (default: 3). Must be odd and \>= 3. Larger values detect peaks over
@@ -65,7 +65,7 @@ A logical vector of the same length as the input where:
 ## Details
 
 The function uses a sliding window algorithm for peak detection (window
-size specified by window_size parameter), combined with a region-based
+size specified by window_width parameter), combined with a region-based
 prominence calculation method similar to that described in Palshikar
 (2009).
 
@@ -73,20 +73,20 @@ prominence calculation method similar to that described in Palshikar
 
 - The function is optimized for use with dplyr's mutate
 
-- For noisy data, consider using a larger window_size or smoothing the
+- For noisy data, consider using a larger window_width or smoothing the
   series before peak detection
 
 - Adjust min_height and min_prominence to filter out unwanted peaks
 
 - Choose plateau_handling based on your specific needs
 
-- Larger window_size values result in more stringent peak detection
+- Larger window_width values result in more stringent peak detection
 
 ## Peak Detection
 
 A point is considered a peak if it is the highest point within its
-window (default window_size of 3 compares each point with its immediate
-neighbors). The first and last (window_size-1)/2 points in the series
+window (default window_width of 3 compares each point with its immediate
+neighbors). The first and last (window_width-1)/2 points in the series
 cannot be peaks and are marked as NA. Larger window sizes will identify
 peaks that dominate over a wider range, typically resulting in fewer
 peaks being detected.
@@ -132,8 +132,8 @@ The function uses the following rules for handling NAs:
 - For prominence calculations, stretches of NAs are handled
   appropriately
 
-- A minimum of window_size points is required; shorter series return all
-  NAs
+- A minimum of window_width points is required; shorter series return
+  all NAs
 
 ## References
 
@@ -155,18 +155,18 @@ find_peaks(x)
 #> [1]    NA  TRUE FALSE  TRUE FALSE  TRUE    NA
 
 # With larger window size
-find_peaks(x, window_size = 5)  # More stringent peak detection
+find_peaks(x, window_width = 5)  # More stringent peak detection
 #> [1]    NA    NA FALSE  TRUE FALSE    NA    NA
 
 # With minimum height
-find_peaks(x, min_height = 4, window_size = 3)
+find_peaks(x, min_height = 4, window_width = 3)
 #> [1]    NA FALSE FALSE  TRUE FALSE  TRUE    NA
 
 # With plateau handling
 x <- c(1, 3, 3, 3, 2, 4, 4, 1)
-find_peaks(x, plateau_handling = "middle", window_size = 3)  # Middle of plateaus
+find_peaks(x, plateau_handling = "middle", window_width = 3)  # Middle of plateaus
 #> [1]    NA FALSE  TRUE FALSE FALSE  TRUE  TRUE    NA
-find_peaks(x, plateau_handling = "all", window_size = 5)     # All plateau points
+find_peaks(x, plateau_handling = "all", window_width = 5)     # All plateau points
 #> [1]    NA    NA FALSE FALSE FALSE  TRUE  TRUE    NA
 
 # With missing values
@@ -188,7 +188,7 @@ data_frame(
   time = 1:10,
   value = c(1, 3, 7, 4, 2, 6, 5, 8, 4, 2)
 ) %>%
-  mutate(peaks = find_peaks(value, window_size = 3))
+  mutate(peaks = find_peaks(value, window_width = 3))
 #> Warning: `data_frame()` was deprecated in tibble 1.1.0.
 #> ℹ Please use `tibble()` instead.
 #> # A tibble: 10 × 3

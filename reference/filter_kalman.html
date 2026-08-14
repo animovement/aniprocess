@@ -11,7 +11,7 @@ and provides noise reduction while preserving real signal changes."></head><body
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,7 @@ and provides noise reduction while preserving real signal changes.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">filter_kalman</span><span class="op">(</span></span>
-<span>  <span class="va">measurements</span>,</span>
+<span>  <span class="va">x</span>,</span>
 <span>  <span class="va">sampling_rate</span>,</span>
 <span>  base_Q <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  R <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -78,8 +78,8 @@ and provides noise reduction while preserving real signal changes.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-measurements">measurements<a class="anchor" aria-label="anchor" href="#arg-measurements"></a></dt>
-<dd><p>Numeric vector containing the measurements to be filtered.</p></dd>
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
+<dd><p>Numeric vector of measurements to be filtered.</p></dd>
 
 
 <dt id="arg-sampling-rate">sampling_rate<a class="anchor" aria-label="anchor" href="#arg-sampling-rate"></a></dt>
@@ -106,7 +106,7 @@ Represents the noise level in your measurements.</p></dd>
 
 <dt id="arg-keep-na">keep_na<a class="anchor" aria-label="anchor" href="#arg-keep-na"></a></dt>
 <dd><p>Logical. If <code>TRUE</code>, positions that were <code>NA</code> in
-<code>measurements</code> are <code>NA</code> in the output. Defaults to <code>FALSE</code>, unlike the
+<code>x</code> are <code>NA</code> in the output. Defaults to <code>FALSE</code>, unlike the
 rest of the filter family: a Kalman filter's predict step is designed
 to carry the state estimate through missing observations, so inferring
 across gaps is the intended behaviour rather than an accident. Set
@@ -115,18 +115,18 @@ across gaps is the intended behaviour rather than an accident. Set
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A numeric vector of the same length as measurements containing the filtered values.</p>
+    <p>A numeric vector of the same length as x containing the filtered values.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The function implements a simple Kalman filter with a constant position model.
 When parameters are not explicitly provided, they are automatically configured based
-on the sampling rate:</p><ul><li><p><code>base_Q</code> defaults to <code>var(measurements) / sampling_rate</code> (so the
+on the sampling rate:</p><ul><li><p><code>base_Q</code> defaults to <code>var(x) / sampling_rate</code> (so the
 per-step process noise <code>Q = base_Q / sampling_rate</code> shrinks at higher
 sampling rates, where consecutive samples are closer together).</p></li>
 <li><p><code>R</code> defaults to <code>min(mean(diff(x)^2) / 2, var(x) / 4)</code> if there are
 enough observations, else <code>0.1</code>.</p></li>
-<li><p><code>initial_P</code> defaults to <code>var(measurements)</code> if there are enough
+<li><p><code>initial_P</code> defaults to <code>var(x)</code> if there are enough
 observations, else <code>1</code>.</p></li>
 </ul><p>Missing values (NA) are handled by relying on the prediction step without measurement updates.</p>
     </div>
@@ -145,11 +145,11 @@ observations, else <code>1</code>.</p></li>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Basic usage with 60 Hz data</span></span></span>
-<span class="r-in"><span><span class="va">measurements</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1.1</span>, <span class="cn">NA</span>, <span class="fl">0.9</span>, <span class="fl">1.2</span>, <span class="cn">NA</span>, <span class="fl">0.8</span>, <span class="fl">1.1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">filtered</span> <span class="op">&lt;-</span> <span class="fu">filter_kalman</span><span class="op">(</span><span class="va">measurements</span>, sampling_rate <span class="op">=</span> <span class="fl">60</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1.1</span>, <span class="cn">NA</span>, <span class="fl">0.9</span>, <span class="fl">1.2</span>, <span class="cn">NA</span>, <span class="fl">0.8</span>, <span class="fl">1.1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">filtered</span> <span class="op">&lt;-</span> <span class="fu">filter_kalman</span><span class="op">(</span><span class="va">x</span>, sampling_rate <span class="op">=</span> <span class="fl">60</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Custom parameters for more aggressive filtering</span></span></span>
-<span class="r-in"><span><span class="va">filtered_custom</span> <span class="op">&lt;-</span> <span class="fu">filter_kalman</span><span class="op">(</span><span class="va">measurements</span>,</span></span>
+<span class="r-in"><span><span class="va">filtered_custom</span> <span class="op">&lt;-</span> <span class="fu">filter_kalman</span><span class="op">(</span><span class="va">x</span>,</span></span>
 <span class="r-in"><span>                                sampling_rate <span class="op">=</span> <span class="fl">60</span>,</span></span>
 <span class="r-in"><span>                                base_Q <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
 <span class="r-in"><span>                                R <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></span>

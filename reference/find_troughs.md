@@ -14,7 +14,7 @@ find_troughs(
   max_height = Inf,
   min_prominence = 0,
   plateau_handling = c("strict", "middle", "first", "last", "all"),
-  window_size = 3
+  window_width = 3
 )
 ```
 
@@ -46,7 +46,7 @@ find_troughs(
 
   - "all": All points in plateau are troughs
 
-- window_size:
+- window_width:
 
   Integer specifying the size of the window to use for trough detection
   (default: 3). Must be odd and \>= 3. Larger values detect troughs over
@@ -66,7 +66,7 @@ A logical vector of the same length as the input where:
 ## Details
 
 The function uses a sliding window algorithm for trough detection
-(window size specified by window_size parameter), combined with a
+(window size specified by window_width parameter), combined with a
 region-based prominence calculation method similar to that described in
 Palshikar (2009).
 
@@ -74,20 +74,20 @@ Palshikar (2009).
 
 - The function is optimized for use with dplyr's mutate
 
-- For noisy data, consider using a larger window_size or smoothing the
+- For noisy data, consider using a larger window_width or smoothing the
   series before trough detection
 
 - Adjust max_height and min_prominence to filter out unwanted troughs
 
 - Choose plateau_handling based on your specific needs
 
-- Larger window_size values result in more stringent trough detection
+- Larger window_width values result in more stringent trough detection
 
 ## Trough Detection
 
 A point is considered a trough if it is the lowest point within its
-window (default window_size of 3 compares each point with its immediate
-neighbors). The first and last (window_size-1)/2 points in the series
+window (default window_width of 3 compares each point with its immediate
+neighbors). The first and last (window_width-1)/2 points in the series
 cannot be troughs and are marked as NA. Larger window sizes will
 identify troughs that dominate over a wider range, typically resulting
 in fewer troughs being detected.
@@ -133,8 +133,8 @@ The function uses the following rules for handling NAs:
 - For prominence calculations, stretches of NAs are handled
   appropriately
 
-- A minimum of window_size points is required; shorter series return all
-  NAs
+- A minimum of window_width points is required; shorter series return
+  all NAs
 
 ## References
 
@@ -156,18 +156,18 @@ find_troughs(x)
 #> [1]    NA  TRUE FALSE  TRUE FALSE  TRUE    NA
 
 # With larger window size
-find_troughs(x, window_size = 5)  # More stringent trough detection
+find_troughs(x, window_width = 5)  # More stringent trough detection
 #> [1]    NA    NA FALSE  TRUE FALSE    NA    NA
 
 # With maximum height
-find_troughs(x, max_height = 3, window_size = 3)
+find_troughs(x, max_height = 3, window_width = 3)
 #> [1]    NA FALSE FALSE  TRUE FALSE  TRUE    NA
 
 # With plateau handling
 x <- c(5, 2, 2, 2, 3, 1, 1, 4)
-find_troughs(x, plateau_handling = "middle", window_size = 3)  # Middle of plateaus
+find_troughs(x, plateau_handling = "middle", window_width = 3)  # Middle of plateaus
 #> [1]    NA FALSE  TRUE FALSE FALSE  TRUE  TRUE    NA
-find_troughs(x, plateau_handling = "all", window_size = 5)     # All plateau points
+find_troughs(x, plateau_handling = "all", window_width = 5)     # All plateau points
 #> [1]    NA    NA FALSE FALSE FALSE  TRUE  TRUE    NA
 
 # With missing values
@@ -181,7 +181,7 @@ data_frame(
   time = 1:10,
   value = c(5, 3, 1, 4, 2, 1, 3, 0, 4, 5)
 ) %>%
-  mutate(troughs = find_troughs(value, window_size = 3))
+  mutate(troughs = find_troughs(value, window_width = 3))
 #> # A tibble: 10 × 3
 #>     time value troughs
 #>    <int> <dbl> <lgl>  

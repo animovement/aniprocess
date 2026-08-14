@@ -11,7 +11,7 @@ temporal shifts in the data.
 filter_sgolay(
   x,
   sampling_rate,
-  window_size = ceiling(sampling_rate/10) * 2 + 1,
+  window_width = ceiling(sampling_rate/10) * 2 + 1,
   order = 3,
   na_action = "linear",
   keep_na = TRUE,
@@ -30,7 +30,7 @@ filter_sgolay(
   Sampling rate of the data in Hz. Must match your data collection rate
   (e.g., 60 for 60 FPS motion capture).
 
-- window_size:
+- window_width:
 
   Window size in samples (must be odd). Controls the amount of
   smoothing. Larger windows give more smoothing but may over-attenuate
@@ -89,7 +89,7 @@ the standard Savitzky-Golay edge convention.
 
 Parameter Selection Guidelines:
 
-- window_size:
+- window_width:
 
   - For 60 FPS: 5-15 frames (83-250ms) for quick movements, 15-31 for
     slow movements
@@ -98,8 +98,8 @@ Parameter Selection Guidelines:
     slow movements
 
   - For 500 FPS: 25-75 frames (50-150ms) for quick movements, 75-151 for
-    slow movements The default window_size = sampling_rate/10 works well
-    for typical human movement.
+    slow movements The default window_width = sampling_rate/10 works
+    well for typical human movement.
 
 - order:
 
@@ -110,17 +110,17 @@ Parameter Selection Guidelines:
   - order=4: Quick movements, sports analysis
 
   - order=5: Very quick movements, impact analysis Note: order must be
-    less than window_size
+    less than window_width
 
 Common values by application:
 
-- Gait analysis (60 FPS): window_size=15, order=3
+- Gait analysis (60 FPS): window_width=15, order=3
 
-- Sports biomechanics (120 FPS): window_size=21, order=4
+- Sports biomechanics (120 FPS): window_width=21, order=4
 
-- Impact analysis (500 FPS): window_size=51, order=4
+- Impact analysis (500 FPS): window_width=51, order=4
 
-- Posture analysis (60 FPS): window_size=31, order=2
+- Posture analysis (60 FPS): window_width=31, order=2
 
 ## References
 
@@ -147,9 +147,9 @@ filtered <- filter_sgolay(x, sampling_rate = 60)
 
 # Adjusting parameters for quick movements
 filtered_quick <- filter_sgolay(x, sampling_rate = 60,
-                               window_size = 11, order = 4)
+                               window_width = 11, order = 4)
 
 # High-speed camera data (500 FPS) with larger window
 filtered_high <- filter_sgolay(x, sampling_rate = 500,
-                              window_size = 51, order = 3)
+                              window_width = 51, order = 3)
 ```
