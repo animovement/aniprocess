@@ -38,8 +38,15 @@ Endpoints have only one neighbor; their speed falls back to the available
 one-sided step. NAs in inputs do not contaminate adjacent rows: a missing
 coordinate at row \code{i} only affects row \code{i}'s speed estimate.
 
+Speed is computed \strong{within each group} of a grouped aniframe, so a step
+is never formed between the last row of one track and the first row of
+the next. Each group's first and last rows are treated as endpoints. On
+ungrouped data the whole frame is a single track.
+
 When using \code{threshold = "auto"}, the threshold is set to the mean speed
-plus three standard deviations.
+plus three standard deviations, pooled across groups. Because no
+cross-track step is ever formed, the estimate uses within-track speeds
+only.
 }
 \examples{
 data <- aniframe::aniframe(

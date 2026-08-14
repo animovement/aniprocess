@@ -115,18 +115,12 @@ filter_ccma <- function(
 
   extra_args <- rlang::list2(...)
 
-  # Apply per group.
-  if (inherits(data, "grouped_df") && length(dplyr::group_vars(data)) > 0L) {
-    group_id <- dplyr::group_indices(data)
-  } else {
-    group_id <- rep(1L, nrow(data))
-  }
-
-  for (g in unique(group_id)) {
-    mask <- which(group_id == g)
-    P <- as.matrix(as.data.frame(data)[mask, variables_where, drop = FALSE])
-    smoothed <- ccma_filter_one(
-      P,
+  # Applied per group by mutate(): the returned data frame is spliced back
+  # over the spatial columns in place. Ungrouped data is simply one group.
+  dplyr::mutate(
+    data,
+    ccma_filter_group(
+      dplyr::pick(dplyr::all_of(variables_where)),
       w_ma = w_ma,
       w_cc = w_cc,
       kernel = kernel,
@@ -136,12 +130,26 @@ filter_ccma <- function(
       keep_na = keep_na,
       replace_na_args = extra_args
     )
-    for (i in seq_along(variables_where)) {
-      data[[variables_where[i]]][mask] <- smoothed[, i]
-    }
-  }
+  )
+}
 
-  data
+
+#' Apply CCMA to one group's coordinates.
+#'
+#' Matrix-in, matrix-out adaptor around [ccma_filter_one()] that takes and
+#' returns a data frame, so the result can be spliced back over the spatial
+#' columns by `dplyr::mutate()`.
+#'
+#' @param coords A data frame of the group's spatial columns.
+#' @inheritParams ccma_filter_one
+#'
+#' @return A data frame with the same names and shape as `coords`.
+#' @keywords internal
+ccma_filter_group <- function(coords, ...) {
+  smoothed <- ccma_filter_one(as.matrix(coords), ...)
+  out <- as.data.frame(smoothed)
+  names(out) <- names(coords)
+  out
 }
 
 

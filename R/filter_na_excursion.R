@@ -80,46 +80,24 @@ filter_na_excursion <- function(
     }
   }
 
-  # Determine row groups (one ungrouped block when nothing is grouped)
-  group_id <- if (
-    inherits(data, "grouped_df") && length(dplyr::group_vars(data)) > 0L
-  ) {
-    dplyr::group_indices(data)
-  } else {
-    rep(1L, nrow(data))
-  }
+  # The mask is built inside mutate() so that each group's state machine
+  # sees only its own rows. Ungrouped data is simply one group.
+  flagged <- dplyr::mutate(
+    data,
+    .aniprocess_flag = excursion_mask(
+      dplyr::pick(dplyr::all_of(variables_where)),
+      outlier_sd,
+      return_sd,
+      by_axis
+    )
+  )$.aniprocess_flag
 
-  for (g in unique(group_id)) {
-    rows <- which(group_id == g)
-    if (length(rows) < 2L) {
-      next
-    }
-    flagged <- if (by_axis) {
-      excursion_mask_per_axis(
-        data,
-        rows,
-        variables_where,
-        outlier_sd,
-        return_sd
-      )
-    } else {
-      excursion_mask_joint(
-        data,
-        rows,
-        variables_where,
-        outlier_sd,
-        return_sd
-      )
-    }
-    if (!any(flagged)) {
-      next
-    }
-    target_rows <- rows[flagged]
+  if (any(flagged)) {
     for (col in variables_where) {
-      data[[col]][target_rows] <- NA_real_
+      data[[col]][flagged] <- NA_real_
     }
     if ("confidence" %in% names(data)) {
-      data$confidence[target_rows] <- NA_real_
+      data$confidence[flagged] <- NA_real_
     }
   }
 
@@ -127,22 +105,38 @@ filter_na_excursion <- function(
 }
 
 
+#' Excursion mask for one group of coordinates.
+#'
+#' Dispatches to the per-axis or joint state machine. Groups too short to
+#' contain a step are never flagged.
+#'
+#' @param coords A data frame of the group's spatial columns.
+#' @param outlier_sd,return_sd Thresholds, in units of the spatial SD.
+#' @param by_axis If `TRUE`, run the per-axis machine; otherwise the joint one.
+#'
+#' @return Logical vector of length `nrow(coords)`.
+#' @keywords internal
+excursion_mask <- function(coords, outlier_sd, return_sd, by_axis) {
+  if (nrow(coords) < 2L) {
+    return(rep(FALSE, nrow(coords)))
+  }
+  if (by_axis) {
+    excursion_mask_per_axis(coords, outlier_sd, return_sd)
+  } else {
+    excursion_mask_joint(coords, outlier_sd, return_sd)
+  }
+}
+
+
 #' Per-axis excursion state machine.
 #'
-#' Returns a logical vector (length `length(rows)`) with `TRUE` at rows
+#' Returns a logical vector (length `nrow(coords)`) with `TRUE` at rows
 #' where any spatial axis is currently inside an excursion run.
 #'
 #' @keywords internal
-excursion_mask_per_axis <- function(
-  data,
-  rows,
-  variables_where,
-  outlier_sd,
-  return_sd
-) {
-  flagged <- rep(FALSE, length(rows))
-  for (col in variables_where) {
-    x <- data[[col]][rows]
+excursion_mask_per_axis <- function(coords, outlier_sd, return_sd) {
+  flagged <- rep(FALSE, nrow(coords))
+  for (x in coords) {
     sigma <- stats::sd(x, na.rm = TRUE)
     med <- stats::median(x, na.rm = TRUE)
     if (!is.finite(sigma) || sigma == 0) {
@@ -158,14 +152,8 @@ excursion_mask_per_axis <- function(
 #' Joint-Euclidean excursion state machine.
 #'
 #' @keywords internal
-excursion_mask_joint <- function(
-  data,
-  rows,
-  variables_where,
-  outlier_sd,
-  return_sd
-) {
-  P <- as.matrix(as.data.frame(data)[rows, variables_where, drop = FALSE])
+excursion_mask_joint <- function(coords, outlier_sd, return_sd) {
+  P <- as.matrix(coords)
   axis_sd <- vapply(
     seq_len(ncol(P)),
     function(j) stats::sd(P[, j], na.rm = TRUE),

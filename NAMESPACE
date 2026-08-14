@@ -27,6 +27,7 @@ export(replace_na_spline)
 export(replace_na_stine)
 export(replace_na_value)
 importFrom(data.table,frollmean)
+importFrom(dplyr,pick)
 importFrom(rlang,
   ":=",
   .data

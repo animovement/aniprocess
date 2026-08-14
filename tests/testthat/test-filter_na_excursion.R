@@ -254,3 +254,58 @@ test_that("filter_na_excursion preserves existing NAs", {
     expect_true(is.na(out$x[50]))
   }
 })
+
+# --- grouping ---------------------------------------------------------------
+
+test_that("filter_na_excursion treats each group independently", {
+  # The invariant: filtering a grouped frame must equal filtering each
+  # group on its own. Guards against a step or statistic being computed
+  # across a track boundary.
+  set.seed(11)
+  np <- 40
+  mk_one <- function(offset) {
+    x <- rnorm(np, sd = 2) + offset
+    x[10:12] <- x[10:12] + 40 # an excursion within the track
+    data.frame(time = seq_len(np), x = x, y = rnorm(np, sd = 2) + offset)
+  }
+  a <- mk_one(0)
+  b <- mk_one(5000) # far away, so a merged view would look wild
+
+  grouped <- aniframe::aniframe(
+    time = c(a$time, b$time),
+    individual = rep(c("a", "b"), each = np),
+    x = c(a$x, b$x),
+    y = c(a$y, b$y),
+    variables_what = "individual"
+  ) |>
+    dplyr::group_by(individual)
+
+  alone <- function(d) {
+    res <- filter_na_excursion(aniframe::aniframe(
+      time = d$time,
+      x = d$x,
+      y = d$y,
+      variables_what = character(0)
+    ))
+    as.data.frame(res)[, c("x", "y")]
+  }
+
+  expect_equal(
+    as.data.frame(filter_na_excursion(grouped))[, c("x", "y")],
+    rbind(alone(a), alone(b)),
+    ignore_attr = TRUE
+  )
+})
+
+test_that("filter_na_excursion leaves one-row groups untouched", {
+  d <- aniframe::aniframe(
+    time = c(1, 2, 3, 1),
+    individual = c("a", "a", "a", "solo"),
+    x = c(0, 1, 2, 42),
+    y = rep(0, 4),
+    variables_what = "individual"
+  ) |>
+    dplyr::group_by(individual)
+
+  expect_equal(filter_na_excursion(d)$x[4], 42)
+})

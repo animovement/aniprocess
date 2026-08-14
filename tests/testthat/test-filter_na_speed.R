@@ -253,39 +253,58 @@ test_that("filter_na_speed handles uneven time spacing", {
   expect_true(is.na(result$x[4]))
 })
 
-test_that("calculate_speed_2d computes correct values", {
+test_that("calculate_step_speed computes correct values in 2D", {
   # Constant velocity of 1 in x direction
-  x <- c(0, 1, 2, 3, 4)
-  y <- c(0, 0, 0, 0, 0)
+  coords <- data.frame(x = c(0, 1, 2, 3, 4), y = c(0, 0, 0, 0, 0))
   time <- c(0, 1, 2, 3, 4)
 
-  speed <- calculate_speed_2d(x, y, time)
+  speed <- calculate_step_speed(coords, time)
 
   expect_true(all(abs(speed - 1) < 1e-9))
 })
 
-test_that("calculate_speed_3d computes correct values", {
-  x <- c(0, 1, 2, 3, 4)
-  y <- c(0, 0, 0, 0, 0)
-  z <- c(0, 0, 0, 0, 0)
+test_that("calculate_step_speed computes correct values in 3D", {
+  coords <- data.frame(
+    x = c(0, 1, 2, 3, 4),
+    y = c(0, 0, 0, 0, 0),
+    z = c(0, 0, 0, 0, 0)
+  )
   time <- c(0, 1, 2, 3, 4)
 
-  speed <- calculate_speed_3d(x, y, z, time)
+  speed <- calculate_step_speed(coords, time)
 
   expect_true(all(abs(speed - 1) < 1e-9))
 })
 
-test_that("calculate_speed_2d uses one-sided fallback at endpoints", {
-  # Step speeds: 1, 1, 1, 1
-  x <- c(0, 1, 2, 3, 4)
-  y <- c(0, 0, 0, 0, 0)
+test_that("calculate_step_speed is dimension-agnostic", {
+  # A 3-4-5 triangle per step: distance 5 per unit time
+  coords <- data.frame(x = c(0, 3, 6), y = c(0, 4, 8))
+  expect_equal(calculate_step_speed(coords, c(0, 1, 2)), c(5, 5, 5))
+
+  # 1D falls out of the same code path
+  expect_equal(
+    calculate_step_speed(data.frame(x = c(0, 2, 4)), c(0, 1, 2)),
+    c(2, 2, 2)
+  )
+})
+
+test_that("calculate_step_speed uses one-sided fallback at endpoints", {
+  coords <- data.frame(x = c(0, 1, 2, 3, 4), y = c(0, 0, 0, 0, 0))
   time <- c(0, 1, 2, 3, 4)
 
-  speed <- calculate_speed_2d(x, y, time)
+  speed <- calculate_step_speed(coords, time)
 
   # Endpoints should fall back to the one-sided step (no NA)
   expect_false(is.na(speed[1]))
   expect_false(is.na(speed[length(speed)]))
+})
+
+test_that("calculate_step_speed returns NA for groups too short to step", {
+  expect_equal(calculate_step_speed(data.frame(x = 1), 1), NA_real_)
+  expect_equal(
+    calculate_step_speed(data.frame(x = numeric(0)), numeric(0)),
+    numeric(0)
+  )
 })
 
 test_that("filter_na_speed errors when time column is missing", {
@@ -297,4 +316,107 @@ test_that("filter_na_speed errors when time column is missing", {
   )
   data$time <- NULL
   expect_error(filter_na_speed(data), "Missing required column.*time")
+})
+
+# --- grouping (issue #37) ---------------------------------------------------
+
+# Two individuals stacked in one aniframe, `sep` units apart, time restarting
+# per individual. Individual "a" has one genuine single-frame outlier.
+speed_fixture <- function(sep) {
+  aniframe::aniframe(
+    time = rep(1:10, 2),
+    individual = rep(c("a", "b"), each = 10),
+    x = c(c(0:3, 500, 5:9), (0:9) + sep),
+    y = rep(0, 20),
+    variables_what = "individual"
+  ) |>
+    dplyr::group_by(individual)
+}
+
+test_that("filter_na_speed does not form steps across group boundaries", {
+  d <- speed_fixture(1e4)
+  speed <- dplyr::mutate(
+    d,
+    sp = calculate_step_speed(dplyr::pick(dplyr::all_of(c("x", "y"))), time)
+  )$sp
+
+  # No negative speed: a cross-boundary step would have dt = 1 - 10 = -9
+  expect_true(all(speed >= 0, na.rm = TRUE))
+  # The boundary rows see only their own track
+  expect_equal(speed[10], 1)
+  expect_equal(speed[11], 1)
+})
+
+test_that("filter_na_speed detection is independent of other tracks", {
+  # The outlier in "a" is identical throughout; only "b" moves further away.
+  # Before the fix, the contaminated auto threshold missed it from 1e4 up.
+  for (sep in c(1e3, 1e4, 1e5, 1e7)) {
+    expect_equal(
+      which(is.na(filter_na_speed(speed_fixture(sep))$x)),
+      5L,
+      info = paste("separation", sep)
+    )
+  }
+})
+
+test_that("filter_na_speed auto threshold ignores cross-track steps", {
+  # Two stationary individuals: every within-track speed is 0, so the
+  # threshold must be 0 no matter how far apart they are.
+  fixture <- function(sep) {
+    aniframe::aniframe(
+      time = rep(1:10, 2),
+      individual = rep(c("a", "b"), each = 10),
+      x = c(rep(0, 10), rep(sep, 10)),
+      y = rep(0, 20),
+      variables_what = "individual"
+    ) |>
+      dplyr::group_by(individual)
+  }
+  for (sep in c(1e3, 1e6)) {
+    d <- fixture(sep)
+    speed <- dplyr::mutate(
+      d,
+      sp = calculate_step_speed(dplyr::pick(dplyr::all_of(c("x", "y"))), time)
+    )$sp
+    expect_equal(mean(speed, na.rm = TRUE), 0)
+    expect_true(!any(is.na(filter_na_speed(d)$x)))
+  }
+})
+
+test_that("filter_na_speed leaves one-row groups untouched", {
+  # A group with fewer than two rows has no step, so speed is NA. if_else()
+  # propagates a missing condition, which would blank an otherwise fine row.
+  d <- aniframe::aniframe(
+    time = c(1, 2, 3, 1),
+    individual = c("a", "a", "a", "solo"),
+    x = c(0, 1, 2, 42),
+    y = rep(0, 4),
+    confidence = rep(0.9, 4),
+    variables_what = "individual"
+  ) |>
+    dplyr::group_by(individual)
+
+  res <- filter_na_speed(d, threshold = 0.5)
+  expect_false(is.na(res$x[4]))
+  expect_equal(res$x[4], 42)
+  expect_false(is.na(res$confidence[4]))
+})
+
+test_that("filter_na_speed is unchanged on ungrouped data", {
+  d <- aniframe::aniframe(
+    time = 1:10,
+    x = c(0:3, 500, 5:9),
+    y = rep(0, 10),
+    variables_what = character(0)
+  )
+  expect_equal(which(is.na(filter_na_speed(d, threshold = 100)$x)), 5L)
+
+  # A frame with a single group must behave exactly like an ungrouped one
+  d_one_group <- d |>
+    dplyr::mutate(individual = "a") |>
+    dplyr::group_by(individual)
+  expect_equal(
+    filter_na_speed(d_one_group, threshold = 100)$x,
+    filter_na_speed(d, threshold = 100)$x
+  )
 })

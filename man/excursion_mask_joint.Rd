@@ -4,7 +4,7 @@
 \alias{excursion_mask_joint}
 \title{Joint-Euclidean excursion state machine.}
 \usage{
-excursion_mask_joint(data, rows, variables_where, outlier_sd, return_sd)
+excursion_mask_joint(coords, outlier_sd, return_sd)
 }
 \description{
 Joint-Euclidean excursion state machine.
