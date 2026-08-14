@@ -47,6 +47,58 @@
 
 ### Bug fixes
 
+- [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)
+  now computes speed within each group of a grouped aniframe. It
+  previously worked on the raw column vectors, so a step was formed
+  between the last row of one track and the first row of the next. Where
+  `time` restarts per track that step has a negative duration and yields
+  a negative “speed”, which inflated the `"auto"` threshold and caused
+  genuine outliers to be **missed** — how badly depended on how far
+  apart the tracks happened to be. The cross-track step never produced
+  false positives, because per-row speed is the minimum of the backward
+  and forward step and a track boundary is one-sided
+  ([\#37](https://github.com/animovement/aniprocess/issues/37)).
+- [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)
+  no longer blanks rows belonging to groups shorter than two rows. Such
+  a group has no step, so its speed is `NA`, and
+  [`dplyr::if_else()`](https://dplyr.tidyverse.org/reference/if_else.html)
+  propagates a missing condition
+  ([\#37](https://github.com/animovement/aniprocess/issues/37)).
+
+### Internal
+
+- [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md),
+  [`filter_na_excursion()`](http://animovement.dev/aniprocess/reference/filter_na_excursion.md)
+  and
+  [`filter_ccma()`](http://animovement.dev/aniprocess/reference/filter_ccma.md)
+  all resolve groups through
+  [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html)
+  and [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html)
+  rather than re-deriving row indices with
+  [`dplyr::group_indices()`](https://dplyr.tidyverse.org/reference/group_data.html).
+  Only
+  [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)
+  changes behaviour; for the other two the output is unchanged, verified
+  byte-for-byte against the previous implementation. The manual loops
+  rescanned the group vector on every iteration — and in
+  [`filter_ccma()`](http://animovement.dev/aniprocess/reference/filter_ccma.md)
+  rebuilt the whole data frame — making them quadratic in group count.
+  At 3,000 groups × 20 rows,
+  [`filter_ccma()`](http://animovement.dev/aniprocess/reference/filter_ccma.md)
+  goes from 47.8s to 5.9s and
+  [`filter_na_excursion()`](http://animovement.dev/aniprocess/reference/filter_na_excursion.md)
+  from 2.19s to 0.63s.
+  [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)
+  becomes slower (0.02s to 0.31s) because it previously did no per-group
+  work at all
+  ([\#37](https://github.com/animovement/aniprocess/issues/37)).
+
+- `calculate_speed_2d()` and `calculate_speed_3d()` are replaced by a
+  single dimension-agnostic
+  [`calculate_step_speed()`](http://animovement.dev/aniprocess/reference/calculate_step_speed.md),
+  which sums the squared step over whatever coordinate columns it is
+  given.
+
 - The `data.table (>= 1.18.0)` requirement is now enforced when the
   package loads, not only when it is installed. Because the rolling
   filters reached `data.table` solely via `data.table::`, R had no

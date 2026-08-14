@@ -9,7 +9,7 @@ coordinates and confidence values at flagged rows are replaced with NA."></head>
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,8 +96,14 @@ have one fast step.</p>
 <p>Endpoints have only one neighbor; their speed falls back to the available
 one-sided step. NAs in inputs do not contaminate adjacent rows: a missing
 coordinate at row <code>i</code> only affects row <code>i</code>'s speed estimate.</p>
+<p>Speed is computed <strong>within each group</strong> of a grouped aniframe, so a step
+is never formed between the last row of one track and the first row of
+the next. Each group's first and last rows are treated as endpoints. On
+ungrouped data the whole frame is a single track.</p>
 <p>When using <code>threshold = "auto"</code>, the threshold is set to the mean speed
-plus three standard deviations.</p>
+plus three standard deviations, pooled across groups. Because no
+cross-track step is ever formed, the estimate uses within-track speeds
+only.</p>
     </div>
 
     <div class="section level2">
