@@ -1,8 +1,11 @@
 #' Replace Missing Values Using Various Methods
 #'
 #' @description
-#' A wrapper function that replaces missing values using various interpolation
-#' or filling methods.
+#' `r lifecycle::badge('deprecated')`
+#'
+#' Use [replace_na_with()] instead. This name collides with
+#' [tidyr::replace_na()], which does something different — it replaces `NA`
+#' with a fixed value per column, rather than interpolating gaps.
 #'
 #' @param x A vector containing numeric data with missing values (NAs)
 #' @param method Character string specifying the replacement method:
@@ -38,15 +41,8 @@
 #' replace_na(x, method = "linear", min_gap = 2, max_gap = 3)
 #' }
 #'
-#' @section Naming:
-#' This is the original name for what is now [replace_na_with()], and the
-#' two are identical — this one simply calls it. `replace_na()` collides
-#' with [tidyr::replace_na()], which does something different, so
-#' [replace_na_with()] is the name to prefer in new code. Nothing is
-#' deprecated: this function keeps working.
-#'
 #' @seealso
-#' - [replace_na_with()], the preferred name
+#' - [replace_na_with()], the replacement
 #' - replace_na_linear() for linear interpolation details
 #' - replace_na_spline() for spline interpolation details
 #' - replace_na_stine() for Stineman interpolation details
@@ -62,6 +58,8 @@ replace_na <- function(
   max_gap = Inf,
   ...
 ) {
+  lifecycle::deprecate_warn("0.3.0", "replace_na()", "replace_na_with()")
+
   replace_na_with(
     x,
     method = method,

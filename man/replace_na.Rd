@@ -33,18 +33,12 @@ A numeric vector with NA values replaced according to the specified method
 where gap length criteria are met.
 }
 \description{
-A wrapper function that replaces missing values using various interpolation
-or filling methods.
-}
-\section{Naming}{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
-This is the original name for what is now \code{\link[=replace_na_with]{replace_na_with()}}, and the
-two are identical — this one simply calls it. \code{replace_na()} collides
-with \code{\link[tidyr:replace_na]{tidyr::replace_na()}}, which does something different, so
-\code{\link[=replace_na_with]{replace_na_with()}} is the name to prefer in new code. Nothing is
-deprecated: this function keeps working.
+Use \code{\link[=replace_na_with]{replace_na_with()}} instead. This name collides with
+\code{\link[tidyr:replace_na]{tidyr::replace_na()}}, which does something different — it replaces \code{NA}
+with a fixed value per column, rather than interpolating gaps.
 }
-
 \examples{
 \dontrun{
 x <- c(1, NA, NA, 4, 5, NA, NA, NA, 9)
@@ -65,7 +59,7 @@ replace_na(x, method = "linear", min_gap = 2, max_gap = 3)
 }
 \seealso{
 \itemize{
-\item \code{\link[=replace_na_with]{replace_na_with()}}, the preferred name
+\item \code{\link[=replace_na_with]{replace_na_with()}}, the replacement
 \item replace_na_linear() for linear interpolation details
 \item replace_na_spline() for spline interpolation details
 \item replace_na_stine() for Stineman interpolation details

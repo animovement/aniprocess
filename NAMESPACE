@@ -31,6 +31,7 @@ export(replace_na_value)
 export(replace_na_with)
 importFrom(data.table,frollmean)
 importFrom(dplyr,pick)
+importFrom(lifecycle,deprecated)
 importFrom(rlang,
   ":=",
   .data

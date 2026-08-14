@@ -2,6 +2,8 @@
 
 ## Breaking changes
 
+* `replace_na()` is deprecated in favour of `replace_na_with()`. It still works and delegates to the new function, but warns. Internally the filters' `na_action` argument now calls `replace_na_with()`, so filtering data with `NA`s does not emit the deprecation warning (#30).
+
 * Argument names are now consistent across the package, so that a generic wrapper can forward them without special-casing. This is the first step towards the unified interface in #30 (#30).
   * `window_size` is now `window_width` in `filter_sgolay()`, `find_peaks()` and `find_troughs()`, matching `filter_gaussian()`, `filter_rollmean()`, `filter_rollmedian()` and `filter_triangular()`.
   * The first argument of `filter_kalman()` and `filter_kalman_irregular()` is now `x` rather than `measurements`. They were the only vector-level functions whose first argument was not `x`, which prevented their use with `dplyr::across()`.
@@ -26,7 +28,7 @@
   All three preserve shape: a vector gives a vector, a data frame of columns gives a data frame. Univariate methods are applied column by column, so `replace_na_with()` and most of `filter_with()` work with `dplyr::across()` as well as `dplyr::pick()`. The multivariate methods — `"ccma"` in `filter_with()`, and everything except `"range"` in `filter_na_with()` — require a data frame and say so when handed a bare vector.
 
   They reject an aniframe. An aniframe *is* a data frame, so without that guard it would be filtered column by column, `time` and identity columns included.
-* `replace_na_with()` is the preferred name for `replace_na()`, which collides with `tidyr::replace_na()`. `replace_na()` is not deprecated and now simply calls `replace_na_with()`.
+* `replace_na_with()` replaces `replace_na()`, which collides with `tidyr::replace_na()` — a function that does something different (it substitutes a fixed value per column rather than interpolating gaps).
 
 * The aniframe-aware filters now accept a data frame of coordinate columns as well as an aniframe, and return whichever shape they were given. This makes them usable inside `dplyr::mutate()` via `dplyr::pick()`, which is the second step towards the unified interface in #30 (#30).
   ```r

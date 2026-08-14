@@ -46,7 +46,7 @@ values used to fill those gaps are kept, so the output has \strong{fewer
 \code{NA}s than the input} and genuinely-missing stretches come back as
 interpolated estimates.}
 
-\item{...}{Additional arguments passed to replace_na()}
+\item{...}{Additional arguments passed to replace_na_with()}
 }
 \value{
 Numeric vector containing the filtered movement data

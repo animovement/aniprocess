@@ -38,7 +38,7 @@
 #' replace_na_with(data.frame(a = x, b = rev(x)), "locf")
 #'
 #' @seealso [filter_with()] for smoothing, [filter_na_with()] for masking.
-#'   [replace_na()] is the original name of this function and still works.
+#'   [replace_na()] is the deprecated former name of this function.
 #' @export
 replace_na_with <- function(
   x,

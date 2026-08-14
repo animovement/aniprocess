@@ -18,7 +18,7 @@
 #'        - order=4: Also preserves jerk (good for quick movements)
 #'        - order=5: Maximum preservation (may retain too much noise)
 #' @inheritParams filter-na-args
-#' @param ... Additional arguments passed to replace_na()
+#' @param ... Additional arguments passed to replace_na_with()
 #'
 #' @details
 #' The Savitzky-Golay filter fits successive polynomials to sliding windows of the data.

@@ -37,7 +37,7 @@ ensure_keep_na <- function(keep_na, call = rlang::caller_env()) {
 
 #' Record and fill NA positions before filtering
 #'
-#' Captures where the `NA`s are, then fills them via [replace_na()] so the
+#' Captures where the `NA`s are, then fills them via [replace_na_with()] so the
 #' filter receives a complete series. Pair with [restore_na()] to put the
 #' gaps back afterwards.
 #'
@@ -46,8 +46,8 @@ ensure_keep_na <- function(keep_na, call = rlang::caller_env()) {
 #' interpolating across coordinates is not.
 #'
 #' @param x Numeric vector or matrix.
-#' @param na_action One of the [replace_na()] methods, or `"error"`.
-#' @param replace_na_args Named list of extra arguments for [replace_na()],
+#' @param na_action One of the [replace_na_with()] methods, or `"error"`.
+#' @param replace_na_args Named list of extra arguments for [replace_na_with()],
 #'   typically `list(...)` from the calling filter.
 #' @param call Environment used for the error's call context.
 #'
@@ -71,7 +71,7 @@ prepare_na <- function(
   }
 
   fill <- function(v) {
-    do.call(replace_na, c(list(v, method = na_action), replace_na_args))
+    do.call(replace_na_with, c(list(v, method = na_action), replace_na_args))
   }
 
   if (is.matrix(x)) {

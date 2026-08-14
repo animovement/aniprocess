@@ -43,7 +43,7 @@ values used to fill those gaps are kept, so the output has \strong{fewer
 \code{NA}s than the input} and genuinely-missing stretches come back as
 interpolated estimates.}
 
-\item{...}{Additional arguments passed to replace_na(). Common options include:
+\item{...}{Additional arguments passed to replace_na_with(). Common options include:
 \itemize{
 \item value: Numeric value for replacement when na_action = "value"
 \item min_gap: Minimum gap size to interpolate/fill
@@ -83,7 +83,7 @@ Common values by field:
 }
 
 Missing Value Handling:
-The function uses replace_na() internally for handling missing values. See ?replace_na
+The function uses replace_na_with() internally for handling missing values. See ?replace_na_with
 for detailed information about each method and its parameters. NAs can optionally be
 restored to their original positions after filtering using keep_na = TRUE.
 }
