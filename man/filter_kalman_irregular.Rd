@@ -5,7 +5,7 @@
 \title{Kalman Filter for Irregular Time Series with Optional Resampling}
 \usage{
 filter_kalman_irregular(
-  measurements,
+  x,
   times,
   base_Q = NULL,
   R = NULL,
@@ -17,9 +17,9 @@ filter_kalman_irregular(
 )
 }
 \arguments{
-\item{measurements}{Numeric vector containing the measurements to be filtered.}
+\item{x}{Numeric vector of measurements to be filtered.}
 
-\item{times}{Numeric vector of timestamps corresponding to measurements.}
+\item{times}{Numeric vector of timestamps corresponding to x.}
 
 \item{base_Q}{Optional. Base process variance per second. If NULL, automatically calculated.}
 
@@ -34,7 +34,7 @@ filter_kalman_irregular(
 \item{resample_freq}{Numeric. Desired sampling frequency in Hz for resampling (required if resample=TRUE).}
 
 \item{keep_na}{Logical. If \code{TRUE}, positions that were \code{NA} in
-\code{measurements} are \code{NA} in the values reported on the original
+\code{x} are \code{NA} in the values reported on the original
 timestamps. Defaults to \code{FALSE}, for the reason given in
 \code{\link[=filter_kalman]{filter_kalman()}}. When \code{resample = TRUE} this applies to
 \code{original_values} only — the resampled \code{values} sit on a different
@@ -88,24 +88,24 @@ Parameter selection guidelines:
 \item base_Q controls the expected rate of change per second
 \item R should reflect your measurement noise level
 \item For slow-changing signals, reduce base_Q
-\item For noisy measurements, increase R
+\item For noisy x, increase R
 }
 }
 \examples{
 # Example with irregular sampling
-measurements <- c(1, 1.1, NA, 0.9, 1.2, NA, 0.8, 1.1)
+x <- c(1, 1.1, NA, 0.9, 1.2, NA, 0.8, 1.1)
 times <- c(0, 0.1, 0.3, 0.35, 0.5, 0.8, 0.81, 1.0)
 
 # Basic filtering with irregular samples
-filtered <- filter_kalman_irregular(measurements, times)
+filtered <- filter_kalman_irregular(x, times)
 
 # Filtering with resampling to 50 Hz
-filtered_resampled <- filter_kalman_irregular(measurements, times,
+filtered_resampled <- filter_kalman_irregular(x, times,
                                              resample = TRUE,
                                              resample_freq = 50)
 
 # Plot results
-plot(times, measurements, type="p", col="blue")
+plot(times, x, type="p", col="blue")
 lines(filtered_resampled$time, filtered_resampled$values, col="red")
 
 }

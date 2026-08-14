@@ -4,15 +4,15 @@
 \alias{filter_na_range}
 \title{Filter values outside a range to NA}
 \usage{
-filter_na_range(x, min = -Inf, max = Inf)
+filter_na_range(x, min_value = -Inf, max_value = Inf)
 }
 \arguments{
 \item{x}{A numeric vector to filter}
 
-\item{min}{Minimum value (inclusive). Values below this become NA.
+\item{min_value}{Minimum value (inclusive). Values below this become NA.
 Default is -Inf (no lower bound).}
 
-\item{max}{Maximum value (inclusive). Values above this become NA.
+\item{max_value}{Maximum value (inclusive). Values above this become NA.
 Default is Inf (no upper bound).}
 }
 \value{
@@ -24,9 +24,9 @@ Replaces values in a numeric vector that fall outside the specified range
 with NA. Values already NA in the input remain NA.
 }
 \examples{
-filter_na_range(c(1, 5, 10, 15), min = 3, max = 12)
+filter_na_range(c(1, 5, 10, 15), min_value = 3, max_value = 12)
 # Returns: c(NA, 5, 10, NA)
 
-filter_na_range(c(1, NA, 10), min = 5)
+filter_na_range(c(1, NA, 10), min_value = 5)
 # Returns: c(NA, NA, 10)
 }
