@@ -53,7 +53,7 @@ filter_na_across <- function(
   ...
 ) {
   method <- match.arg(method)
-  ensure_aniframe_spatial(data)
+  aniframe::ensure_is_spatial(data)
 
   variables <- resolve_variables(data, rlang::enquo(variables))
   args <- rlang::list2(...)

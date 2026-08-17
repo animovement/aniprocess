@@ -204,7 +204,8 @@ test_that("filter_across errors on a missing selected column", {
     y = as.numeric(1:5),
     variables_what = character(0)
   )
-  d <- aniframe::set_metadata(d, variables_where = c("x", "y", "z"))
+  # Dropping a declared column leaves `variables_where` promising it.
+  d <- dplyr::select(d, -x)
 
   expect_error(filter_across(d, "gaussian"), "Missing spatial column")
 })
@@ -240,7 +241,8 @@ test_that("filter_across errors when variables_when names a missing column", {
     y = as.numeric(1:6),
     variables_what = character(0)
   )
-  d <- aniframe::set_metadata(d, variables_when = "frame")
+  # Renaming the column leaves `variables_when` promising the old name.
+  d <- dplyr::rename(d, frame = time)
 
   expect_error(filter_across(d, "kalman_irregular"), "Missing time column")
 })

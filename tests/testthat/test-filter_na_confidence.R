@@ -322,8 +322,8 @@ test_that("filter_na_confidence validates required columns exist", {
   ) |>
     aniframe::as_aniframe()
 
-  # Set metadata to expect z column that doesn't exist
-  data <- aniframe::set_metadata(data, variables_where = c("x", "y", "z"))
+  # Dropping a declared column leaves `variables_where` promising it
+  data <- dplyr::select(data, -x)
 
   expect_error(
     filter_na_across(data, "confidence"),
