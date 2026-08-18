@@ -212,7 +212,7 @@ ensure_on_deltas_supported <- function(
     speed = ,
     excursion = paste(
       "{.val {method}} already judges between-sample change, so on",
-      "differences it would become second-order — a question about",
+      "differences it would become second-order: a question about",
       "acceleration, not about the displacement its name promises."
     ),
     roi = "A region of space is not a region of displacement.",
