@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,23 +51,17 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="aniprocess-development-version">aniprocess (development version)<a class="anchor" aria-label="anchor" href="#aniprocess-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.4.0" id="aniprocess-040-2026-08-18">aniprocess 0.4.0 (2026-08-18)<a class="anchor" aria-label="anchor" href="#aniprocess-040-2026-08-18"></a></h2>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<h3 id="new-features-0-4-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-4-0"></a></h3>
 <ul><li>
-<p><code><a href="../reference/filter_na_across.html">filter_na_across()</a></code> gains <code>on_deltas</code>, matching <code><a href="../reference/filter_across.html">filter_across()</a></code>: it differences each column, masks the differences, and re-integrates from the original starting value (<a href="https://github.com/animovement/aniprocess/issues/54" class="external-link">#54</a>). Where the coordinates are cumulative — trackball data, whose raw readings are per-window displacements — masking a position blanks the sample you flagged but leaves the spurious jump baked into every position after it; masking the displacement removes the bad step, and everything downstream shifts back into place.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/filter_na_across.html">filter_na_across</a></span><span class="op">(</span><span class="va">trackball</span>, <span class="st">"range"</span>, min_value <span class="op">=</span> <span class="op">-</span><span class="fl">10</span>, max_value <span class="op">=</span> <span class="fl">10</span>, on_deltas <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>A masked step counts as no movement and is restored as <code>NA</code> at its own sample alone, so the <code>NA</code> does not propagate forward. Only <code>"range"</code> accepts <code>on_deltas</code>; <code>"speed"</code> and <code>"excursion"</code> already judge between-sample change, and <code>"roi"</code> and <code>"confidence"</code> are not about displacement at all, so each errors with the reason rather than quietly computing something else.</p>
+<p><code><a href="../reference/filter_na_across.html">filter_na_across()</a></code> gains <code>on_deltas</code>, matching <code><a href="../reference/filter_across.html">filter_across()</a></code>: it differences each column, masks the differences, and re-integrates from the original starting value (<a href="https://github.com/animovement/aniprocess/issues/54" class="external-link">#54</a>). Where coordinates are cumulative — trackball data, whose readings are per-window displacements — masking a position blanks the flagged sample but leaves the spurious jump in every position after it; masking the displacement removes the jump itself.</p>
+<p>Only <code>"range"</code> accepts it. <code>"speed"</code> and <code>"excursion"</code> already judge between-sample change, and <code>"roi"</code> and <code>"confidence"</code> are not about displacement, so each errors with the reason rather than computing something odd.</p>
 </li>
 </ul></div>
 <div class="section level3">
-<h3 id="improvements-development-version">Improvements<a class="anchor" aria-label="anchor" href="#improvements-development-version"></a></h3>
-<ul><li>The aniframe-aware filters now use <code><a href="http://animovement.dev/aniframe/reference/ensure_is_spatial.html" class="external-link">aniframe::ensure_is_spatial()</a></code> instead of a local copy of the same check. <code>aniframe</code> 0.6.0.9005 exports the validator (animovement/aniframe#79), so <code>ensure_aniframe_spatial()</code> is gone and the metadata contract is enforced by the package that defines it.</li>
-</ul></div>
-<div class="section level3">
-<h3 id="internal-development-version">Internal<a class="anchor" aria-label="anchor" href="#internal-development-version"></a></h3>
-<ul><li>Test fixtures that needed a frame whose metadata had drifted from its columns previously built it with <code>aniframe::set_metadata(variables_where = ...)</code>. That route is now refused (animovement/aniframe#82), and the fixtures produce the divergence the way it actually happens: <code><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">dplyr::select()</a></code> drops a declared column, or <code><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">dplyr::rename()</a></code> moves it out from under the declaration.</li>
+<h3 id="improvements-0-4-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-4-0"></a></h3>
+<ul><li>The aniframe-aware filters use <code><a href="http://animovement.dev/aniframe/reference/ensure_is_spatial.html" class="external-link">aniframe::ensure_is_spatial()</a></code> in place of a local copy, so the metadata contract is enforced by the package that defines it (animovement/aniframe#79). Requires aniframe 0.7.0.</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -76,7 +70,7 @@
 <h3 id="breaking-changes-0-3-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-3-0"></a></h3>
 <ul><li>
 <p>The interface is now split into three tiers (<a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a>). The individual functions work on a vector or a frame of coordinate columns, <code>*_with()</code> selects a method by name, and <code>*_across()</code> applies one to a whole aniframe.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/filter_across.html">filter_across</a></span><span class="op">(</span><span class="va">data</span>, <span class="st">"lowpass"</span>, cutoff_freq <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/filter_with.html">filter_with</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"gaussian"</span>, sigma <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="va">data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="../reference/filter_ccma.html">filter_ccma</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pick.html" class="external-link">pick</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
