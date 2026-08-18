@@ -73,7 +73,8 @@ evaluated across a track boundary.</p>
 <span>  <span class="va">data</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"range"</span>, <span class="st">"speed"</span>, <span class="st">"excursion"</span>, <span class="st">"roi"</span>, <span class="st">"confidence"</span><span class="op">)</span>,</span>
 <span>  variables <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>  <span class="va">...</span>,</span>
+<span>  on_deltas <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -102,6 +103,17 @@ estimates a threshold separately for each group, so every track is
 judged against its own noise; <code>"pooled"</code> estimates one threshold from
 all groups at once, which is steadier when tracks are short.</p></dd>
 
+
+<dt id="arg-on-deltas">on_deltas<a class="anchor" aria-label="anchor" href="#arg-on-deltas"></a></dt>
+<dd><p>If <code>TRUE</code>, difference each column, mask the differences,
+and re-integrate from the original starting value — rejecting
+implausible single-window displacements rather than implausible
+positions. See <em>Masking on displacements</em> below.</p>
+<p>Only <code>"range"</code> accepts it. The others either already judge
+between-sample change, or are not about displacement at all, so
+differencing first would answer a different question than their name
+promises; they error rather than quietly compute it.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -121,6 +133,20 @@ call masked — the cross-column effect that the vector-level functions
 cannot perform, since <code>confidence</code> is not a coordinate.</p>
     </div>
     <div class="section level2">
+    <h2 id="masking-on-displacements">Masking on displacements<a class="anchor" aria-label="anchor" href="#masking-on-displacements"></a></h2>
+    <p><code>on_deltas</code> matters more here than it does for smoothing. Where the
+coordinates are cumulative — trackball data, say, whose raw readings are
+per-window displacements that were integrated with <code><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum()</a></code> — masking a
+<em>position</em> blanks the sample you flagged but leaves the spurious jump
+baked into every subsequent position. Masking the <em>displacement</em> removes
+the bad step itself, and everything downstream shifts back into place.</p>
+<p>A masked step counts as no movement, and is restored as <code>NA</code> at its own
+sample alone; the <code>NA</code> is not propagated forward. So the reading is "this
+step is not believable", not "the animal's position is unknown from here".
+The first sample of each group is never masked: it is the starting point,
+and there is no step into it to judge.</p>
+    </div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="filter_na_with.html">filter_na_with()</a></code> for the vector-level generic.</p></div>
     </div>
@@ -132,6 +158,16 @@ cannot perform, since <code>confidence</code> is not a coordinate.</p>
 <span class="r-in"><span><span class="fu">filter_na_across</span><span class="op">(</span><span class="va">tracking_data</span>, <span class="st">"speed"</span>, threshold <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">filter_na_across</span><span class="op">(</span><span class="va">tracking_data</span>, <span class="st">"range"</span>, min_value <span class="op">=</span> <span class="fl">0</span>, max_value <span class="op">=</span> <span class="fl">1920</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># trackball positions are integrated displacements: reject the step,</span></span></span>
+<span class="r-in"><span><span class="co"># not the position it left behind</span></span></span>
+<span class="r-in"><span><span class="fu">filter_na_across</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">trackball_data</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"range"</span>,</span></span>
+<span class="r-in"><span>  min_value <span class="op">=</span> <span class="op">-</span><span class="fl">10</span>,</span></span>
+<span class="r-in"><span>  max_value <span class="op">=</span> <span class="fl">10</span>,</span></span>
+<span class="r-in"><span>  on_deltas <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
