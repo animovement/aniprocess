@@ -195,3 +195,130 @@ test_that("a per-group auto threshold judges each track on its own noise", {
   expect_true(10L %in% per_group)
   expect_true((np + 10L) %in% per_group)
 })
+
+
+# on_deltas ------------------------------------------------------------
+
+# Trackball-style data: the raw readings are per-window displacements and
+# the coordinates are their running sum, so one spurious step offsets every
+# position after it.
+delta_fixture <- function(individuals = "a") {
+  steps <- c(0, 1, 1, 1, 50, 1, 1, 1)
+  np <- length(steps)
+  ni <- length(individuals)
+  # each track starts somewhere different
+  offset <- rep(100 * seq_len(ni), each = np)
+
+  aniframe::aniframe(
+    time = rep(seq_len(np), ni),
+    individual = rep(individuals, each = np),
+    x = offset + rep(cumsum(steps), ni),
+    y = offset + rep(cumsum(rev(steps)), ni),
+    variables_what = "individual"
+  ) |>
+    dplyr::group_by(individual)
+}
+
+test_that("on_deltas removes a spurious jump from every later position", {
+  d <- delta_fixture()
+  out <- filter_na_across(
+    d,
+    "range",
+    min_value = -10,
+    max_value = 10,
+    on_deltas = TRUE
+  )
+
+  # The bad step is gone, so positions after it sit where they would have
+  # without it: the earlier run of +1 steps simply continues.
+  expect_equal(out$x, c(100, 101, 102, 103, NA, 104, 105, 106))
+
+  # Masking the position instead leaves the jump baked in downstream.
+  positions <- filter_na_across(d, "range", min_value = -10, max_value = 110)
+  expect_equal(positions$x, c(100, 101, 102, 103, NA, NA, NA, NA))
+})
+
+test_that("on_deltas blanks only the sample whose step was masked", {
+  d <- delta_fixture()
+  out <- filter_na_across(
+    d,
+    "range",
+    min_value = -10,
+    max_value = 10,
+    on_deltas = TRUE
+  )
+
+  expect_equal(which(is.na(out$x)), 5L)
+  # y carries the same steps reversed, so its bad step lands elsewhere
+  expect_equal(which(is.na(out$y)), 4L)
+})
+
+test_that("on_deltas never masks the first sample", {
+  d <- delta_fixture()
+  # Inverted range: every real step of 1 is rejected, only the jump of 50
+  # survives. The first sample has no step into it, so it is the starting
+  # point rather than something to reject.
+  out <- filter_na_across(
+    d,
+    "range",
+    min_value = 2,
+    max_value = 60,
+    on_deltas = TRUE
+  )
+
+  expect_equal(out$x[1], d$x[1])
+  expect_equal(which(is.na(out$x)), c(2L, 3L, 4L, 6L, 7L, 8L))
+})
+
+test_that("on_deltas respects grouping", {
+  d <- delta_fixture(c("a", "b"))
+  out <- filter_na_across(
+    d,
+    "range",
+    min_value = -10,
+    max_value = 10,
+    on_deltas = TRUE
+  )
+
+  # No step is formed across the boundary, and each track re-integrates
+  # from its own starting value.
+  expect_equal(which(is.na(out$x)), c(5L, 13L))
+  expect_equal(out$x[1], d$x[1])
+  expect_equal(out$x[9], d$x[9])
+})
+
+test_that("on_deltas = FALSE leaves the position-level behaviour alone", {
+  d <- na_fixture()
+
+  expect_equal(
+    filter_na_across(d, "range", min_value = 0, max_value = 100),
+    filter_na_across(
+      d,
+      "range",
+      min_value = 0,
+      max_value = 100,
+      on_deltas = FALSE
+    )
+  )
+})
+
+test_that("on_deltas is refused by the criteria it does not suit", {
+  d <- na_fixture()
+
+  expect_error(
+    filter_na_across(d, "speed", threshold = 100, on_deltas = TRUE),
+    "second-order"
+  )
+  expect_error(
+    filter_na_across(d, "excursion", on_deltas = TRUE),
+    "second-order"
+  )
+  expect_error(
+    filter_na_across(d, "roi", on_deltas = TRUE),
+    "not a region of displacement"
+  )
+  expect_error(
+    filter_na_across(d, "confidence", on_deltas = TRUE),
+    "not spatial"
+  )
+})

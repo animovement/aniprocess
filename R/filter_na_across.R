@@ -21,6 +21,21 @@
 #' call masked — the cross-column effect that the vector-level functions
 #' cannot perform, since `confidence` is not a coordinate.
 #'
+#' # Masking on displacements
+#'
+#' `on_deltas` matters more here than it does for smoothing. Where the
+#' coordinates are cumulative — trackball data, say, whose raw readings are
+#' per-window displacements that were integrated with `cumsum()` — masking a
+#' *position* blanks the sample you flagged but leaves the spurious jump
+#' baked into every subsequent position. Masking the *displacement* removes
+#' the bad step itself, and everything downstream shifts back into place.
+#'
+#' A masked step counts as no movement, and is restored as `NA` at its own
+#' sample alone; the `NA` is not propagated forward. So the reading is "this
+#' step is not believable", not "the animal's position is unknown from here".
+#' The first sample of each group is never masked: it is the starting point,
+#' and there is no step into it to judge.
+#'
 #' @param data An aniframe.
 #' @param method Criterion to apply. One of `"range"`, `"speed"`,
 #'   `"excursion"`, `"roi"` or `"confidence"`.
@@ -32,6 +47,15 @@
 #'   estimates a threshold separately for each group, so every track is
 #'   judged against its own noise; `"pooled"` estimates one threshold from
 #'   all groups at once, which is steadier when tracks are short.
+#' @param on_deltas If `TRUE`, difference each column, mask the differences,
+#'   and re-integrate from the original starting value — rejecting
+#'   implausible single-window displacements rather than implausible
+#'   positions. See *Masking on displacements* below.
+#'
+#'   Only `"range"` accepts it. The others either already judge
+#'   between-sample change, or are not about displacement at all, so
+#'   differencing first would answer a different question than their name
+#'   promises; they error rather than quietly compute it.
 #'
 #' @return An aniframe of the same shape, with failing values replaced by
 #'   `NA`.
@@ -42,6 +66,16 @@
 #' filter_na_across(tracking_data, "speed", threshold = "auto")
 #'
 #' filter_na_across(tracking_data, "range", min_value = 0, max_value = 1920)
+#'
+#' # trackball positions are integrated displacements: reject the step,
+#' # not the position it left behind
+#' filter_na_across(
+#'   trackball_data,
+#'   "range",
+#'   min_value = -10,
+#'   max_value = 10,
+#'   on_deltas = TRUE
+#' )
 #' }
 #'
 #' @seealso [filter_na_with()] for the vector-level generic.
@@ -50,9 +84,11 @@ filter_na_across <- function(
   data,
   method = c("range", "speed", "excursion", "roi", "confidence"),
   variables = NULL,
-  ...
+  ...,
+  on_deltas = FALSE
 ) {
   method <- match.arg(method)
+  ensure_on_deltas_supported(method, on_deltas)
   aniframe::ensure_is_spatial(data)
 
   variables <- resolve_variables(data, rlang::enquo(variables))
@@ -60,12 +96,16 @@ filter_na_across <- function(
 
   # "range" is univariate: applied one column at a time.
   if (method == "range") {
+    fn <- filter_na_range
+    if (isTRUE(on_deltas)) {
+      fn <- derivative_wrapper(fn)
+    }
     return(dplyr::mutate(
       data,
       apply_across_columns(
         dplyr::pick(dplyr::all_of(variables)),
         variables = variables,
-        fn = filter_na_range,
+        fn = fn,
         args = args
       )
     ))
@@ -140,6 +180,53 @@ filter_na_across <- function(
   }
 
   out
+}
+
+
+#' Reject `on_deltas` for the criteria it does not suit.
+#'
+#' Unlike the smoothing filters, the masking criteria differ in whether a
+#' displacement is even the right thing to judge. Only `"range"` reads
+#' naturally on differences — "reject implausible single-window
+#' displacements". The rest would compute something defensible but
+#' unexpected, so they say why rather than doing it quietly.
+#'
+#' @param method The criterion, already matched.
+#' @param on_deltas The supplied argument.
+#' @param call Environment used for the error's call context.
+#'
+#' @return Invisibly `NULL`. Called for side effects (errors).
+#' @keywords internal
+ensure_on_deltas_supported <- function(
+  method,
+  on_deltas,
+  call = rlang::caller_env()
+) {
+  if (!isTRUE(on_deltas) || method == "range") {
+    return(invisible(NULL))
+  }
+
+  supported <- "range"
+  why <- switch(
+    method,
+    speed = ,
+    excursion = paste(
+      "{.val {method}} already judges between-sample change, so on",
+      "differences it would become second-order: a question about",
+      "acceleration, not about the displacement its name promises."
+    ),
+    roi = "A region of space is not a region of displacement.",
+    confidence = "Confidence is not spatial, so it has no displacement."
+  )
+
+  cli::cli_abort(
+    c(
+      "{.arg on_deltas} is only supported for {.val {supported}}.",
+      "x" = why,
+      "i" = "Difference the columns yourself if that is what you want."
+    ),
+    call = call
+  )
 }
 
 

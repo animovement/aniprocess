@@ -8,7 +8,8 @@ filter_na_across(
   data,
   method = c("range", "speed", "excursion", "roi", "confidence"),
   variables = NULL,
-  ...
+  ...,
+  on_deltas = FALSE
 )
 }
 \arguments{
@@ -26,6 +27,16 @@ For \code{"speed"}, \code{threshold} additionally accepts \code{"pooled"}: \code
 estimates a threshold separately for each group, so every track is
 judged against its own noise; \code{"pooled"} estimates one threshold from
 all groups at once, which is steadier when tracks are short.}
+
+\item{on_deltas}{If \code{TRUE}, difference each column, mask the differences,
+and re-integrate from the original starting value — rejecting
+implausible single-window displacements rather than implausible
+positions. See \emph{Masking on displacements} below.
+
+Only \code{"range"} accepts it. The others either already judge
+between-sample change, or are not about displacement at all, so
+differencing first would answer a different question than their name
+promises; they error rather than quietly compute it.}
 }
 \value{
 An aniframe of the same shape, with failing values replaced by
@@ -52,12 +63,37 @@ Where a \code{confidence} column is present, it is blanked on rows that this
 call masked — the cross-column effect that the vector-level functions
 cannot perform, since \code{confidence} is not a coordinate.
 }
+\section{Masking on displacements}{
+\code{on_deltas} matters more here than it does for smoothing. Where the
+coordinates are cumulative — trackball data, say, whose raw readings are
+per-window displacements that were integrated with \code{cumsum()} — masking a
+\emph{position} blanks the sample you flagged but leaves the spurious jump
+baked into every subsequent position. Masking the \emph{displacement} removes
+the bad step itself, and everything downstream shifts back into place.
+
+A masked step counts as no movement, and is restored as \code{NA} at its own
+sample alone; the \code{NA} is not propagated forward. So the reading is "this
+step is not believable", not "the animal's position is unknown from here".
+The first sample of each group is never masked: it is the starting point,
+and there is no step into it to judge.
+}
+
 \examples{
 \dontrun{
 # time comes from the aniframe's metadata
 filter_na_across(tracking_data, "speed", threshold = "auto")
 
 filter_na_across(tracking_data, "range", min_value = 0, max_value = 1920)
+
+# trackball positions are integrated displacements: reject the step,
+# not the position it left behind
+filter_na_across(
+  trackball_data,
+  "range",
+  min_value = -10,
+  max_value = 10,
+  on_deltas = TRUE
+)
 }
 
 }
