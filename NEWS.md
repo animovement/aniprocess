@@ -1,22 +1,14 @@
-# aniprocess (development version)
+# aniprocess 0.4.0 (2026-08-18)
 
 ## New features
 
-* `filter_na_across()` gains `on_deltas`, matching `filter_across()`: it differences each column, masks the differences, and re-integrates from the original starting value (#54). Where the coordinates are cumulative — trackball data, whose raw readings are per-window displacements — masking a position blanks the sample you flagged but leaves the spurious jump baked into every position after it; masking the displacement removes the bad step, and everything downstream shifts back into place.
+* `filter_na_across()` gains `on_deltas`, matching `filter_across()`: it differences each column, masks the differences, and re-integrates from the original starting value (#54). Where coordinates are cumulative — trackball data, whose readings are per-window displacements — masking a position blanks the flagged sample but leaves the spurious jump in every position after it; masking the displacement removes the jump itself.
 
-  ```r
-  filter_na_across(trackball, "range", min_value = -10, max_value = 10, on_deltas = TRUE)
-  ```
-
-  A masked step counts as no movement and is restored as `NA` at its own sample alone, so the `NA` does not propagate forward. Only `"range"` accepts `on_deltas`; `"speed"` and `"excursion"` already judge between-sample change, and `"roi"` and `"confidence"` are not about displacement at all, so each errors with the reason rather than quietly computing something else.
+  Only `"range"` accepts it. `"speed"` and `"excursion"` already judge between-sample change, and `"roi"` and `"confidence"` are not about displacement, so each errors with the reason rather than computing something odd.
 
 ## Improvements
 
-* The aniframe-aware filters now use `aniframe::ensure_is_spatial()` instead of a local copy of the same check. `aniframe` 0.6.0.9005 exports the validator (animovement/aniframe#79), so `ensure_aniframe_spatial()` is gone and the metadata contract is enforced by the package that defines it.
-
-## Internal
-
-* Test fixtures that needed a frame whose metadata had drifted from its columns previously built it with `aniframe::set_metadata(variables_where = ...)`. That route is now refused (animovement/aniframe#82), and the fixtures produce the divergence the way it actually happens: `dplyr::select()` drops a declared column, or `dplyr::rename()` moves it out from under the declaration.
+* The aniframe-aware filters use `aniframe::ensure_is_spatial()` in place of a local copy, so the metadata contract is enforced by the package that defines it (animovement/aniframe#79). Requires aniframe 0.7.0.
 
 # aniprocess 0.3.0
 
