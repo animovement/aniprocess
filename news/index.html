@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,6 +52,14 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="aniprocess-development-version">aniprocess (development version)<a class="anchor" aria-label="anchor" href="#aniprocess-development-version"></a></h2>
+<div class="section level3">
+<h3 id="improvements-development-version">Improvements<a class="anchor" aria-label="anchor" href="#improvements-development-version"></a></h3>
+<ul><li>The aniframe-aware filters now use <code><a href="http://animovement.dev/aniframe/reference/ensure_is_spatial.html" class="external-link">aniframe::ensure_is_spatial()</a></code> instead of a local copy of the same check. <code>aniframe</code> 0.6.0.9005 exports the validator (animovement/aniframe#79), so <code>ensure_aniframe_spatial()</code> is gone and the metadata contract is enforced by the package that defines it.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal-development-version">Internal<a class="anchor" aria-label="anchor" href="#internal-development-version"></a></h3>
+<ul><li>Test fixtures that needed a frame whose metadata had drifted from its columns previously built it with <code>aniframe::set_metadata(variables_where = ...)</code>. That route is now refused (animovement/aniframe#82), and the fixtures produce the divergence the way it actually happens: <code><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">dplyr::select()</a></code> drops a declared column, or <code><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">dplyr::rename()</a></code> moves it out from under the declaration.</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.0" id="aniprocess-030">aniprocess 0.3.0<a class="anchor" aria-label="anchor" href="#aniprocess-030"></a></h2>
@@ -136,7 +144,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="internal--housekeeping-0-2-0">Internal / housekeeping<a class="anchor" aria-label="anchor" href="#internal--housekeeping-0-2-0"></a></h3>
-<ul><li>New helpers <code><a href="../reference/ensure_replace_na_args.html">ensure_replace_na_args()</a></code> and <code><a href="../reference/ensure_aniframe_spatial.html">ensure_aniframe_spatial()</a></code> replace duplicated input validation across the <code>replace_na_*()</code> and <code>filter_na_*()</code> families.</li>
+<ul><li>New helpers <code><a href="../reference/ensure_replace_na_args.html">ensure_replace_na_args()</a></code> and <code>ensure_aniframe_spatial()</code> replace duplicated input validation across the <code>replace_na_*()</code> and <code>filter_na_*()</code> families.</li>
 <li>
 <code>check_*()</code> helpers for optional packages consolidated, so the canonical r-universe URL lives in a single place.</li>
 <li>Three dead files removed; future work tracked in <a href="https://github.com/animovement/aniprocess/issues/29" class="external-link">#29</a> (<code>filter_by_pose</code>) and <a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a> (an across-style API).</li>

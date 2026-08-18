@@ -2,6 +2,27 @@
 
 ## aniprocess (development version)
 
+### Improvements
+
+- The aniframe-aware filters now use
+  [`aniframe::ensure_is_spatial()`](http://animovement.dev/aniframe/reference/ensure_is_spatial.md)
+  instead of a local copy of the same check. `aniframe` 0.6.0.9005
+  exports the validator (animovement/aniframe#79), so
+  `ensure_aniframe_spatial()` is gone and the metadata contract is
+  enforced by the package that defines it.
+
+### Internal
+
+- Test fixtures that needed a frame whose metadata had drifted from its
+  columns previously built it with
+  `aniframe::set_metadata(variables_where = ...)`. That route is now
+  refused (animovement/aniframe#82), and the fixtures produce the
+  divergence the way it actually happens:
+  [`dplyr::select()`](https://dplyr.tidyverse.org/reference/select.html)
+  drops a declared column, or
+  [`dplyr::rename()`](https://dplyr.tidyverse.org/reference/rename.html)
+  moves it out from under the declaration.
+
 ## aniprocess 0.3.0
 
 ### Breaking changes
@@ -181,10 +202,8 @@
 
 - New helpers
   [`ensure_replace_na_args()`](http://animovement.dev/aniprocess/reference/ensure_replace_na_args.md)
-  and
-  [`ensure_aniframe_spatial()`](http://animovement.dev/aniprocess/reference/ensure_aniframe_spatial.md)
-  replace duplicated input validation across the `replace_na_*()` and
-  `filter_na_*()` families.
+  and `ensure_aniframe_spatial()` replace duplicated input validation
+  across the `replace_na_*()` and `filter_na_*()` families.
 - `check_*()` helpers for optional packages consolidated, so the
   canonical r-universe URL lives in a single place.
 - Three dead files removed; future work tracked in
