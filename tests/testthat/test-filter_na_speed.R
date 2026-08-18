@@ -175,7 +175,7 @@ test_that("filter_na_speed validates required columns exist", {
     y = c(0, 1, 2, 3, 4)
   )
 
-  data <- aniframe::set_metadata(data, variables_where = c("x", "y", "z"))
+  data <- dplyr::select(data, -x)
 
   expect_error(
     filter_na_across(data, "speed", threshold = 5),

@@ -238,7 +238,7 @@ test_that("filter_ccma errors when a variables_where column is missing", {
     y = rnorm(10),
     variables_what = character(0)
   )
-  d <- aniframe::set_metadata(d, variables_where = c("x", "y", "z"))
+  d <- dplyr::select(d, -x)
   expect_error(filter_across(d, "ccma"), "Missing spatial column")
 })
 

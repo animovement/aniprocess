@@ -77,7 +77,7 @@ filter_across <- function(
   on_deltas = FALSE
 ) {
   method <- match.arg(method)
-  ensure_aniframe_spatial(data)
+  aniframe::ensure_is_spatial(data)
 
   variables <- resolve_variables(data, rlang::enquo(variables))
   args <- rlang::list2(...)

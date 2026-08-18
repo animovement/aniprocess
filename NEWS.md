@@ -1,5 +1,13 @@
 # aniprocess (development version)
 
+## Improvements
+
+* The aniframe-aware filters now use `aniframe::ensure_is_spatial()` instead of a local copy of the same check. `aniframe` 0.6.0.9005 exports the validator (animovement/aniframe#79), so `ensure_aniframe_spatial()` is gone and the metadata contract is enforced by the package that defines it.
+
+## Internal
+
+* Test fixtures that needed a frame whose metadata had drifted from its columns previously built it with `aniframe::set_metadata(variables_where = ...)`. That route is now refused (animovement/aniframe#82), and the fixtures produce the divergence the way it actually happens: `dplyr::select()` drops a declared column, or `dplyr::rename()` moves it out from under the declaration.
+
 # aniprocess 0.3.0
 
 ## Breaking changes
