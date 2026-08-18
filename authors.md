@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/animovement/aniprocess/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/animovement/aniprocess/blob/v0.4.0/inst/CITATION)
 
 Roald-Arbøl M (2026). “aniprocess: An R package for signal processing
 and filtering of movement data.”
