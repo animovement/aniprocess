@@ -1,5 +1,15 @@
 # aniprocess (development version)
 
+## New features
+
+* `filter_na_across()` gains `on_deltas`, matching `filter_across()`: it differences each column, masks the differences, and re-integrates from the original starting value (#54). Where the coordinates are cumulative — trackball data, whose raw readings are per-window displacements — masking a position blanks the sample you flagged but leaves the spurious jump baked into every position after it; masking the displacement removes the bad step, and everything downstream shifts back into place.
+
+  ```r
+  filter_na_across(trackball, "range", min_value = -10, max_value = 10, on_deltas = TRUE)
+  ```
+
+  A masked step counts as no movement and is restored as `NA` at its own sample alone, so the `NA` does not propagate forward. Only `"range"` accepts `on_deltas`; `"speed"` and `"excursion"` already judge between-sample change, and `"roi"` and `"confidence"` are not about displacement at all, so each errors with the reason rather than quietly computing something else.
+
 ## Improvements
 
 * The aniframe-aware filters now use `aniframe::ensure_is_spatial()` instead of a local copy of the same check. `aniframe` 0.6.0.9005 exports the validator (animovement/aniframe#79), so `ensure_aniframe_spatial()` is gone and the metadata contract is enforced by the package that defines it.
