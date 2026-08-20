@@ -30,6 +30,13 @@
 #'
 #' @return Filtered numeric vector, same length as `x`.
 #'
+#' @examples
+#' x <- c(1, 2, 100, 4, 5, 6, 7)
+#' filter_rollmean(x, window_width = 3)
+#'
+#' # Centring the window changes which samples are averaged, and leaves NA at
+#' # both edges rather than one
+#' filter_rollmean(x, window_width = 3, align = "center")
 #' @export
 filter_rollmean <- function(
   x,
