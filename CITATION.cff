@@ -12,14 +12,14 @@ version: 0.4.0
 date-released: 2026-08-18
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.17357778
+    value: 10.5281/zenodo.17357777
 abstract: An R package for signal processing and filtering of movement data.
 authors:
 - family-names: Roald-Arbøl
   given-names: Mikkel
   email: animovement.84w1m@passmail.com
   orcid: https://orcid.org/0000-0002-9998-0058
-url: http://animovement.dev/aniprocess/
+url: https://animovement.dev/aniprocess/
 contact:
 - family-names: Roald-Arbøl
   given-names: Mikkel
