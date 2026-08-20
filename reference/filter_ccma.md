@@ -76,7 +76,7 @@ filter_ccma(
 - ...:
 
   Additional arguments passed to
-  [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
+  [`replace_na_with()`](https://animovement.dev/aniprocess/reference/replace_na_with.md)
   (e.g. `value`, `min_gap`, `max_gap`).
 
 ## Value
@@ -104,13 +104,13 @@ The algorithm has two stages:
 Because curvature is intrinsically multi-dimensional, this filter
 operates on all spatial coordinates jointly (unlike the per-column
 filters dispatched through
-[`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md)).
+[`filter_across()`](https://animovement.dev/aniprocess/reference/filter_across.md)).
 It is most useful for smoothing curved 2D or 3D trajectories where a
 plain moving average visibly cuts corners; for general-purpose
 time-series smoothing reach for
-[`filter_gaussian()`](http://animovement.dev/aniprocess/reference/filter_gaussian.md)
+[`filter_gaussian()`](https://animovement.dev/aniprocess/reference/filter_gaussian.md)
 or
-[`filter_sgolay()`](http://animovement.dev/aniprocess/reference/filter_sgolay.md).
+[`filter_sgolay()`](https://animovement.dev/aniprocess/reference/filter_sgolay.md).
 
 Smoothing is applied within the aniframe's existing grouping (driven by
 `variables_what`), so each individual / track / keypoint is smoothed as

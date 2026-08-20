@@ -1,7 +1,7 @@
 # Restore NAs to their original positions after filtering
 
 The counterpart to
-[`prepare_na()`](http://animovement.dev/aniprocess/reference/prepare_na.md),
+[`prepare_na()`](https://animovement.dev/aniprocess/reference/prepare_na.md),
 and also usable on its own by filters that never fill (they infer
 through gaps, or handle `NA` natively) but should still honour
 `keep_na`.
@@ -21,7 +21,7 @@ restore_na(result, na_positions, keep_na)
 - na_positions:
 
   Logical vector or matrix from
-  [`prepare_na()`](http://animovement.dev/aniprocess/reference/prepare_na.md),
+  [`prepare_na()`](https://animovement.dev/aniprocess/reference/prepare_na.md),
   or from [`is.na()`](https://rdrr.io/r/base/NA.html) on the original
   input.
 

@@ -49,6 +49,6 @@ Filtered numeric vector, same length as `x`.
 ## Details
 
 Edge handling matches
-[`filter_rollmean()`](http://animovement.dev/aniprocess/reference/filter_rollmean.md):
+[`filter_rollmean()`](https://animovement.dev/aniprocess/reference/filter_rollmean.md):
 partial windows at the edges for `align = "right"`/`"left"`; `NA` at the
 edges for `align = "center"`.

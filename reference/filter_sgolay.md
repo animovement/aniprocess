@@ -130,9 +130,9 @@ Data by Simplified Least Squares Procedures. Analytical Chemistry,
 
 ## See also
 
-[`filter_lowpass`](http://animovement.dev/aniprocess/reference/filter_lowpass.md)
+[`filter_lowpass`](https://animovement.dev/aniprocess/reference/filter_lowpass.md)
 for frequency-based filtering
-[`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
+[`replace_na_with()`](https://animovement.dev/aniprocess/reference/replace_na_with.md)
 for details on NA handling methods
 
 ## Examples

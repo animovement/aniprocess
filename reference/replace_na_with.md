@@ -71,9 +71,9 @@ as well as
 
 ## See also
 
-[`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md)
+[`filter_with()`](https://animovement.dev/aniprocess/reference/filter_with.md)
 for smoothing,
-[`filter_na_with()`](http://animovement.dev/aniprocess/reference/filter_na_with.md)
+[`filter_na_with()`](https://animovement.dev/aniprocess/reference/filter_na_with.md)
 for masking.
 
 ## Examples

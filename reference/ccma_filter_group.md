@@ -1,7 +1,7 @@
 # Apply CCMA to one group's coordinates.
 
 Matrix-in, matrix-out adaptor around
-[`ccma_filter_one()`](http://animovement.dev/aniprocess/reference/ccma_filter_one.md)
+[`ccma_filter_one()`](https://animovement.dev/aniprocess/reference/ccma_filter_one.md)
 that takes and returns a data frame, so the result can be spliced back
 over the spatial columns by
 [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html).

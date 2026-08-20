@@ -36,7 +36,7 @@ filter_triangular(
 - align:
 
   Window alignment, passed to
-  [`filter_rollmean()`](http://animovement.dev/aniprocess/reference/filter_rollmean.md).
+  [`filter_rollmean()`](https://animovement.dev/aniprocess/reference/filter_rollmean.md).
   One of `"center"` (default), `"right"`, or `"left"`.
 
 - keep_na:
@@ -54,14 +54,14 @@ Filtered numeric vector, same length as `x`.
 ## Details
 
 For `align = "center"`, the underlying
-[`filter_rollmean()`](http://animovement.dev/aniprocess/reference/filter_rollmean.md)
+[`filter_rollmean()`](https://animovement.dev/aniprocess/reference/filter_rollmean.md)
 returns `NA` at the first and last `(window_width - 1) %/% 2` positions
 of each pass, so the output has roughly `window_width - 1` `NA` values
 at each edge.
 
 `keep_na = TRUE` restores the positions that were `NA` in the input, but
 note that this filter fills gaps more aggressively than a single
-[`filter_rollmean()`](http://animovement.dev/aniprocess/reference/filter_rollmean.md)
+[`filter_rollmean()`](https://animovement.dev/aniprocess/reference/filter_rollmean.md)
 pass: because the second pass smooths the output of the first, values
 interpolated across a gap propagate outward. `keep_na` blanks the
 original gap positions; it does not undo that spread into neighbouring

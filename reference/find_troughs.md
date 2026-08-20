@@ -144,7 +144,7 @@ Analytics and Intelligence.
 
 ## See also
 
-- [`find_peaks`](http://animovement.dev/aniprocess/reference/find_peaks.md)
+- [`find_peaks`](https://animovement.dev/aniprocess/reference/find_peaks.md)
   for finding local maxima
 
 ## Examples

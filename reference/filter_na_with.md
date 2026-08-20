@@ -51,9 +51,9 @@ and `threshold` plus `confidence` for `"confidence"`.
 
 ## See also
 
-[`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md)
+[`filter_with()`](https://animovement.dev/aniprocess/reference/filter_with.md)
 for the smoothing and frequency filters,
-[`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
+[`replace_na_with()`](https://animovement.dev/aniprocess/reference/replace_na_with.md)
 for filling gaps.
 
 ## Examples

@@ -19,7 +19,7 @@ filter_na_confidence(data, threshold = 0.6, confidence = NULL)
   inside
   [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html).
   To filter a whole aniframe, use
-  [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md).
+  [`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_across.md).
 
 - threshold:
 
@@ -44,7 +44,7 @@ enter for "I did not assess this", and tracker scores are not bounded at
 than a sentinel value. A warning reports how many were missing, since
 silently skipping them would hide that those rows were never checked. To
 drop them as well, filter `confidence` directly with
-[`filter_na_range()`](http://animovement.dev/aniprocess/reference/filter_na_range.md).
+[`filter_na_range()`](https://animovement.dev/aniprocess/reference/filter_na_range.md).
 
 ## Input shape
 
@@ -58,7 +58,7 @@ Takes and returns a frame of coordinate columns, so it composes inside
 The decision uses all coordinates at once, so this cannot be used with
 [`dplyr::across()`](https://dplyr.tidyverse.org/reference/across.html).
 `confidence` is not a coordinate and so is never modified here;
-[`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
+[`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_across.md)
 filters it as well.
 
 ## Examples

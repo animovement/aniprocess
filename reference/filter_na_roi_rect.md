@@ -20,7 +20,7 @@ filter_na_roi_rect(data, x_min, x_max, y_min, y_max, z_min, z_max, has_z)
   inside
   [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html).
   To filter a whole aniframe, use
-  [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md).
+  [`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_across.md).
 
 - x_min, x_max, y_min, y_max, z_min, z_max:
 

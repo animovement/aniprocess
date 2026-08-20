@@ -92,11 +92,11 @@ TRUE.
 
 ## See also
 
-[`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
+[`replace_na_with()`](https://animovement.dev/aniprocess/reference/replace_na_with.md)
 for details on NA handling methods
-[`filter_highpass_fft`](http://animovement.dev/aniprocess/reference/filter_highpass_fft.md)
+[`filter_highpass_fft`](https://animovement.dev/aniprocess/reference/filter_highpass_fft.md)
 for FFT-based high-pass filtering
-[`filter_lowpass`](http://animovement.dev/aniprocess/reference/filter_lowpass.md)
+[`filter_lowpass`](https://animovement.dev/aniprocess/reference/filter_lowpass.md)
 for Butterworth-based filtering
 
 ## Examples

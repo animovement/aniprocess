@@ -18,7 +18,7 @@ filter_na_speed(data, threshold = "auto", time = NULL)
   inside
   [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html).
   To filter a whole aniframe, use
-  [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md).
+  [`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_across.md).
 
 - threshold:
 
@@ -56,7 +56,7 @@ estimate.
 
 Every row of `data` is treated as one continuous track: a step is formed
 between each consecutive pair. Called via
-[`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
+[`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_across.md)
 or with
 [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html)
 inside a grouped
@@ -65,7 +65,7 @@ that means one group, so a step is never formed across a track boundary.
 
 When using `threshold = "auto"`, the threshold is the mean speed plus
 three standard deviations of the rows given. Called through
-[`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
+[`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_across.md)
 that means one threshold per group; pass `threshold = "pooled"` there to
 estimate a single threshold from every group at once instead.
 
@@ -79,7 +79,7 @@ Takes and returns a frame of coordinate columns, so it composes inside
 Speed depends on all coordinates jointly, so this cannot be used with
 [`dplyr::across()`](https://dplyr.tidyverse.org/reference/across.html).
 `confidence` is not a coordinate and so is never modified here;
-[`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
+[`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_across.md)
 blanks it on masked rows.
 
 ## Examples

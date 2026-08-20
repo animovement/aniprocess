@@ -31,22 +31,21 @@ To cite *aniprocess* in publications use:
 ``` r
 
 citation("aniprocess")
-#> To cite aniprocess in publications use:
+#> To cite aniprocess in publications, please cite the animovement toolbox
+#> as a whole (the first entry below). If your work used only aniprocess,
+#> you may cite the package directly instead (the second entry).
+#> 
+#>   Roald-Arbøl M (2026). "animovement: An R toolbox for analysing
+#>   movement across space and time." doi:10.5281/zenodo.13235277
+#>   <https://doi.org/10.5281/zenodo.13235277>.
+#>   <https://animovement.dev/animovement/>.
 #> 
 #>   Roald-Arbøl M (2026). "aniprocess: An R package for signal processing
-#>   and filtering of movement data." doi:10.5281/zenodo.17357778
-#>   <https://doi.org/10.5281/zenodo.17357778>.
-#>   <http://animovement.dev/aniprocess/>.
+#>   and filtering of movement data." doi:10.5281/zenodo.17357777
+#>   <https://doi.org/10.5281/zenodo.17357777>.
+#>   <https://animovement.dev/aniprocess/>.
 #> 
-#> A BibTeX entry for LaTeX users is
-#> 
-#>   @Misc{aniprocess,
-#>     doi = {10.5281/zenodo.17357778},
-#>     title = {aniprocess: An R package for signal processing and filtering of movement data},
-#>     author = {Mikkel Roald-Arbøl},
-#>     year = {2026},
-#>     url = {http://animovement.dev/aniprocess/},
-#>     abstract = {An R package for signal processing and filtering of movement data.},
-#>     version = {0.3.0},
-#>   }
+#> To see these entries in BibTeX format, use 'print(<citation>,
+#> bibtex=TRUE)', 'toBibtex(.)', or set
+#> 'options(citation.bibtex.max=999)'.
 ```

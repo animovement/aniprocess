@@ -54,7 +54,7 @@ still has to be supplied: `sampling_rate` for `"sgolay"`, `"lowpass"`,
 
 ## See also
 
-[`filter_across()`](http://animovement.dev/aniprocess/reference/filter_across.md)
+[`filter_across()`](https://animovement.dev/aniprocess/reference/filter_across.md)
 to apply a filter across an aniframe's spatial columns.
 
 ## Examples

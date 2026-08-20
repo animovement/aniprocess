@@ -1,7 +1,7 @@
 # Apply CCMA to one trajectory, with NA pre-handling.
 
 Wraps
-[`ccma_apply()`](http://animovement.dev/aniprocess/reference/ccma_apply.md)
+[`ccma_apply()`](https://animovement.dev/aniprocess/reference/ccma_apply.md)
 with `replace_na`-based interpolation of `NA`s before filtering and
 optional restoration after.
 

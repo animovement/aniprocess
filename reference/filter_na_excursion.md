@@ -21,7 +21,7 @@ filter_na_excursion(data, outlier_sd = 5, return_sd = 1, by_axis = TRUE)
   inside
   [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html).
   To filter a whole aniframe, use
-  [`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md).
+  [`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_across.md).
 
 - outlier_sd:
 
@@ -41,7 +41,7 @@ filter_na_excursion(data, outlier_sd = 5, return_sd = 1, by_axis = TRUE)
   machine, and a row is blanked if any axis flags it. If `FALSE`, a
   single state machine runs on the joint Euclidean displacement
   (consistent with
-  [`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)).
+  [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_speed.md)).
 
 ## Value
 
@@ -69,7 +69,7 @@ case it is accepted via the second criterion.
 
 Every coordinate column is set to `NA` at a flagged row. `confidence` is
 not a coordinate and so is never modified here;
-[`filter_na_across()`](http://animovement.dev/aniprocess/reference/filter_na_across.md)
+[`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_across.md)
 blanks it too.
 
 ## References
@@ -82,7 +82,7 @@ Biology*, 14(1), 015002.
 
 ## See also
 
-[`filter_na_speed()`](http://animovement.dev/aniprocess/reference/filter_na_speed.md)
+[`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_speed.md)
 for single-frame outliers.
 
 ## Examples

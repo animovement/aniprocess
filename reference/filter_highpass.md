@@ -121,9 +121,9 @@ Engineer, 7, 536-541.
 
 ## See also
 
-[`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
+[`replace_na_with()`](https://animovement.dev/aniprocess/reference/replace_na_with.md)
 for details on NA handling methods
-[`filter_lowpass`](http://animovement.dev/aniprocess/reference/filter_lowpass.md)
+[`filter_lowpass`](https://animovement.dev/aniprocess/reference/filter_lowpass.md)
 for low-pass filtering
 
 ## Examples

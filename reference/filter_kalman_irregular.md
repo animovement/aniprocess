@@ -64,7 +64,7 @@ filter_kalman_irregular(
   Logical. If `TRUE`, positions that were `NA` in `x` are `NA` in the
   values reported on the original timestamps. Defaults to `FALSE`, for
   the reason given in
-  [`filter_kalman()`](http://animovement.dev/aniprocess/reference/filter_kalman.md).
+  [`filter_kalman()`](https://animovement.dev/aniprocess/reference/filter_kalman.md).
   When `resample = TRUE` this applies to `original_values` only — the
   resampled `values` sit on a different time grid, where input positions
   have no counterpart, so they are always interpolated from the complete

@@ -10,17 +10,29 @@
 Source:
 [`inst/CITATION`](https://github.com/animovement/aniprocess/blob/main/inst/CITATION)
 
+Roald-Arbøl M (2026). “animovement: An R toolbox for analysing movement
+across space and time.”
+[doi:10.5281/zenodo.13235277](https://doi.org/10.5281/zenodo.13235277).
+<https://animovement.dev/animovement/>.
+
+    @Misc{animovement,
+      title = {animovement: An R toolbox for analysing movement across space and time},
+      author = {Mikkel Roald-Arbøl},
+      year = {2026},
+      doi = {10.5281/zenodo.13235277},
+      url = {https://animovement.dev/animovement/},
+    }
+
 Roald-Arbøl M (2026). “aniprocess: An R package for signal processing
 and filtering of movement data.”
-[doi:10.5281/zenodo.17357778](https://doi.org/10.5281/zenodo.17357778).
-<http://animovement.dev/aniprocess/>.
+[doi:10.5281/zenodo.17357777](https://doi.org/10.5281/zenodo.17357777).
+<https://animovement.dev/aniprocess/>.
 
     @Misc{aniprocess,
-      doi = {10.5281/zenodo.17357778},
       title = {aniprocess: An R package for signal processing and filtering of movement data},
       author = {Mikkel Roald-Arbøl},
       year = {2026},
-      url = {http://animovement.dev/aniprocess/},
-      abstract = {An R package for signal processing and filtering of movement data.},
+      doi = {10.5281/zenodo.17357777},
       version = {0.4.0},
+      url = {https://animovement.dev/aniprocess/},
     }

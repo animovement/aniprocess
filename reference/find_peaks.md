@@ -143,7 +143,7 @@ Analytics and Intelligence.
 
 ## See also
 
-- [`find_troughs`](http://animovement.dev/aniprocess/reference/find_troughs.md)
+- [`find_troughs`](https://animovement.dev/aniprocess/reference/find_troughs.md)
   for finding local minima
 
 ## Examples

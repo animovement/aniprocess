@@ -62,11 +62,11 @@ An aniframe of the same shape, with the selected columns filtered.
 
 This is the aniframe tier of the interface:
 
-- [`filter_gaussian()`](http://animovement.dev/aniprocess/reference/filter_gaussian.md)
+- [`filter_gaussian()`](https://animovement.dev/aniprocess/reference/filter_gaussian.md)
   and friends filter one vector — use them inside
   [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html).
 
-- [`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md)
+- [`filter_with()`](https://animovement.dev/aniprocess/reference/filter_with.md)
   does the same but picks the method by name.
 
 - `filter_across()` applies a method to a whole aniframe.
@@ -81,7 +81,7 @@ Beyond looping over columns, it fills in what the frame already knows:
 
 ## See also
 
-[`filter_with()`](http://animovement.dev/aniprocess/reference/filter_with.md)
+[`filter_with()`](https://animovement.dev/aniprocess/reference/filter_with.md)
 for the vector-level generic.
 
 ## Examples

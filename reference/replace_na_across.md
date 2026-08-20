@@ -46,7 +46,7 @@ replace_na_across(
 - ...:
 
   Arguments passed to
-  [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md),
+  [`replace_na_with()`](https://animovement.dev/aniprocess/reference/replace_na_with.md),
   such as `value`, `min_gap` and `max_gap`.
 
 ## Value
@@ -55,7 +55,7 @@ An aniframe of the same shape, with gaps filled.
 
 ## See also
 
-[`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md)
+[`replace_na_with()`](https://animovement.dev/aniprocess/reference/replace_na_with.md)
 for the vector-level generic.
 
 ## Examples

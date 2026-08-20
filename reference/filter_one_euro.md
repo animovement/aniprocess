@@ -64,7 +64,7 @@ filter_one_euro(
 - ...:
 
   Additional arguments passed to
-  [`replace_na_with()`](http://animovement.dev/aniprocess/reference/replace_na_with.md).
+  [`replace_na_with()`](https://animovement.dev/aniprocess/reference/replace_na_with.md).
 
 ## Value
 
@@ -107,7 +107,7 @@ Systems (CHI '12)*, 2527–2530.
 
 ## See also
 
-[`filter_lowpass()`](http://animovement.dev/aniprocess/reference/filter_lowpass.md)
+[`filter_lowpass()`](https://animovement.dev/aniprocess/reference/filter_lowpass.md)
 for a fixed-cutoff Butterworth filter.
 
 ## Examples
