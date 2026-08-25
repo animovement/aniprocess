@@ -53,3 +53,11 @@ edges are not partial: the first and last \code{(window_width - 1) \%/\% 2}
 positions return \code{NA}. This is a limitation of the underlying
 \code{\link[data.table:frollmean]{data.table::frollmean()}} implementation.
 }
+\examples{
+x <- c(1, 2, 100, 4, 5, 6, 7)
+filter_rollmean(x, window_width = 3)
+
+# Centring the window changes which samples are averaged, and leaves NA at
+# both edges rather than one
+filter_rollmean(x, window_width = 3, align = "center")
+}

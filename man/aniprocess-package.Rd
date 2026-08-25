@@ -6,6 +6,8 @@
 \alias{aniprocess-package}
 \title{aniprocess: An R package for signal processing and filtering of movement data}
 \description{
+\if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
+
 An R package for signal processing and filtering of movement data.
 }
 \seealso{

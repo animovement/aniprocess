@@ -41,3 +41,11 @@ Applies a rolling median filter to a numeric vector using
 Edge handling matches \code{\link[=filter_rollmean]{filter_rollmean()}}: partial windows at the edges
 for \code{align = "right"}/\code{"left"}; \code{NA} at the edges for \code{align = "center"}.
 }
+\examples{
+x <- c(1, 2, 100, 4, 5, 6, 7)
+filter_rollmedian(x, window_width = 3)
+
+# The median discards the spike; a rolling mean smears it across three
+# neighbouring samples instead
+filter_rollmean(x, window_width = 3)
+}
