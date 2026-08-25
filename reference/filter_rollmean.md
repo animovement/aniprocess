@@ -63,3 +63,16 @@ edges are not partial: the first and last `(window_width - 1) %/% 2`
 positions return `NA`. This is a limitation of the underlying
 [`data.table::frollmean()`](https://rdrr.io/pkg/data.table/man/froll.html)
 implementation.
+
+## Examples
+
+``` r
+x <- c(1, 2, 100, 4, 5, 6, 7)
+filter_rollmean(x, window_width = 3)
+#> [1]  1.00000  1.50000 34.33333 35.33333 36.33333  5.00000  6.00000
+
+# Centring the window changes which samples are averaged, and leaves NA at
+# both edges rather than one
+filter_rollmean(x, window_width = 3, align = "center")
+#> [1]       NA 34.33333 35.33333 36.33333  5.00000  6.00000       NA
+```

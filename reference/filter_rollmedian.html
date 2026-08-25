@@ -109,6 +109,18 @@ interpolated estimates.</p></dd>
 for <code>align = "right"</code>/<code>"left"</code>; <code>NA</code> at the edges for <code>align = "center"</code>.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">100</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span>, <span class="fl">7</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">filter_rollmedian</span><span class="op">(</span><span class="va">x</span>, window_width <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.0 1.5 2.0 4.0 5.0 5.0 6.0</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The median discards the spike; a rolling mean smears it across three</span></span></span>
+<span class="r-in"><span><span class="co"># neighbouring samples instead</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="filter_rollmean.html">filter_rollmean</a></span><span class="op">(</span><span class="va">x</span>, window_width <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  1.00000  1.50000 34.33333 35.33333 36.33333  5.00000  6.00000</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

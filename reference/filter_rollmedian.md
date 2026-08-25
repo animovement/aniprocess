@@ -52,3 +52,16 @@ Edge handling matches
 [`filter_rollmean()`](https://animovement.dev/aniprocess/reference/filter_rollmean.md):
 partial windows at the edges for `align = "right"`/`"left"`; `NA` at the
 edges for `align = "center"`.
+
+## Examples
+
+``` r
+x <- c(1, 2, 100, 4, 5, 6, 7)
+filter_rollmedian(x, window_width = 3)
+#> [1] 1.0 1.5 2.0 4.0 5.0 5.0 6.0
+
+# The median discards the spike; a rolling mean smears it across three
+# neighbouring samples instead
+filter_rollmean(x, window_width = 3)
+#> [1]  1.00000  1.50000 34.33333 35.33333 36.33333  5.00000  6.00000
+```
