@@ -52,21 +52,21 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.0" id="aniprocess-040-2026-08-18">aniprocess 0.4.0 (2026-08-18)<a class="anchor" aria-label="anchor" href="#aniprocess-040-2026-08-18"></a></h2>
 <div class="section level3">
-<h3 id="new-features-0-4-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-4-0"></a></h3>
+<h3 id="added-0-4-0">Added<a class="anchor" aria-label="anchor" href="#added-0-4-0"></a></h3>
 <ul><li>
 <p><code><a href="../reference/filter_na_across.html">filter_na_across()</a></code> gains <code>on_deltas</code>, matching <code><a href="../reference/filter_across.html">filter_across()</a></code>: it differences each column, masks the differences, and re-integrates from the original starting value (<a href="https://github.com/animovement/aniprocess/issues/54" class="external-link">#54</a>). Where coordinates are cumulative — trackball data, whose readings are per-window displacements — masking a position blanks the flagged sample but leaves the spurious jump in every position after it; masking the displacement removes the jump itself.</p>
 <p>Only <code>"range"</code> accepts it. <code>"speed"</code> and <code>"excursion"</code> already judge between-sample change, and <code>"roi"</code> and <code>"confidence"</code> are not about displacement, so each errors with the reason rather than computing something odd.</p>
 </li>
 </ul></div>
 <div class="section level3">
-<h3 id="improvements-0-4-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-4-0"></a></h3>
+<h3 id="changed-0-4-0">Changed<a class="anchor" aria-label="anchor" href="#changed-0-4-0"></a></h3>
 <ul><li>The aniframe-aware filters use <code><a href="https://animovement.dev/aniframe/reference/ensure_is_spatial.html" class="external-link">aniframe::ensure_is_spatial()</a></code> in place of a local copy, so the metadata contract is enforced by the package that defines it (animovement/aniframe#79). Requires aniframe 0.7.0.</li>
 </ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.0" id="aniprocess-030">aniprocess 0.3.0<a class="anchor" aria-label="anchor" href="#aniprocess-030"></a></h2>
 <div class="section level3">
-<h3 id="breaking-changes-0-3-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-3-0"></a></h3>
+<h3 id="changed-0-3-0">Changed<a class="anchor" aria-label="anchor" href="#changed-0-3-0"></a></h3>
 <ul><li>
 <p>The interface is now split into three tiers (<a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a>). The individual functions work on a vector or a frame of coordinate columns, <code>*_with()</code> selects a method by name, and <code>*_across()</code> applies one to a whole aniframe.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -81,9 +81,10 @@
 <li><p>Argument names are consistent across the package: <code>window_width</code> replaces <code>window_size</code> in <code><a href="../reference/filter_sgolay.html">filter_sgolay()</a></code>, <code><a href="../reference/find_peaks.html">find_peaks()</a></code> and <code><a href="../reference/find_troughs.html">find_troughs()</a></code>; <code>x</code> replaces <code>measurements</code> in the Kalman filters; <code>min_value</code>/<code>max_value</code> replace <code>min</code>/<code>max</code> in <code><a href="../reference/filter_na_range.html">filter_na_range()</a></code>.</p></li>
 <li><p><code><a href="../reference/filter_na_confidence.html">filter_na_confidence()</a></code> no longer masks rows whose confidence is <code>NA</code>, and warns instead — a missing score means <em>not assessed</em>, not <em>poor</em>.</p></li>
 <li><p><code>filter_na_across(method = "speed")</code> estimates an <code>"auto"</code> threshold per group. Pass <code>threshold = "pooled"</code> for a single estimate across all groups, which is steadier when tracks are short.</p></li>
+<li><p><code><a href="../reference/filter_ccma.html">filter_ccma()</a></code> and <code><a href="../reference/filter_na_excursion.html">filter_na_excursion()</a></code> no longer scale quadratically in the number of groups. At 3,000 groups they are roughly 8× and 3.5× faster (<a href="https://github.com/animovement/aniprocess/issues/37" class="external-link">#37</a>).</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="new-features-0-3-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-3-0"></a></h3>
+<h3 id="added-0-3-0">Added<a class="anchor" aria-label="anchor" href="#added-0-3-0"></a></h3>
 <ul><li>New <code><a href="../reference/filter_one_euro.html">filter_one_euro()</a></code>: the One Euro filter (Casiez, Roussel &amp; Vogel, 2012), an adaptive low-pass whose cutoff rises with the speed of the signal — smooth when the animal is still, responsive when it moves (<a href="https://github.com/animovement/aniprocess/issues/35" class="external-link">#35</a>).</li>
 <li>
 <code>*_across()</code> uses what the aniframe already knows: <code>sampling_rate</code> and the time column come from its metadata. <code>variables</code> selects columns with tidyselect, defaulting to <code>variables_where</code>.</li>
@@ -91,7 +92,7 @@
 <code>keep_na</code> is available on every filter, and validated.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-0-3-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-0"></a></h3>
+<h3 id="fixed-0-3-0">Fixed<a class="anchor" aria-label="anchor" href="#fixed-0-3-0"></a></h3>
 <ul><li>
 <code><a href="../reference/filter_na_speed.html">filter_na_speed()</a></code> computes speed within each group, so a step is never formed between one track and the next. Where <code>time</code> restarts per track that step inflated the <code>"auto"</code> threshold and caused genuine outliers to be missed (<a href="https://github.com/animovement/aniprocess/issues/37" class="external-link">#37</a>).</li>
 <li>Differencing filters (<code>on_deltas</code>, formerly <code>use_derivatives</code>) re-integrate from the original starting value; they previously dropped the first sample and shifted the whole series (<a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a>).</li>
@@ -99,23 +100,18 @@
 <code><a href="../reference/filter_na_speed.html">filter_na_speed()</a></code> no longer blanks groups too short to contain a step (<a href="https://github.com/animovement/aniprocess/issues/37" class="external-link">#37</a>).</li>
 <li>The <code>data.table (&gt;= 1.18.0)</code> requirement is enforced when the package loads, not only when it is installed (<a href="https://github.com/animovement/aniprocess/issues/33" class="external-link">#33</a>).</li>
 </ul></div>
-<div class="section level3">
-<h3 id="performance-0-3-0">Performance<a class="anchor" aria-label="anchor" href="#performance-0-3-0"></a></h3>
-<ul><li>
-<code><a href="../reference/filter_ccma.html">filter_ccma()</a></code> and <code><a href="../reference/filter_na_excursion.html">filter_na_excursion()</a></code> no longer scale quadratically in the number of groups. At 3,000 groups they are roughly 8× and 3.5× faster (<a href="https://github.com/animovement/aniprocess/issues/37" class="external-link">#37</a>).</li>
-</ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.0" id="aniprocess-020">aniprocess 0.2.0<a class="anchor" aria-label="anchor" href="#aniprocess-020"></a></h2>
 <div class="section level3">
-<h3 id="new-features-0-2-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-0"></a></h3>
+<h3 id="added-0-2-0">Added<a class="anchor" aria-label="anchor" href="#added-0-2-0"></a></h3>
 <ul><li>New <code><a href="../reference/filter_ccma.html">filter_ccma()</a></code>: Curvature-Corrected Moving Average for 2D/3D Cartesian trajectories (Steinecker &amp; Wuensche, 2023). Hanning and uniform kernels; padding boundary mode (<a href="https://github.com/animovement/aniprocess/issues/11" class="external-link">#11</a>).</li>
 <li>New <code><a href="../reference/filter_na_excursion.html">filter_na_excursion()</a></code>: flags multi-frame tracking excursions using the criterion from Todd, Kain &amp; de Bivort (2017) — a jump that eventually returns counts as an outlier; a sustained shift does not (<a href="https://github.com/animovement/aniprocess/issues/13" class="external-link">#13</a>).</li>
 <li>New <code><a href="../reference/filter_gaussian.html">filter_gaussian()</a></code>: Gaussian kernel smoother with NA-aware weight renormalisation (<a href="https://github.com/animovement/aniprocess/issues/1" class="external-link">#1</a>).</li>
 <li>New <code><a href="../reference/filter_triangular.html">filter_triangular()</a></code>: triangular smoother as two passes of <code><a href="../reference/filter_rollmean.html">filter_rollmean()</a></code> (<a href="https://github.com/animovement/aniprocess/issues/1" class="external-link">#1</a>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-0-2-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-0"></a></h3>
+<h3 id="fixed-0-2-0">Fixed<a class="anchor" aria-label="anchor" href="#fixed-0-2-0"></a></h3>
 <ul><li>
 <code><a href="../reference/filter_lowpass_fft.html">filter_lowpass_fft()</a></code> / <code><a href="../reference/filter_highpass_fft.html">filter_highpass_fft()</a></code>: fixed an asymmetric frequency-domain mask that halved the passband amplitude. Lowpass + highpass at the same cutoff now reconstruct the input exactly.</li>
 <li>
@@ -132,35 +128,48 @@
 <code><a href="../reference/replace_na_stine.html">replace_na_stine()</a></code> and the inline installer in <code>filter_bandwidth.R</code> now point at the current r-universe (<a href="https://github.com/animovement/aniprocess/issues/17" class="external-link">#17</a>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="breaking-changes-0-2-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-2-0"></a></h3>
+<h3 id="changed-0-2-0">Changed<a class="anchor" aria-label="anchor" href="#changed-0-2-0"></a></h3>
 <ul><li>
 <code><a href="../reference/filter_sgolay.html">filter_sgolay()</a></code>: dropped <code>preserve_edges</code>.</li>
 <li>
 <code><a href="../reference/filter_rollmean.html">filter_rollmean()</a></code> / <code><a href="../reference/filter_rollmedian.html">filter_rollmedian()</a></code>: dropped <code>...</code>, gained an explicit <code>align</code> argument (<a href="https://github.com/animovement/aniprocess/issues/7" class="external-link">#7</a>).</li>
-</ul></div>
-<div class="section level3">
-<h3 id="dependencies-0-2-0">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-0-2-0"></a></h3>
-<ul><li>
+<li>
 <code>data.table (&gt;= 1.18.0)</code> promoted from <code>Suggests</code> to <code>Imports</code> (now backs the rolling filters and the LOCF interpolation step).</li>
 <li>Removed <code>roll</code>, <code>collapse</code>, and <code>animetric</code>.</li>
-</ul></div>
-<div class="section level3">
-<h3 id="internal--housekeeping-0-2-0">Internal / housekeeping<a class="anchor" aria-label="anchor" href="#internal--housekeeping-0-2-0"></a></h3>
-<ul><li>New helpers <code><a href="../reference/ensure_replace_na_args.html">ensure_replace_na_args()</a></code> and <code>ensure_aniframe_spatial()</code> replace duplicated input validation across the <code>replace_na_*()</code> and <code>filter_na_*()</code> families.</li>
-<li>
-<code>check_*()</code> helpers for optional packages consolidated, so the canonical r-universe URL lives in a single place.</li>
-<li>Three dead files removed; future work tracked in <a href="https://github.com/animovement/aniprocess/issues/29" class="external-link">#29</a> (<code>filter_by_pose</code>) and <a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a> (an across-style API).</li>
-<li>Package now at 100% line coverage; <code>covr</code> added to <code>Suggests</code>.</li>
 </ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.2" id="aniprocess-012">aniprocess 0.1.2<a class="anchor" aria-label="anchor" href="#aniprocess-012"></a></h2>
-<ul><li>Added a <code>NEWS.md</code> file to track changes to the package.</li>
-<li>Update to work with tidy movement logic.</li>
-<li>Use <code>differentiate</code> from <em>animetric</em> for <code>filter_na_speed</code>.</li>
-<li>
-<code>filter_na_roi</code> now works with 3D ROIs.</li>
+<div class="section level3">
+<h3 id="added-0-1-2">Added<a class="anchor" aria-label="anchor" href="#added-0-1-2"></a></h3>
+<ul><li>A <code>NEWS.md</code> file, to track changes to the package.</li>
 </ul></div>
+<div class="section level3">
+<h3 id="changed-0-1-2">Changed<a class="anchor" aria-label="anchor" href="#changed-0-1-2"></a></h3>
+<ul><li>Updated to the tidy movement data model of aniframe 0.4.0.</li>
+<li>
+<code><a href="../reference/filter_na_speed.html">filter_na_speed()</a></code> uses <code>differentiate()</code> from animetric rather than its own derivative.</li>
+<li>
+<code><a href="../reference/filter_na_roi.html">filter_na_roi()</a></code> accepts 3D regions of interest.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.1" id="aniprocess-011">aniprocess 0.1.1<a class="anchor" aria-label="anchor" href="#aniprocess-011"></a></h2>
+<p>The package takes its present shape: masking, gap filling and smoothing.</p>
+<div class="section level3">
+<h3 id="added-0-1-1">Added<a class="anchor" aria-label="anchor" href="#added-0-1-1"></a></h3>
+<ul><li>NA masking: <code><a href="../reference/filter_na_confidence.html">filter_na_confidence()</a></code>, <code><a href="../reference/filter_na_speed.html">filter_na_speed()</a></code>, <code><a href="../reference/filter_na_range.html">filter_na_range()</a></code> and <code><a href="../reference/filter_na_roi.html">filter_na_roi()</a></code>.</li>
+<li>Gap filling: <code><a href="../reference/replace_na_linear.html">replace_na_linear()</a></code>, <code><a href="../reference/replace_na_spline.html">replace_na_spline()</a></code>, <code><a href="../reference/replace_na_stine.html">replace_na_stine()</a></code>, <code><a href="../reference/replace_na_locf.html">replace_na_locf()</a></code>, <code><a href="../reference/replace_na_value.html">replace_na_value()</a></code> and the generic <code>replace_na()</code>.</li>
+<li>Smoothing and filtering: <code><a href="../reference/filter_sgolay.html">filter_sgolay()</a></code>, <code><a href="../reference/filter_rollmean.html">filter_rollmean()</a></code>, <code><a href="../reference/filter_rollmedian.html">filter_rollmedian()</a></code>, <code><a href="../reference/filter_lowpass.html">filter_lowpass()</a></code>, <code><a href="../reference/filter_highpass.html">filter_highpass()</a></code>, their <code>_fft()</code> counterparts, <code><a href="../reference/filter_kalman.html">filter_kalman()</a></code> and <code><a href="../reference/filter_kalman_irregular.html">filter_kalman_irregular()</a></code>.</li>
+<li>Peak detection: <code><a href="../reference/find_peaks.html">find_peaks()</a></code> and <code><a href="../reference/find_troughs.html">find_troughs()</a></code>.</li>
+<li>
+<code>filter_aniframe()</code>, the frame-level entry point.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.0" id="aniprocess-010">aniprocess 0.1.0<a class="anchor" aria-label="anchor" href="#aniprocess-010"></a></h2>
+<p>Package skeleton. No filters yet.</p>
+</div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

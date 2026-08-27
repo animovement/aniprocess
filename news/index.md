@@ -2,7 +2,7 @@
 
 ## aniprocess 0.4.0 (2026-08-18)
 
-### New features
+### Added
 
 - [`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_across.md)
   gains `on_deltas`, matching
@@ -20,7 +20,7 @@
   displacement, so each errors with the reason rather than computing
   something odd.
 
-### Improvements
+### Changed
 
 - The aniframe-aware filters use
   [`aniframe::ensure_is_spatial()`](https://animovement.dev/aniframe/reference/ensure_is_spatial.html)
@@ -30,7 +30,7 @@
 
 ## aniprocess 0.3.0
 
-### Breaking changes
+### Changed
 
 - The interface is now split into three tiers
   ([\#30](https://github.com/animovement/aniprocess/issues/30)). The
@@ -87,7 +87,14 @@
   per group. Pass `threshold = "pooled"` for a single estimate across
   all groups, which is steadier when tracks are short.
 
-### New features
+- [`filter_ccma()`](https://animovement.dev/aniprocess/reference/filter_ccma.md)
+  and
+  [`filter_na_excursion()`](https://animovement.dev/aniprocess/reference/filter_na_excursion.md)
+  no longer scale quadratically in the number of groups. At 3,000 groups
+  they are roughly 8× and 3.5× faster
+  ([\#37](https://github.com/animovement/aniprocess/issues/37)).
+
+### Added
 
 - New
   [`filter_one_euro()`](https://animovement.dev/aniprocess/reference/filter_one_euro.md):
@@ -100,7 +107,7 @@
   with tidyselect, defaulting to `variables_where`.
 - `keep_na` is available on every filter, and validated.
 
-### Bug fixes
+### Fixed
 
 - [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_speed.md)
   computes speed within each group, so a step is never formed between
@@ -118,18 +125,9 @@
   loads, not only when it is installed
   ([\#33](https://github.com/animovement/aniprocess/issues/33)).
 
-### Performance
-
-- [`filter_ccma()`](https://animovement.dev/aniprocess/reference/filter_ccma.md)
-  and
-  [`filter_na_excursion()`](https://animovement.dev/aniprocess/reference/filter_na_excursion.md)
-  no longer scale quadratically in the number of groups. At 3,000 groups
-  they are roughly 8× and 3.5× faster
-  ([\#37](https://github.com/animovement/aniprocess/issues/37)).
-
 ## aniprocess 0.2.0
 
-### New features
+### Added
 
 - New
   [`filter_ccma()`](https://animovement.dev/aniprocess/reference/filter_ccma.md):
@@ -153,7 +151,7 @@
   [`filter_rollmean()`](https://animovement.dev/aniprocess/reference/filter_rollmean.md)
   ([\#1](https://github.com/animovement/aniprocess/issues/1)).
 
-### Bug fixes
+### Fixed
 
 - [`filter_lowpass_fft()`](https://animovement.dev/aniprocess/reference/filter_lowpass_fft.md)
   /
@@ -187,7 +185,7 @@
   current r-universe
   ([\#17](https://github.com/animovement/aniprocess/issues/17)).
 
-### Breaking changes
+### Changed
 
 - [`filter_sgolay()`](https://animovement.dev/aniprocess/reference/filter_sgolay.md):
   dropped `preserve_edges`.
@@ -196,31 +194,59 @@
   [`filter_rollmedian()`](https://animovement.dev/aniprocess/reference/filter_rollmedian.md):
   dropped `...`, gained an explicit `align` argument
   ([\#7](https://github.com/animovement/aniprocess/issues/7)).
-
-### Dependencies
-
 - `data.table (>= 1.18.0)` promoted from `Suggests` to `Imports` (now
   backs the rolling filters and the LOCF interpolation step).
 - Removed `roll`, `collapse`, and `animetric`.
 
-### Internal / housekeeping
-
-- New helpers
-  [`ensure_replace_na_args()`](https://animovement.dev/aniprocess/reference/ensure_replace_na_args.md)
-  and `ensure_aniframe_spatial()` replace duplicated input validation
-  across the `replace_na_*()` and `filter_na_*()` families.
-- `check_*()` helpers for optional packages consolidated, so the
-  canonical r-universe URL lives in a single place.
-- Three dead files removed; future work tracked in
-  [\#29](https://github.com/animovement/aniprocess/issues/29)
-  (`filter_by_pose`) and
-  [\#30](https://github.com/animovement/aniprocess/issues/30) (an
-  across-style API).
-- Package now at 100% line coverage; `covr` added to `Suggests`.
-
 ## aniprocess 0.1.2
 
-- Added a `NEWS.md` file to track changes to the package.
-- Update to work with tidy movement logic.
-- Use `differentiate` from *animetric* for `filter_na_speed`.
-- `filter_na_roi` now works with 3D ROIs.
+### Added
+
+- A `NEWS.md` file, to track changes to the package.
+
+### Changed
+
+- Updated to the tidy movement data model of aniframe 0.4.0.
+- [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_speed.md)
+  uses `differentiate()` from animetric rather than its own derivative.
+- [`filter_na_roi()`](https://animovement.dev/aniprocess/reference/filter_na_roi.md)
+  accepts 3D regions of interest.
+
+## aniprocess 0.1.1
+
+The package takes its present shape: masking, gap filling and smoothing.
+
+### Added
+
+- NA masking:
+  [`filter_na_confidence()`](https://animovement.dev/aniprocess/reference/filter_na_confidence.md),
+  [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_speed.md),
+  [`filter_na_range()`](https://animovement.dev/aniprocess/reference/filter_na_range.md)
+  and
+  [`filter_na_roi()`](https://animovement.dev/aniprocess/reference/filter_na_roi.md).
+- Gap filling:
+  [`replace_na_linear()`](https://animovement.dev/aniprocess/reference/replace_na_linear.md),
+  [`replace_na_spline()`](https://animovement.dev/aniprocess/reference/replace_na_spline.md),
+  [`replace_na_stine()`](https://animovement.dev/aniprocess/reference/replace_na_stine.md),
+  [`replace_na_locf()`](https://animovement.dev/aniprocess/reference/replace_na_locf.md),
+  [`replace_na_value()`](https://animovement.dev/aniprocess/reference/replace_na_value.md)
+  and the generic `replace_na()`.
+- Smoothing and filtering:
+  [`filter_sgolay()`](https://animovement.dev/aniprocess/reference/filter_sgolay.md),
+  [`filter_rollmean()`](https://animovement.dev/aniprocess/reference/filter_rollmean.md),
+  [`filter_rollmedian()`](https://animovement.dev/aniprocess/reference/filter_rollmedian.md),
+  [`filter_lowpass()`](https://animovement.dev/aniprocess/reference/filter_lowpass.md),
+  [`filter_highpass()`](https://animovement.dev/aniprocess/reference/filter_highpass.md),
+  their `_fft()` counterparts,
+  [`filter_kalman()`](https://animovement.dev/aniprocess/reference/filter_kalman.md)
+  and
+  [`filter_kalman_irregular()`](https://animovement.dev/aniprocess/reference/filter_kalman_irregular.md).
+- Peak detection:
+  [`find_peaks()`](https://animovement.dev/aniprocess/reference/find_peaks.md)
+  and
+  [`find_troughs()`](https://animovement.dev/aniprocess/reference/find_troughs.md).
+- `filter_aniframe()`, the frame-level entry point.
+
+## aniprocess 0.1.0
+
+Package skeleton. No filters yet.
