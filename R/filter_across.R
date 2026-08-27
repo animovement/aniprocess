@@ -118,7 +118,7 @@ filter_across <- function(
   helpers <- list()
   if (method == "kalman_irregular") {
     helpers$times <- helper_column(args$times, "times", "filter_with") %||%
-      metadata_value(data, "variables_when", "which column holds time")[1]
+      anicore::get_index(data)
     args$times <- NULL
     if (!helpers$times %in% names(data)) {
       cli::cli_abort("Missing time column: {.val {helpers$times}}.")

@@ -116,7 +116,7 @@ filter_na_across <- function(
   helpers <- list()
   if (method == "speed") {
     helpers$time <- helper_column(args$time, "time", "filter_na_with") %||%
-      metadata_value(data, "variables_when", "which column holds time")[1]
+      anicore::get_index(data)
     args$time <- NULL
   }
   if (method == "confidence") {
