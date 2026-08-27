@@ -226,13 +226,13 @@ test_that("filter_one_euro is reachable through the generics", {
     filter_one_euro(x, sampling_rate = 60, beta = 0.5)
   )
 
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(60),
     x = x,
     y = rev(x),
     variables_what = character(0)
   )
-  d <- aniframe::set_metadata(d, sampling_rate = 60)
+  d <- anicore::set_metadata(d, sampling_rate = 60)
 
   # sampling_rate comes from the aniframe's metadata
   expect_equal(

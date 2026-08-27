@@ -18,7 +18,7 @@ test_that("filter_na_excursion flags a multi-frame excursion that returns", {
   x[100:102] <- 50
   y[100:102] <- 50
 
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(n),
     x = x,
     y = y,
@@ -41,7 +41,7 @@ test_that("filter_na_excursion leaves persistent shifts untouched", {
   x <- c(rnorm(n / 2, 0, 1), rnorm(n / 2, 100, 1))
   y <- c(rnorm(n / 2, 0, 1), rnorm(n / 2, 100, 1))
 
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(n),
     x = x,
     y = y,
@@ -61,7 +61,7 @@ test_that("filter_na_excursion (per-axis) flags a row when only one axis jumps",
   # Only x jumps; y stays normal.
   x[100:102] <- 50
 
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(n),
     x = x,
     y = y,
@@ -84,7 +84,7 @@ test_that("filter_na_excursion (joint Euclidean) flags only when magnitude is la
   x[100:102] <- 50
   y[100:102] <- 50
 
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(n),
     x = x,
     y = y,
@@ -105,7 +105,7 @@ test_that("filter_na_excursion blanks confidence at flagged rows", {
   y[100:102] <- 50
   conf <- rep(0.9, n)
 
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(n),
     x = x,
     y = y,
@@ -130,7 +130,7 @@ test_that("filter_na_excursion runs per group", {
   y_a[100:102] <- 50
   y_b <- rnorm(n, 0, 1)
 
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     track = rep(c("a", "b"), each = n),
     time = rep(seq_len(n), 2),
     x = c(x_a, x_b),
@@ -147,7 +147,7 @@ test_that("filter_na_excursion runs per group", {
 })
 
 test_that("filter_na_excursion returns an aniframe of the same shape", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:50,
     x = rnorm(50),
     y = rnorm(50),
@@ -162,7 +162,7 @@ test_that("filter_na_excursion returns an aniframe of the same shape", {
 test_that("filter_na_excursion handles trajectories with no σ (constant data)", {
   # σ = 0 means we cannot define the threshold; the algorithm should
   # bail out gracefully and leave data untouched.
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:20,
     x = rep(5, 20),
     y = rep(5, 20),
@@ -184,7 +184,7 @@ test_that("filter_na_excursion coordinate-frame form matches the aniframe form",
   x[10:12] <- x[10:12] + 40
   y <- rnorm(np, sd = 2)
 
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(np),
     x = x,
     y = y,
@@ -198,7 +198,7 @@ test_that("filter_na_excursion coordinate-frame form matches the aniframe form",
 })
 
 test_that("filter_na_excursion errors when a variables_where column is missing", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:10,
     x = rnorm(10),
     y = rnorm(10),
@@ -209,7 +209,7 @@ test_that("filter_na_excursion errors when a variables_where column is missing",
 })
 
 test_that("filter_na_excursion errors on non-numeric spatial columns", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:10,
     x = rnorm(10),
     y = rnorm(10),
@@ -220,7 +220,7 @@ test_that("filter_na_excursion errors on non-numeric spatial columns", {
 })
 
 test_that("filter_na_excursion validates threshold arguments", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:50,
     x = rnorm(50),
     y = rnorm(50),
@@ -233,7 +233,7 @@ test_that("filter_na_excursion validates threshold arguments", {
 })
 
 test_that("filter_na_excursion handles short trajectories", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:1,
     x = 1,
     y = 1,
@@ -243,7 +243,7 @@ test_that("filter_na_excursion handles short trajectories", {
 })
 
 test_that("filter_na_excursion (joint) bails out on constant data", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:20,
     x = rep(5, 20),
     y = rep(5, 20),
@@ -261,7 +261,7 @@ test_that("filter_na_excursion preserves existing NAs", {
   y <- rnorm(n, 0, 1)
   x[c(10, 50)] <- NA
   y[c(20, 60)] <- NA
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(n),
     x = x,
     y = y,
@@ -290,7 +290,7 @@ test_that("filter_na_excursion treats each group independently", {
   a <- mk_one(0)
   b <- mk_one(5000) # far away, so a merged view would look wild
 
-  grouped <- aniframe::aniframe(
+  grouped <- anicore::aniframe(
     time = c(a$time, b$time),
     individual = rep(c("a", "b"), each = np),
     x = c(a$x, b$x),
@@ -300,7 +300,7 @@ test_that("filter_na_excursion treats each group independently", {
     dplyr::group_by(individual)
 
   alone <- function(d) {
-    res <- filter_na_excursion(aniframe::aniframe(
+    res <- filter_na_excursion(anicore::aniframe(
       time = d$time,
       x = d$x,
       y = d$y,
@@ -317,7 +317,7 @@ test_that("filter_na_excursion treats each group independently", {
 })
 
 test_that("filter_na_excursion leaves one-row groups untouched", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = c(1, 2, 3, 1),
     individual = c("a", "a", "a", "solo"),
     x = c(0, 1, 2, 42),

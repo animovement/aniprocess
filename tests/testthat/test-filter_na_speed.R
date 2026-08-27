@@ -15,7 +15,7 @@
 
 test_that("filter_na_speed flags a single-frame outlier (2D)", {
   # Smooth motion with one position outlier at index 5
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:9,
     x = c(1, 2, 3, 4, 100, 6, 7, 8, 9),
     y = c(1, 2, 3, 4, 100, 6, 7, 8, 9)
@@ -34,7 +34,7 @@ test_that("filter_na_speed flags a single-frame outlier (2D)", {
 })
 
 test_that("filter_na_speed flags a single-frame outlier (3D)", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:9,
     x = c(1, 2, 3, 4, 100, 6, 7, 8, 9),
     y = c(1, 2, 3, 4, 100, 6, 7, 8, 9),
@@ -53,7 +53,7 @@ test_that("filter_na_speed flags a single-frame outlier (3D)", {
 
 test_that("filter_na_speed leaves legitimate step changes alone", {
   # Sustained move to a new region (not an outlier)
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:8,
     x = c(1, 2, 3, 100, 101, 102, 103, 104),
     y = c(1, 2, 3, 100, 101, 102, 103, 104)
@@ -68,7 +68,7 @@ test_that("filter_na_speed leaves legitimate step changes alone", {
 
 test_that("filter_na_speed calculates auto threshold", {
   # Data with one single-frame outlier at index 51
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:100,
     x = c(1:50, 500, 51:99),
     y = 1:100
@@ -83,7 +83,7 @@ test_that("filter_na_speed calculates auto threshold", {
 })
 
 test_that("filter_na_speed preserves existing NAs", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:5,
     x = c(0, NA, 2, 3, 4),
     y = c(0, 1, NA, 3, 4)
@@ -98,7 +98,7 @@ test_that("filter_na_speed preserves existing NAs", {
 
 test_that("filter_na_speed does not contaminate neighbors of NA inputs", {
   # Single NA in x at row 3 of an otherwise clean series
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:7,
     x = c(1, 2, NA, 4, 5, 6, 7),
     y = c(1, 2, 3, 4, 5, 6, 7)
@@ -114,7 +114,7 @@ test_that("filter_na_speed does not contaminate neighbors of NA inputs", {
 })
 
 test_that("filter_na_speed preserves other columns", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:5,
     x = c(0, 1, 2, 3, 4),
     y = c(0, 1, 2, 3, 4),
@@ -129,7 +129,7 @@ test_that("filter_na_speed preserves other columns", {
 })
 
 test_that("filter_na_speed filters confidence when present", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:7,
     x = c(1, 2, 3, 100, 5, 6, 7),
     y = c(1, 2, 3, 100, 5, 6, 7),
@@ -143,7 +143,7 @@ test_that("filter_na_speed filters confidence when present", {
 })
 
 test_that("filter_na_speed works without confidence column", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:5,
     x = c(0, 1, 2, 3, 4),
     y = c(0, 1, 2, 3, 4)
@@ -169,7 +169,7 @@ test_that("filter_na_speed validates data is an aniframe", {
 })
 
 test_that("filter_na_speed validates required columns exist", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:5,
     x = c(0, 1, 2, 3, 4),
     y = c(0, 1, 2, 3, 4)
@@ -184,7 +184,7 @@ test_that("filter_na_speed validates required columns exist", {
 })
 
 test_that("filter_na_speed validates columns are numeric", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:5,
     x = c(0, 1, 2, 3, 4),
     y = c(0, 1, 2, 3, 4)
@@ -198,7 +198,7 @@ test_that("filter_na_speed validates columns are numeric", {
 })
 
 test_that("filter_na_speed validates threshold is auto or numeric", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:5,
     x = c(0, 1, 2, 3, 4),
     y = c(0, 1, 2, 3, 4)
@@ -216,7 +216,7 @@ test_that("filter_na_speed validates threshold is auto or numeric", {
 })
 
 test_that("filter_na_speed returns an aniframe", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:5,
     x = c(0, 1, 2, 3, 4),
     y = c(0, 1, 2, 3, 4)
@@ -228,7 +228,7 @@ test_that("filter_na_speed returns an aniframe", {
 })
 
 test_that("filter_na_speed handles constant position", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:5,
     x = c(5, 5, 5, 5, 5),
     y = c(5, 5, 5, 5, 5)
@@ -243,7 +243,7 @@ test_that("filter_na_speed handles constant position", {
 
 test_that("filter_na_speed handles uneven time spacing", {
   # Single-frame outlier on an uneven time grid
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = c(0, 1, 2, 2.1, 2.2, 3, 4),
     x = c(0, 1, 2, 100, 4, 5, 6),
     y = c(0, 1, 2, 100, 4, 5, 6)
@@ -310,7 +310,7 @@ test_that("calculate_step_speed returns NA for groups too short to step", {
 })
 
 test_that("filter_na_speed errors when time column is missing", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:5,
     x = 1:5,
     y = 1:5,
@@ -325,7 +325,7 @@ test_that("filter_na_speed errors when time column is missing", {
 # Two individuals stacked in one aniframe, `sep` units apart, time restarting
 # per individual. Individual "a" has one genuine single-frame outlier.
 speed_fixture <- function(sep, np = 30) {
-  aniframe::aniframe(
+  anicore::aniframe(
     time = rep(seq_len(np), 2),
     individual = rep(c("a", "b"), each = np),
     x = c(c(0:3, 500, 5:(np - 1)), (0:(np - 1)) + sep),
@@ -365,7 +365,7 @@ test_that("filter_na_speed auto threshold ignores cross-track steps", {
   # Two stationary individuals: every within-track speed is 0, so the
   # threshold must be 0 no matter how far apart they are.
   fixture <- function(sep) {
-    aniframe::aniframe(
+    anicore::aniframe(
       time = rep(1:10, 2),
       individual = rep(c("a", "b"), each = 10),
       x = c(rep(0, 10), rep(sep, 10)),
@@ -388,7 +388,7 @@ test_that("filter_na_speed auto threshold ignores cross-track steps", {
 test_that("filter_na_speed leaves one-row groups untouched", {
   # A group with fewer than two rows has no step, so speed is NA. if_else()
   # propagates a missing condition, which would blank an otherwise fine row.
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = c(1, 2, 3, 1),
     individual = c("a", "a", "a", "solo"),
     x = c(0, 1, 2, 42),
@@ -405,7 +405,7 @@ test_that("filter_na_speed leaves one-row groups untouched", {
 })
 
 test_that("filter_na_speed is unchanged on ungrouped data", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:10,
     x = c(0:3, 500, 5:9),
     y = rep(0, 10),
@@ -439,7 +439,7 @@ test_that("filter_na_speed coordinate-frame form matches the aniframe form", {
   x <- c(0:3, 500, 5:9)
   y <- rep(0, 10)
   tm <- 1:10
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = tm,
     x = x,
     y = y,
@@ -455,7 +455,7 @@ test_that("filter_na_speed coordinate-frame form matches the aniframe form", {
 test_that("filter_na_speed works inside mutate via pick()", {
   set.seed(9)
   np <- 20
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = rep(seq_len(np), 2),
     individual = rep(c("a", "b"), each = np),
     x = c(c(0:8, 500, 10:19), (0:19) + 1000),

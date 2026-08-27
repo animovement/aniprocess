@@ -8,7 +8,7 @@
 
 ## Improvements
 
-* The aniframe-aware filters use `aniframe::ensure_is_spatial()` in place of a local copy, so the metadata contract is enforced by the package that defines it (animovement/aniframe#79). Requires aniframe 0.7.0.
+* The aniframe-aware filters use `anicore::ensure_is_spatial()` in place of a local copy, so the metadata contract is enforced by the package that defines it (animovement/aniframe#79). Requires aniframe 0.7.0.
 
 # aniprocess 0.3.0
 

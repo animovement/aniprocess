@@ -106,7 +106,7 @@ test_that("filter_with dispatches ccma on a frame", {
 })
 
 test_that("filter_with rejects an aniframe", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:9,
     x = as.numeric(1:9),
     y = as.numeric(1:9),

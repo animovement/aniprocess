@@ -5,7 +5,7 @@
 # - Grouping is respected
 
 na_fixture <- function(np = 20) {
-  aniframe::aniframe(
+  anicore::aniframe(
     time = rep(seq_len(np), 2),
     individual = rep(c("a", "b"), each = np),
     x = c(c(0:8, 500, 10:(np - 1)), (0:(np - 1)) + 1000),
@@ -66,7 +66,7 @@ test_that("filter_na_across dispatches excursion and roi", {
   np <- 40
   x <- rnorm(np, sd = 2)
   x[10:12] <- x[10:12] + 40
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(np),
     x = x,
     y = rnorm(np, sd = 2),
@@ -79,7 +79,7 @@ test_that("filter_na_across dispatches excursion and roi", {
   )
 
   coords <- data.frame(x = c(0, 10, 20), y = c(0, 10, 20))
-  d2 <- aniframe::aniframe(
+  d2 <- anicore::aniframe(
     time = 1:3,
     x = coords$x,
     y = coords$y,
@@ -94,7 +94,7 @@ test_that("filter_na_across dispatches excursion and roi", {
 })
 
 test_that("filter_na_across dispatches confidence and filters the column", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:4,
     x = c(1, 2, 3, 4),
     y = c(5, 6, 7, 8),
@@ -108,7 +108,7 @@ test_that("filter_na_across dispatches confidence and filters the column", {
 })
 
 test_that("filter_na_across errors when a required column is absent", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:4,
     x = c(1, 2, 3, 4),
     y = c(5, 6, 7, 8),
@@ -150,7 +150,7 @@ test_that("auto estimates a threshold per group, pooled estimates one overall", 
   # Ten rows per track is too few for mean + 3 sd to catch this outlier
   # within its own track, but enough when both tracks are pooled. The two
   # settings therefore disagree, which is what makes them distinguishable.
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = rep(1:10, 2),
     individual = rep(c("a", "b"), each = 10),
     x = c(c(0:3, 500, 5:9), (0:9) + 1e4),
@@ -182,7 +182,7 @@ test_that("a per-group auto threshold judges each track on its own noise", {
   xb <- cumsum(rnorm(np, sd = 0.1)) + 1e5
   xb[10] <- xb[10] + 3000
 
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = rep(seq_len(np), 2),
     individual = rep(c("a", "b"), each = np),
     x = c(xa, xb),
@@ -209,7 +209,7 @@ delta_fixture <- function(individuals = "a") {
   # each track starts somewhere different
   offset <- rep(100 * seq_len(ni), each = np)
 
-  aniframe::aniframe(
+  anicore::aniframe(
     time = rep(seq_len(np), ni),
     individual = rep(individuals, each = np),
     x = offset + rep(cumsum(steps), ni),
