@@ -12,7 +12,7 @@ Authors@R:
       )
 Description: An R package for signal processing and filtering of movement data.
 License: MIT + file LICENSE
-URL: http://animovement.dev/aniprocess/, https://github.com/animovement/aniprocess/
+URL: https://animovement.dev/aniprocess/, https://github.com/animovement/aniprocess/
 BugReports: https://github.com/animovement/aniprocess/issues
 Encoding: UTF-8
 LazyData: true
