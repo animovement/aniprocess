@@ -13,6 +13,19 @@
   take a `times` argument, the positions the values sit at. It defaults
   to row position, which is what they used before.
 
+### Changed
+
+- The minimum `anicore` is 0.8.0, which is the first version published
+  under that name. The constraint read `>= 0.7.0` — a version of
+  `anicore` that never existed, carried over unchanged from `aniframe`
+  when the dependency was renamed.
+
+- The core data structures come from `anicore`, which is what the
+  `aniframe` package was renamed to in its 0.8.0
+  (animovement/anicore#84). The `aniframe` class keeps its name; only
+  the package providing it changed, so `anicore` replaces `aniframe` in
+  `Imports` and in every `aniframe::` call.
+
 ### Fixed
 
 - The interpolators fill gaps against the index rather than row position
@@ -51,8 +64,6 @@
   carrying a temporal context, so the wrong column was used whenever one
   was present.
 
-### Fixed
-
 - [`filter_ccma()`](https://animovement.dev/aniprocess/reference/filter_ccma.md)’s
   documentation no longer promises an aniframe path it does not have
   ([\#71](https://github.com/animovement/aniprocess/issues/71)). It is a
@@ -78,19 +89,6 @@
   [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_speed.md)
   at
   [`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_across.md).
-
-### Changed
-
-- The minimum `anicore` is 0.8.0, which is the first version published
-  under that name. The constraint read `>= 0.7.0` — a version of
-  `anicore` that never existed, carried over unchanged from `aniframe`
-  when the dependency was renamed.
-
-- The core data structures come from `anicore`, which is what the
-  `aniframe` package was renamed to in its 0.8.0
-  (animovement/anicore#84). The `aniframe` class keeps its name; only
-  the package providing it changed, so `anicore` replaces `aniframe` in
-  `Imports` and in every `aniframe::` call.
 
 ## aniprocess 0.4.0 (2026-08-18)
 
