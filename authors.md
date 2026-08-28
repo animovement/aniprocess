@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/animovement/aniprocess/blob/v0.5.0/inst/CITATION)
+[`inst/CITATION`](https://github.com/animovement/aniprocess/blob/main/inst/CITATION)
 
 Roald-Arbøl M (2026). “animovement: An R toolbox for analysing movement
 across space and time.”
@@ -33,6 +33,6 @@ and filtering of movement data.”
       author = {Mikkel Roald-Arbøl},
       year = {2026},
       doi = {10.5281/zenodo.17357777},
-      version = {0.5.0},
+      version = {0.5.0.9000},
       url = {https://animovement.dev/aniprocess/},
     }
