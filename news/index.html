@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,15 +50,34 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="aniprocess-development-version">aniprocess (development version)<a class="anchor" aria-label="anchor" href="#aniprocess-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.5.0" id="aniprocess-050-2026-08-28">aniprocess 0.5.0 (2026-08-28)<a class="anchor" aria-label="anchor" href="#aniprocess-050-2026-08-28"></a></h2>
 <div class="section level3">
-<h3 id="fixed-development-version">Fixed<a class="anchor" aria-label="anchor" href="#fixed-development-version"></a></h3>
+<h3 id="added-0-5-0">Added<a class="anchor" aria-label="anchor" href="#added-0-5-0"></a></h3>
+<ul><li>
+<code><a href="../reference/replace_na_linear.html">replace_na_linear()</a></code>, <code><a href="../reference/replace_na_spline.html">replace_na_spline()</a></code> and <code><a href="../reference/replace_na_stine.html">replace_na_stine()</a></code> take a <code>times</code> argument, the positions the values sit at. It defaults to row position, which is what they used before.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixed-0-5-0">Fixed<a class="anchor" aria-label="anchor" href="#fixed-0-5-0"></a></h3>
+<ul><li>
+<p>The interpolators fill gaps against the index rather than row position (<a href="https://github.com/animovement/aniprocess/issues/67" class="external-link">#67</a>). They built their abscissa as <code>seq_len(n)</code>. On a regularly sampled frame row position and elapsed time are proportional and the two agree; on an irregular one they do not, and the imputed value landed at the wrong moment with no error or warning:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">10</span><span class="op">)</span>; <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="cn">NA</span>, <span class="fl">100</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  50   interpolating on row position</span></span>
+<span><span class="co">#&gt;  10   interpolating on the index</span></span></code></pre></div>
+<p>A factor of five on three points, and it grows with how uneven the sampling is. <code><a href="../reference/replace_na_across.html">replace_na_across()</a></code> resolves the index and passes it down.</p>
+<p>Two further faults surfaced while fixing it. The data was indexed by <em>time value</em> rather than position — correct only while the abscissa was <code>seq_len(n)</code>. And <code><a href="../reference/replace_na_spline.html">replace_na_spline()</a></code> asked <code><a href="https://rdrr.io/r/stats/splinefun.html" class="external-link">stats::spline()</a></code> for <code>n</code> points spread across the whole range rather than evaluated at the positions being filled, so with leading or trailing <code>NA</code>s the interpolated values were misaligned even on regularly sampled data.</p>
+</li>
+<li><p>The column holding time is read from the frame’s index rather than the first <code>variables_when</code> entry. <code>variables_when</code> now holds only the temporal context, so on an ordinary frame it is empty and the lookup failed with <code>Cannot determine which column holds time.</code> It also repairs a latent fault: the first entry was <code>session</code> on any frame carrying a temporal context, so the wrong column was used whenever one was present.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixed-0-5-0-1">Fixed<a class="anchor" aria-label="anchor" href="#fixed-0-5-0-1"></a></h3>
 <ul><li><p><code><a href="../reference/filter_ccma.html">filter_ccma()</a></code>’s documentation no longer promises an aniframe path it does not have (<a href="https://github.com/animovement/aniprocess/issues/71" class="external-link">#71</a>). It is a column-level function; the aniframe tier is <code>filter_across(data, "ccma")</code>, and both are now shown in a runnable example rather than a <code>\dontrun{}</code> block referring to an undefined object.</p></li>
 <li><p>Handing a whole aniframe to a column-level filter now says which tier takes one (<a href="https://github.com/animovement/aniprocess/issues/71" class="external-link">#71</a>). It was rejected for its identity columns not being numeric — <code>Coordinate column "keypoint" must be numeric</code> — which reads as a problem with the data rather than with the function being called. <code><a href="../reference/filter_ccma.html">filter_ccma()</a></code> points at <code><a href="../reference/filter_across.html">filter_across()</a></code>, and <code><a href="../reference/filter_na_confidence.html">filter_na_confidence()</a></code>, <code><a href="../reference/filter_na_excursion.html">filter_na_excursion()</a></code>, <code><a href="../reference/filter_na_roi.html">filter_na_roi()</a></code> and <code><a href="../reference/filter_na_speed.html">filter_na_speed()</a></code> at <code><a href="../reference/filter_na_across.html">filter_na_across()</a></code>.</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="changed-development-version">Changed<a class="anchor" aria-label="anchor" href="#changed-development-version"></a></h3>
-<ul><li>The core data structures come from <code>anicore</code>, which is what the <code>aniframe</code> package was renamed to in its 0.8.0 (animovement/anicore#84). The <code>aniframe</code> class keeps its name; only the package providing it changed, so <code>anicore</code> replaces <code>aniframe</code> in <code>Imports</code> and in every <code>aniframe::</code> call.</li>
+<h3 id="changed-0-5-0">Changed<a class="anchor" aria-label="anchor" href="#changed-0-5-0"></a></h3>
+<ul><li><p>The minimum <code>anicore</code> is 0.8.0, which is the first version published under that name. The constraint read <code>&gt;= 0.7.0</code> — a version of <code>anicore</code> that never existed, carried over unchanged from <code>aniframe</code> when the dependency was renamed.</p></li>
+<li><p>The core data structures come from <code>anicore</code>, which is what the <code>aniframe</code> package was renamed to in its 0.8.0 (animovement/anicore#84). The <code>aniframe</code> class keeps its name; only the package providing it changed, so <code>anicore</code> replaces <code>aniframe</code> in <code>Imports</code> and in every <code>aniframe::</code> call.</p></li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -81,7 +100,7 @@
 <h3 id="changed-0-3-0">Changed<a class="anchor" aria-label="anchor" href="#changed-0-3-0"></a></h3>
 <ul><li>
 <p>The interface is now split into three tiers (<a href="https://github.com/animovement/aniprocess/issues/30" class="external-link">#30</a>). The individual functions work on a vector or a frame of coordinate columns, <code>*_with()</code> selects a method by name, and <code>*_across()</code> applies one to a whole aniframe.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/filter_across.html">filter_across</a></span><span class="op">(</span><span class="va">data</span>, <span class="st">"lowpass"</span>, cutoff_freq <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/filter_with.html">filter_with</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"gaussian"</span>, sigma <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="va">data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="../reference/filter_ccma.html">filter_ccma</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pick.html" class="external-link">pick</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
