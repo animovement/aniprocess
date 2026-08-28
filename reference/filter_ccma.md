@@ -25,11 +25,12 @@ filter_ccma(
 
 - data:
 
-  An aniframe in Cartesian coordinates with 2 or 3 spatial columns (set
-  via the `variables_where` metadata field), or a data frame of 2 or 3
-  numeric coordinate columns. The curvature math is Cartesian-specific
-  (cross products, Euclidean norms, circumradius), so polar /
-  cylindrical / spherical aniframes are rejected.
+  A data frame of 2 or 3 numeric coordinate columns. The curvature math
+  is Cartesian-specific (cross products, Euclidean norms, circumradius),
+  so coordinates must be Cartesian. For a whole aniframe use
+  [`filter_across()`](https://animovement.dev/aniprocess/reference/filter_across.md),
+  which selects the spatial columns from `variables_where` and rejects
+  non-Cartesian frames.
 
 - window_width_ma:
 
@@ -112,25 +113,19 @@ time-series smoothing reach for
 or
 [`filter_sgolay()`](https://animovement.dev/aniprocess/reference/filter_sgolay.md).
 
-Smoothing is applied within the aniframe's existing grouping (driven by
-`variables_what`), so each individual / track / keypoint is smoothed as
-its own trajectory.
-
 ## Input shape
 
-Returns the same shape it is given.
+This is a **column-level** function: it takes a data frame of coordinate
+columns and returns one of the same shape. The aniframe tier is
+[`filter_across()`](https://animovement.dev/aniprocess/reference/filter_across.md),
+which applies it within the frame's existing grouping so each individual
+/ track / keypoint is smoothed as its own trajectory.
 
-- Given an **aniframe**, the spatial columns named by `variables_where`
-  are smoothed and an aniframe is returned.
+    filter_across(af, "ccma")                             # a whole aniframe
+    data |> mutate(filter_ccma(pick(all_of(c("x", "y")))))  # the columns
 
-- Given a **data frame of coordinate columns**, that frame is smoothed
-  and returned. This is the form to use inside
-  [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html),
-  where
-  [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html)
-  supplies the columns and the result is spliced back over them:
-
-    data |> mutate(filter_ccma(pick(all_of(c("x", "y")))))
+[`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html)
+supplies the columns and the result is spliced back over them.
 
 CCMA is multivariate — each output coordinate depends on all of them —
 so it cannot be used with
@@ -148,7 +143,35 @@ Reference Python implementation: <https://github.com/UniBwTAS/ccma>
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-filter_ccma(tracking_data, window_width_ma = 11, window_width_cc = 7)
-} # }
+# The column tier: a data frame of coordinates
+coords <- data.frame(x = sin(seq(0, 6, length.out = 40)), y = seq(0, 6, length.out = 40))
+head(filter_ccma(coords, window_width_ma = 11, window_width_cc = 7))
+#>           x         y
+#> 1 0.1335266 0.1323343
+#> 2 0.2193066 0.2202318
+#> 3 0.3248390 0.3313703
+#> 4 0.4431924 0.4611623
+#> 5 0.5652973 0.6035949
+#> 6 0.6818460 0.7529515
+
+# The aniframe tier
+af <- anicore::example_aniframe(n_obs = 60, n_individuals = 1, n_keypoints = 1)
+filter_across(af, "ccma", window_width_ma = 11, window_width_cc = 7)
+#> # Individuals: 1
+#> # Keypoints:   centroid
+#> # Sessions:    1
+#> # Trials:      1
+#>    individual keypoint session trial  time       x       y confidence
+#>         <int> <fct>      <int> <int> <int>   <dbl>   <dbl>      <dbl>
+#>  1          1 centroid       1     1     1 -1.10    0.229       0.450
+#>  2          1 centroid       1     1     2 -0.916  -0.0276      0.830
+#>  3          1 centroid       1     1     3 -0.726  -0.257       0.438
+#>  4          1 centroid       1     1     4 -0.530  -0.413       0.761
+#>  5          1 centroid       1     1     5 -0.313  -0.444       0.896
+#>  6          1 centroid       1     1     6 -0.159  -0.296       0.873
+#>  7          1 centroid       1     1     7 -0.186  -0.150       0.687
+#>  8          1 centroid       1     1     8 -0.211  -0.0153      0.605
+#>  9          1 centroid       1     1     9 -0.182   0.124       0.944
+#> 10          1 centroid       1     1    10 -0.0986  0.260       0.653
+#> # ℹ 50 more rows
 ```

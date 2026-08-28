@@ -6,7 +6,7 @@ An R package for signal processing and filtering of movement data.
 
 Useful links:
 
-- <http://animovement.dev/aniprocess/>
+- <https://animovement.dev/aniprocess/>
 
 - <https://github.com/animovement/aniprocess/>
 
