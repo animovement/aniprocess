@@ -11,6 +11,13 @@
 #'
 #' @return Filtered numeric vector, same length as `x`.
 #'
+#' @examples
+#' x <- c(1, 2, 100, 4, 5, 6, 7)
+#' filter_rollmedian(x, window_width = 3)
+#'
+#' # The median discards the spike; a rolling mean smears it across three
+#' # neighbouring samples instead
+#' filter_rollmean(x, window_width = 3)
 #' @export
 filter_rollmedian <- function(
   x,

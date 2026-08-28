@@ -9,6 +9,7 @@
 ^pkgdown$
 ^\.github$
 ^CITATION\.cff$
-^README\.Rmd$
+^README\.qmd$
 ^.vscode$
 ^\.claude$
+^AGENTS\.md$

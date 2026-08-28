@@ -1,23 +1,29 @@
 ---
-output: github_document
+format:
+  gfm:
+    # Without this, pandoc appends ".png" to extensionless image URLs and every
+    # shields.io / R-universe badge in this README breaks.
+    default-image-extension: ""
+knitr:
+  opts_chunk:
+    fig.path: "man/figures/README-"
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- README.md is generated from README.qmd. Please edit that file -->
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/README-",
   out.width = "100%"
 )
 # install.packages('aniprocess', repos = c('https://animovement.r-universe.dev', 'https://cloud.r-project.org'))
 ```
 
 
-# aniprocess
+# aniprocess <a href="https://animovement.dev/aniprocess/"><img src="man/figures/logo.png" align="right" height="139" alt="aniprocess hex logo" /></a>
 <!-- badges: start -->
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17357778.svg)](https://doi.org/10.5281/zenodo.17357778)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17357777.svg)](https://doi.org/10.5281/zenodo.17357777)
 [![R-CMD-check](https://github.com/animovement/aniprocess/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/animovement/aniprocess/actions/workflows/R-CMD-check.yaml)
 [![aniprocess status
 badge](https://animovement.r-universe.dev/badges/aniprocess)](https://animovement.r-universe.dev)

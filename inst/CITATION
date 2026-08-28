@@ -1,14 +1,34 @@
-citHeader("To cite aniprocess in publications use:")
+citHeader(
+  paste(
+    "To cite aniprocess in publications, please cite the animovement toolbox as a",
+    "whole (the first entry below). If your work used only aniprocess, you may",
+    "cite the package directly instead (the second entry)."
+  )
+)
 
-bibentry(bibtype = "Misc",
-         key = "aniprocess",
-         doi = "10.5281/zenodo.17357778",
-         title = "aniprocess: An R package for signal processing and filtering of movement data",
-         author = person(given = "Mikkel",
-                         family = "Roald-Arbøl",
-                         email = "animovement.84w1m@passmail.com",
-                         comment = c(ORCID = "0000-0002-9998-0058")),
-         year = "2026",
-         url = "https://animovement.dev/aniprocess/",
-         abstract = "An R package for signal processing and filtering of movement data.",
-         version = "0.4.0")
+bibentry(
+  bibtype  = "Misc",
+  key      = "animovement",
+  title    = "animovement: An R toolbox for analysing movement across space and time",
+  author   = person(
+    given = "Mikkel", family = "Roald-Arbøl",
+    comment = c(ORCID = "0000-0002-9998-0058")
+  ),
+  year     = "2026",
+  doi      = "10.5281/zenodo.13235277",
+  url      = "https://animovement.dev/animovement/"
+)
+
+bibentry(
+  bibtype  = "Misc",
+  key      = "aniprocess",
+  title    = "aniprocess: An R package for signal processing and filtering of movement data",
+  author   = person(
+    given = "Mikkel", family = "Roald-Arbøl",
+    comment = c(ORCID = "0000-0002-9998-0058")
+  ),
+  year     = "2026",
+  doi      = "10.5281/zenodo.17357777",
+  version  = meta$Version,
+  url      = "https://animovement.dev/aniprocess/"
+)
