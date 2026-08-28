@@ -9,6 +9,10 @@
 #'   than this will be left as NA. Default is 1 (interpolate all gaps).
 #' @param max_gap Integer or Inf specifying maximum gap size to interpolate. Gaps longer
 #'   than this will be left as NA. Default is Inf (no upper limit).
+#' @param times Optional numeric vector of positions for the values in `x`,
+#'   normally the frame's index. Interpolation is then over elapsed time
+#'   rather than over row position, so an irregularly sampled gap is filled
+#'   correctly. Defaults to row position.
 #' @param ... Additional parameters passed to stinepack::stinterp
 #'
 #' @return A numeric vector with NA values replaced by interpolated values where
@@ -33,7 +37,7 @@
 #' replace_na_stine(x, min_gap = 2, max_gap = 3)  # gaps between 2 and 3
 #' }
 #' @export
-replace_na_stine <- function(x, min_gap = 1, max_gap = Inf, ...) {
+replace_na_stine <- function(x, min_gap = 1, max_gap = Inf, times = NULL, ...) {
   check_stinepack()
   ensure_replace_na_args(x, min_gap, max_gap)
 
@@ -49,11 +53,11 @@ replace_na_stine <- function(x, min_gap = 1, max_gap = Inf, ...) {
   # Get indices
   n <- length(x)
   missindx <- is.na(x)
-  allindx <- seq_len(n)
+  allindx <- interpolation_positions(x, times)
   indx <- allindx[!missindx]
 
   # Perform interpolation
-  interp <- stinepack::stinterp(indx, x[indx], allindx, ...)$y
+  interp <- stinepack::stinterp(indx, x[!missindx], allindx, ...)$y
 
   # Handle any edge NAs like approx does
   if (any(is.na(interp))) {

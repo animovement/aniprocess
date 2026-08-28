@@ -10,6 +10,7 @@ replace_na_with(
   value = NULL,
   min_gap = 1,
   max_gap = Inf,
+  times = NULL,
   ...
 )
 }
@@ -33,6 +34,12 @@ shorter than this are left as \code{NA}. Default \code{1} (fill all gaps).}
 
 \item{max_gap}{Integer or \code{Inf} specifying the maximum gap size to fill.
 Gaps longer than this are left as \code{NA}. Default \code{Inf} (no limit).}
+
+\item{times}{Optional numeric vector of positions for the values in \code{x},
+normally the frame's index. Interpolation is then over elapsed time
+rather than over row position, so an irregularly sampled gap is filled
+correctly. Defaults to row position, and is ignored by the methods
+that do not interpolate.}
 
 \item{...}{Additional parameters passed to the underlying function.}
 }

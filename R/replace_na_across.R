@@ -42,13 +42,26 @@ replace_na_across <- function(
   variables <- resolve_variables(data, rlang::enquo(variables))
   args <- c(list(method = method), rlang::list2(...))
 
+  # Interpolating methods place the imputed value at a moment, so they need
+  # the index rather than the row number. The frame knows which column that
+  # is (#67).
+  helpers <- list()
+  if (method %in% c("linear", "spline", "stine")) {
+    helpers$times <- anicore::get_index(data)
+    if (!helpers$times %in% names(data)) {
+      cli::cli_abort("Missing index column: {.val {helpers$times}}.")
+    }
+  }
+
+  needed <- unique(c(variables, unlist(helpers, use.names = FALSE)))
   dplyr::mutate(
     data,
     apply_across_columns(
-      dplyr::pick(dplyr::all_of(variables)),
+      dplyr::pick(dplyr::all_of(needed)),
       variables = variables,
       fn = replace_na_with,
-      args = args
+      args = args,
+      helpers = helpers
     )
   )
 }

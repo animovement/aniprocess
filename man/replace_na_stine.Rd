@@ -4,7 +4,7 @@
 \alias{replace_na_stine}
 \title{Replace Missing Values Using Stineman Interpolation}
 \usage{
-replace_na_stine(x, min_gap = 1, max_gap = Inf, ...)
+replace_na_stine(x, min_gap = 1, max_gap = Inf, times = NULL, ...)
 }
 \arguments{
 \item{x}{A vector containing numeric data with missing values (NAs)}
@@ -14,6 +14,11 @@ than this will be left as NA. Default is 1 (interpolate all gaps).}
 
 \item{max_gap}{Integer or Inf specifying maximum gap size to interpolate. Gaps longer
 than this will be left as NA. Default is Inf (no upper limit).}
+
+\item{times}{Optional numeric vector of positions for the values in \code{x},
+normally the frame's index. Interpolation is then over elapsed time
+rather than over row position, so an irregularly sampled gap is filled
+correctly. Defaults to row position.}
 
 \item{...}{Additional parameters passed to stinepack::stinterp}
 }

@@ -22,6 +22,11 @@
 #'   shorter than this are left as `NA`. Default `1` (fill all gaps).
 #' @param max_gap Integer or `Inf` specifying the maximum gap size to fill.
 #'   Gaps longer than this are left as `NA`. Default `Inf` (no limit).
+#' @param times Optional numeric vector of positions for the values in `x`,
+#'   normally the frame's index. Interpolation is then over elapsed time
+#'   rather than over row position, so an irregularly sampled gap is filled
+#'   correctly. Defaults to row position, and is ignored by the methods
+#'   that do not interpolate.
 #' @param ... Additional parameters passed to the underlying function.
 #'
 #' @return The same shape as `x`, with gaps filled where the gap-length
@@ -45,6 +50,7 @@ replace_na_with <- function(
   value = NULL,
   min_gap = 1,
   max_gap = Inf,
+  times = NULL,
   ...
 ) {
   method <- match.arg(method)
@@ -58,13 +64,31 @@ replace_na_with <- function(
   fn <- switch(
     method,
     linear = function(v, ...) {
-      replace_na_linear(v, min_gap = min_gap, max_gap = max_gap, ...)
+      replace_na_linear(
+        v,
+        min_gap = min_gap,
+        max_gap = max_gap,
+        times = times,
+        ...
+      )
     },
     spline = function(v, ...) {
-      replace_na_spline(v, min_gap = min_gap, max_gap = max_gap, ...)
+      replace_na_spline(
+        v,
+        min_gap = min_gap,
+        max_gap = max_gap,
+        times = times,
+        ...
+      )
     },
     stine = function(v, ...) {
-      replace_na_stine(v, min_gap = min_gap, max_gap = max_gap, ...)
+      replace_na_stine(
+        v,
+        min_gap = min_gap,
+        max_gap = max_gap,
+        times = times,
+        ...
+      )
     },
     locf = function(v, ...) {
       replace_na_locf(v, min_gap = min_gap, max_gap = max_gap)
