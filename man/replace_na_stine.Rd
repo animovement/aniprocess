@@ -4,7 +4,7 @@
 \alias{replace_na_stine}
 \title{Replace Missing Values Using Stineman Interpolation}
 \usage{
-replace_na_stine(x, min_gap = 1, max_gap = Inf, ...)
+replace_na_stine(x, min_gap = 1, max_gap = Inf, times = NULL, ...)
 }
 \arguments{
 \item{x}{A vector containing numeric data with missing values (NAs)}

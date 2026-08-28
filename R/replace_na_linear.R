@@ -30,7 +30,13 @@
 #' replace_na_linear(x, min_gap = 2, max_gap = 3)  # gaps between 2 and 3
 #' }
 #' @export
-replace_na_linear <- function(x, min_gap = 1, max_gap = Inf, ...) {
+replace_na_linear <- function(
+  x,
+  min_gap = 1,
+  max_gap = Inf,
+  times = NULL,
+  ...
+) {
   ensure_replace_na_args(x, min_gap, max_gap)
 
   if (!anyNA(x)) {
@@ -45,14 +51,14 @@ replace_na_linear <- function(x, min_gap = 1, max_gap = Inf, ...) {
   # Get indices
   n <- length(x)
   missindx <- is.na(x)
-  allindx <- seq_len(n)
+  allindx <- interpolation_positions(x, times)
   indx <- allindx[!missindx]
 
   # Perform interpolation
   if (methods::hasArg("rule")) {
-    interp <- stats::approx(indx, x[indx], allindx, ...)$y
+    interp <- stats::approx(indx, x[!missindx], allindx, ...)$y
   } else {
-    interp <- stats::approx(indx, x[indx], allindx, rule = 2, ...)$y
+    interp <- stats::approx(indx, x[!missindx], allindx, rule = 2, ...)$y
   }
 
   # Apply gap filtering

@@ -10,6 +10,7 @@ replace_na_with(
   value = NULL,
   min_gap = 1,
   max_gap = Inf,
+  times = NULL,
   ...
 )
 }

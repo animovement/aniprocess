@@ -31,7 +31,13 @@
 #' }
 #'
 #' @export
-replace_na_spline <- function(x, min_gap = 1, max_gap = Inf, ...) {
+replace_na_spline <- function(
+  x,
+  min_gap = 1,
+  max_gap = Inf,
+  times = NULL,
+  ...
+) {
   ensure_replace_na_args(x, min_gap, max_gap)
 
   if (!anyNA(x)) {
@@ -46,11 +52,11 @@ replace_na_spline <- function(x, min_gap = 1, max_gap = Inf, ...) {
   # Get indices
   n <- length(x)
   missindx <- is.na(x)
-  allindx <- seq_len(n)
+  allindx <- interpolation_positions(x, times)
   indx <- allindx[!missindx]
 
   # Perform interpolation
-  interp <- stats::spline(indx, x[indx], n = n, ...)$y
+  interp <- stats::spline(indx, x[!missindx], xout = allindx, ...)$y
 
   # Apply gap filtering
   if (min_gap > 1 || is.finite(max_gap)) {

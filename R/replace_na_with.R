@@ -45,6 +45,7 @@ replace_na_with <- function(
   value = NULL,
   min_gap = 1,
   max_gap = Inf,
+  times = NULL,
   ...
 ) {
   method <- match.arg(method)
@@ -58,13 +59,31 @@ replace_na_with <- function(
   fn <- switch(
     method,
     linear = function(v, ...) {
-      replace_na_linear(v, min_gap = min_gap, max_gap = max_gap, ...)
+      replace_na_linear(
+        v,
+        min_gap = min_gap,
+        max_gap = max_gap,
+        times = times,
+        ...
+      )
     },
     spline = function(v, ...) {
-      replace_na_spline(v, min_gap = min_gap, max_gap = max_gap, ...)
+      replace_na_spline(
+        v,
+        min_gap = min_gap,
+        max_gap = max_gap,
+        times = times,
+        ...
+      )
     },
     stine = function(v, ...) {
-      replace_na_stine(v, min_gap = min_gap, max_gap = max_gap, ...)
+      replace_na_stine(
+        v,
+        min_gap = min_gap,
+        max_gap = max_gap,
+        times = times,
+        ...
+      )
     },
     locf = function(v, ...) {
       replace_na_locf(v, min_gap = min_gap, max_gap = max_gap)
