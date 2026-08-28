@@ -1,5 +1,12 @@
 # aniprocess (development version)
 
+## Fixed
+
+* `filter_ccma()`'s documentation no longer promises an aniframe path it does not have (#71). It is a column-level function; the aniframe tier is `filter_across(data, "ccma")`, and both are now shown in a runnable example rather than a `\dontrun{}` block referring to an undefined object.
+
+* Handing a whole aniframe to a column-level filter now says which tier takes one (#71). It was rejected for its identity columns not being numeric — `Coordinate column "keypoint" must be numeric` — which reads as a problem with the data rather than with the function being called. `filter_ccma()` points at `filter_across()`, and `filter_na_confidence()`, `filter_na_excursion()`, `filter_na_roi()` and `filter_na_speed()` at `filter_na_across()`.
+
+
 ## Changed
 
 * The core data structures come from `anicore`, which is what the `aniframe` package was renamed to in its 0.8.0 (animovement/anicore#84). The `aniframe` class keeps its name; only the package providing it changed, so `anicore` replaces `aniframe` in `Imports` and in every `aniframe::` call.

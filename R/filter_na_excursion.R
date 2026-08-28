@@ -71,7 +71,7 @@ filter_na_excursion <- function(
   return_sd = 1,
   by_axis = TRUE
 ) {
-  ensure_coords(data)
+  ensure_coords(data, across = "filter_na_across")
 
   for (sd_arg in c("outlier_sd", "return_sd")) {
     val <- get(sd_arg)

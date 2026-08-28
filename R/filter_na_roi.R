@@ -57,7 +57,7 @@ filter_na_roi <- function(
   z_center = NULL,
   radius = NULL
 ) {
-  ensure_coords(data)
+  ensure_coords(data, across = "filter_na_across")
   variables_where <- names(data)
   missing_axes <- setdiff(c("x", "y"), variables_where)
   if (length(missing_axes) > 0L) {

@@ -356,3 +356,38 @@ test_that("filter_ccma reports the coordinate count it was given", {
     "2 or 3 coordinate columns"
   )
 })
+
+
+# An aniframe is the other tier's job (#71) ----
+
+test_that("an aniframe is refused with a pointer to the tier that takes one", {
+  # The docs promised an aniframe path that did not exist, and the frame was
+  # rejected for its identity columns not being numeric -- which read as a
+  # problem with the data rather than with the tier being called.
+  af <- anicore::example_aniframe(
+    n_obs = 50,
+    n_individuals = 2,
+    n_keypoints = 1
+  )
+
+  err <- tryCatch(filter_ccma(af), error = function(e) e)
+
+  # It still fails -- the identity columns are not coordinates -- but now
+  # it says which tier does take a whole frame.
+  expect_match(conditionMessage(err), "must be numeric")
+  expect_true(any(grepl("filter_across", err$body)))
+})
+
+test_that("the aniframe tier does the documented thing", {
+  af <- anicore::example_aniframe(
+    n_obs = 50,
+    n_individuals = 2,
+    n_keypoints = 1
+  )
+
+  out <- filter_across(af, "ccma")
+
+  expect_s3_class(out, "aniframe")
+  expect_equal(nrow(out), nrow(af))
+  expect_false(isTRUE(all.equal(out$x, af$x)))
+})

@@ -36,7 +36,12 @@ ensure_replace_na_args <- function(x, min_gap, max_gap) {
 #'
 #' @return Invisibly `NULL`. Called for side effects (errors).
 #' @keywords internal
-ensure_coords <- function(coords, arg = "data", call = rlang::caller_env()) {
+ensure_coords <- function(
+  coords,
+  arg = "data",
+  across = NULL,
+  call = rlang::caller_env()
+) {
   if (!is.data.frame(coords)) {
     cli::cli_abort(
       c(
@@ -51,8 +56,22 @@ ensure_coords <- function(coords, arg = "data", call = rlang::caller_env()) {
   }
   non_numeric <- names(coords)[!vapply(coords, is.numeric, logical(1))]
   if (length(non_numeric) > 0L) {
+    # A whole aniframe lands here, rejected for its identity columns --
+    # which reads as a problem with the data rather than with the tier
+    # being called (#71). Frames carrying only coordinates still pass.
+    hint <- if (!anicore::is_aniframe(coords)) {
+      NULL
+    } else if (is.null(across)) {
+      c("i" = "Pass the spatial columns rather than the whole frame.")
+    } else {
+      c("i" = "For a whole aniframe, use {.fn {across}}.")
+    }
+
     cli::cli_abort(
-      "Coordinate column{?s} {.val {non_numeric}} must be numeric.",
+      c(
+        "Coordinate column{?s} {.val {non_numeric}} must be numeric.",
+        hint
+      ),
       call = call
     )
   }

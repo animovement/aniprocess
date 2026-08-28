@@ -36,3 +36,21 @@ test_that("ensure_replace_na_args returns invisibly on valid input", {
   expect_invisible(ensure_replace_na_args(1:5, min_gap = 1, max_gap = Inf))
   expect_null(ensure_replace_na_args(1:5, min_gap = 1, max_gap = Inf))
 })
+
+test_that("ensure_coords() names the aniframe tier when it knows it", {
+  af <- anicore::example_aniframe(n_obs = 5, n_individuals = 1, n_keypoints = 1)
+
+  with_hint <- tryCatch(
+    ensure_coords(af, across = "filter_na_across"),
+    error = function(e) e
+  )
+  without <- tryCatch(ensure_coords(af), error = function(e) e)
+  expect_match(conditionMessage(with_hint), "must be numeric")
+
+  expect_true(any(grepl("filter_na_across", with_hint$body)))
+  expect_true(any(grepl("Pass the spatial columns", without$body)))
+})
+
+test_that("ensure_coords() still rejects a non-data-frame", {
+  expect_error(ensure_coords(1:5), "aniframe or a data frame")
+})

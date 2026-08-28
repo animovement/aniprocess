@@ -17,11 +17,11 @@ filter_ccma(
 )
 }
 \arguments{
-\item{data}{An aniframe in Cartesian coordinates with 2 or 3 spatial
-columns (set via the \code{variables_where} metadata field), or a data
-frame of 2 or 3 numeric coordinate columns. The curvature math is
-Cartesian-specific (cross products, Euclidean norms, circumradius),
-so polar / cylindrical / spherical aniframes are rejected.}
+\item{data}{A data frame of 2 or 3 numeric coordinate columns. The
+curvature math is Cartesian-specific (cross products, Euclidean norms,
+circumradius), so coordinates must be Cartesian. For a whole aniframe
+use \code{\link[=filter_across]{filter_across()}}, which selects the spatial columns from
+\code{variables_where} and rejects non-Cartesian frames.}
 
 \item{window_width_ma}{Integer width of the moving-average kernel
 (must be odd; even values are rounded up). Larger = more smoothing.
@@ -88,25 +88,20 @@ filters dispatched through \code{\link[=filter_across]{filter_across()}}). It is
 for smoothing curved 2D or 3D trajectories where a plain moving
 average visibly cuts corners; for general-purpose time-series
 smoothing reach for \code{\link[=filter_gaussian]{filter_gaussian()}} or \code{\link[=filter_sgolay]{filter_sgolay()}}.
-
-Smoothing is applied within the aniframe's existing grouping (driven
-by \code{variables_what}), so each individual / track / keypoint is
-smoothed as its own trajectory.
 }
 \section{Input shape}{
 
-Returns the same shape it is given.
-\itemize{
-\item Given an \strong{aniframe}, the spatial columns named by \code{variables_where}
-are smoothed and an aniframe is returned.
-\item Given a \strong{data frame of coordinate columns}, that frame is smoothed
-and returned. This is the form to use inside \code{\link[dplyr:mutate]{dplyr::mutate()}}, where
-\code{\link[dplyr:pick]{dplyr::pick()}} supplies the columns and the result is spliced back
-over them:
-}
+This is a \strong{column-level} function: it takes a data frame of coordinate
+columns and returns one of the same shape. The aniframe tier is
+\code{\link[=filter_across]{filter_across()}}, which applies it within the frame's existing grouping
+so each individual / track / keypoint is smoothed as its own trajectory.
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{data |> mutate(filter_ccma(pick(all_of(c("x", "y")))))
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{filter_across(af, "ccma")                             # a whole aniframe
+data |> mutate(filter_ccma(pick(all_of(c("x", "y")))))  # the columns
 }\if{html}{\out{</div>}}
+
+\code{\link[dplyr:pick]{dplyr::pick()}} supplies the columns and the result is spliced back over
+them.
 
 CCMA is multivariate — each output coordinate depends on all of them —
 so it cannot be used with \code{\link[dplyr:across]{dplyr::across()}}, which passes one column at
@@ -114,9 +109,13 @@ a time.
 }
 
 \examples{
-\dontrun{
-filter_ccma(tracking_data, window_width_ma = 11, window_width_cc = 7)
-}
+# The column tier: a data frame of coordinates
+coords <- data.frame(x = sin(seq(0, 6, length.out = 40)), y = seq(0, 6, length.out = 40))
+head(filter_ccma(coords, window_width_ma = 11, window_width_cc = 7))
+
+# The aniframe tier
+af <- anicore::example_aniframe(n_obs = 60, n_individuals = 1, n_keypoints = 1)
+filter_across(af, "ccma", window_width_ma = 11, window_width_cc = 7)
 
 }
 \references{

@@ -61,7 +61,7 @@
 #'
 #' @export
 filter_na_speed <- function(data, threshold = "auto", time = NULL) {
-  ensure_coords(data)
+  ensure_coords(data, across = "filter_na_across")
   variables_where <- names(data)
 
   if (is.null(time)) {

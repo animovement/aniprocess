@@ -13,7 +13,7 @@ An R package for signal processing and filtering of movement data.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{http://animovement.dev/aniprocess/}
+  \item \url{https://animovement.dev/aniprocess/}
   \item \url{https://github.com/animovement/aniprocess/}
   \item Report bugs at \url{https://github.com/animovement/aniprocess/issues}
 }

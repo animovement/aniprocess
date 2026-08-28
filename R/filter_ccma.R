@@ -27,33 +27,29 @@
 #' average visibly cuts corners; for general-purpose time-series
 #' smoothing reach for [filter_gaussian()] or [filter_sgolay()].
 #'
-#' Smoothing is applied within the aniframe's existing grouping (driven
-#' by `variables_what`), so each individual / track / keypoint is
-#' smoothed as its own trajectory.
-#'
 #' @section Input shape:
-#' Returns the same shape it is given.
-#'
-#' * Given an **aniframe**, the spatial columns named by `variables_where`
-#'   are smoothed and an aniframe is returned.
-#' * Given a **data frame of coordinate columns**, that frame is smoothed
-#'   and returned. This is the form to use inside [dplyr::mutate()], where
-#'   [dplyr::pick()] supplies the columns and the result is spliced back
-#'   over them:
+#' This is a **column-level** function: it takes a data frame of coordinate
+#' columns and returns one of the same shape. The aniframe tier is
+#' [filter_across()], which applies it within the frame's existing grouping
+#' so each individual / track / keypoint is smoothed as its own trajectory.
 #'
 #' ```r
-#' data |> mutate(filter_ccma(pick(all_of(c("x", "y")))))
+#' filter_across(af, "ccma")                             # a whole aniframe
+#' data |> mutate(filter_ccma(pick(all_of(c("x", "y")))))  # the columns
 #' ```
+#'
+#' [dplyr::pick()] supplies the columns and the result is spliced back over
+#' them.
 #'
 #' CCMA is multivariate — each output coordinate depends on all of them —
 #' so it cannot be used with [dplyr::across()], which passes one column at
 #' a time.
 #'
-#' @param data An aniframe in Cartesian coordinates with 2 or 3 spatial
-#'   columns (set via the `variables_where` metadata field), or a data
-#'   frame of 2 or 3 numeric coordinate columns. The curvature math is
-#'   Cartesian-specific (cross products, Euclidean norms, circumradius),
-#'   so polar / cylindrical / spherical aniframes are rejected.
+#' @param data A data frame of 2 or 3 numeric coordinate columns. The
+#'   curvature math is Cartesian-specific (cross products, Euclidean norms,
+#'   circumradius), so coordinates must be Cartesian. For a whole aniframe
+#'   use [filter_across()], which selects the spatial columns from
+#'   `variables_where` and rejects non-Cartesian frames.
 #' @param window_width_ma Integer width of the moving-average kernel
 #'   (must be odd; even values are rounded up). Larger = more smoothing.
 #'   Default `11`.
@@ -83,9 +79,13 @@
 #' <https://github.com/UniBwTAS/ccma>
 #'
 #' @examples
-#' \dontrun{
-#' filter_ccma(tracking_data, window_width_ma = 11, window_width_cc = 7)
-#' }
+#' # The column tier: a data frame of coordinates
+#' coords <- data.frame(x = sin(seq(0, 6, length.out = 40)), y = seq(0, 6, length.out = 40))
+#' head(filter_ccma(coords, window_width_ma = 11, window_width_cc = 7))
+#'
+#' # The aniframe tier
+#' af <- anicore::example_aniframe(n_obs = 60, n_individuals = 1, n_keypoints = 1)
+#' filter_across(af, "ccma", window_width_ma = 11, window_width_cc = 7)
 #'
 #' @export
 filter_ccma <- function(
@@ -99,7 +99,7 @@ filter_ccma <- function(
   keep_na = TRUE,
   ...
 ) {
-  ensure_coords(data)
+  ensure_coords(data, across = "filter_across")
 
   d <- ncol(data)
   if (!d %in% c(2L, 3L)) {
