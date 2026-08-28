@@ -74,3 +74,19 @@ test_that("spline and stine interpolate on the index too", {
   expect_true(spl < 20)
   expect_false(is.na(spl))
 })
+
+test_that("replace_na_across() says so when the index column is gone", {
+  # The declaration names a column the frame no longer carries, so there is
+  # no index to interpolate against.
+  af <- anicore::example_aniframe(
+    n_obs = 10,
+    n_individuals = 1,
+    n_keypoints = 1
+  )
+  stripped <- suppressWarnings(dplyr::select(dplyr::ungroup(af), -"time"))
+
+  expect_error(
+    replace_na_across(stripped, method = "linear"),
+    "Missing index column"
+  )
+})
