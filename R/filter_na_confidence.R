@@ -47,7 +47,7 @@
 #'
 #' @export
 filter_na_confidence <- function(data, threshold = 0.6, confidence = NULL) {
-  ensure_coords(data)
+  ensure_coords(data, across = "filter_na_across")
   variables_where <- names(data)
 
   if (is.null(confidence)) {

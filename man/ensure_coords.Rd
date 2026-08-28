@@ -4,7 +4,7 @@
 \alias{ensure_coords}
 \title{Validate a coordinate frame.}
 \usage{
-ensure_coords(coords, arg = "data", call = rlang::caller_env())
+ensure_coords(coords, arg = "data", across = NULL, call = rlang::caller_env())
 }
 \arguments{
 \item{coords}{The value to validate.}
