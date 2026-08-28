@@ -1,7 +1,7 @@
 Package: aniprocess
 Type: Package
 Title: An R package for signal processing and filtering of movement data
-Version: 0.4.0
+Version: 0.4.0.9000
 Authors@R: 
     person(
       "Mikkel", 
@@ -12,12 +12,12 @@ Authors@R:
       )
 Description: An R package for signal processing and filtering of movement data.
 License: MIT + file LICENSE
-URL: http://animovement.dev/aniprocess/, https://github.com/animovement/aniprocess/
+URL: https://animovement.dev/aniprocess/, https://github.com/animovement/aniprocess/
 BugReports: https://github.com/animovement/aniprocess/issues
 Encoding: UTF-8
 LazyData: true
 Imports:
-    aniframe (>= 0.7.0),
+    anicore (>= 0.7.0),
     cli,
     data.table (>= 1.18.0),
     dplyr (>= 1.1.0),

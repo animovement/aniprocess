@@ -11,7 +11,7 @@
 #' @keywords internal
 resolve_variables <- function(data, variables, call = rlang::caller_env()) {
   if (rlang::quo_is_null(variables)) {
-    return(aniframe::get_metadata(data, "variables_where"))
+    return(anicore::get_metadata(data, "variables_where"))
   }
 
   selected <- names(tidyselect::eval_select(variables, data, error_call = call))
@@ -42,7 +42,7 @@ resolve_variables <- function(data, variables, call = rlang::caller_env()) {
 #' @return The metadata value.
 #' @keywords internal
 metadata_value <- function(data, field, what, call = rlang::caller_env()) {
-  value <- aniframe::get_metadata(data, field)
+  value <- anicore::get_metadata(data, field)
   if (length(value) == 0L || all(is.na(value))) {
     cli::cli_abort(
       c(

@@ -89,7 +89,7 @@ filter_na_across <- function(
 ) {
   method <- match.arg(method)
   ensure_on_deltas_supported(method, on_deltas)
-  aniframe::ensure_is_spatial(data)
+  anicore::ensure_is_spatial(data)
 
   variables <- resolve_variables(data, rlang::enquo(variables))
   args <- rlang::list2(...)
@@ -116,7 +116,7 @@ filter_na_across <- function(
   helpers <- list()
   if (method == "speed") {
     helpers$time <- helper_column(args$time, "time", "filter_na_with") %||%
-      metadata_value(data, "variables_when", "which column holds time")[1]
+      anicore::get_index(data)
     args$time <- NULL
   }
   if (method == "confidence") {

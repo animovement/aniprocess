@@ -82,7 +82,7 @@ test_that("replace_na_with rejects an unknown method", {
 })
 
 test_that("replace_na_with rejects an aniframe", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:3,
     x = c(1, NA, 3),
     y = c(1, 2, 3),

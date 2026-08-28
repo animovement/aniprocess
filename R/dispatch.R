@@ -29,7 +29,7 @@ dispatch_method <- function(
 ) {
   # An aniframe is a data frame, so without this it would be filtered
   # column-wise -- including `time` and any identity columns.
-  if (aniframe::is_aniframe(x)) {
+  if (anicore::is_aniframe(x)) {
     cli::cli_abort(
       c(
         "{.arg x} is an aniframe, but {.fn {generic}} works on a vector or a frame of coordinate columns.",

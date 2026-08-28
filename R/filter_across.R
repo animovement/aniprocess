@@ -77,7 +77,7 @@ filter_across <- function(
   on_deltas = FALSE
 ) {
   method <- match.arg(method)
-  aniframe::ensure_is_spatial(data)
+  anicore::ensure_is_spatial(data)
 
   variables <- resolve_variables(data, rlang::enquo(variables))
   args <- rlang::list2(...)
@@ -87,7 +87,7 @@ filter_across <- function(
     # The curvature math is Cartesian-specific, and only the aniframe knows
     # its coordinate system -- filter_ccma() sees bare columns.
     coord_system <- as.character(
-      aniframe::get_metadata(data, "coordinate_system")
+      anicore::get_metadata(data, "coordinate_system")
     )
     if (length(coord_system) > 0L && !startsWith(coord_system, "cartesian")) {
       cli::cli_abort(c(
@@ -118,7 +118,7 @@ filter_across <- function(
   helpers <- list()
   if (method == "kalman_irregular") {
     helpers$times <- helper_column(args$times, "times", "filter_with") %||%
-      metadata_value(data, "variables_when", "which column holds time")[1]
+      anicore::get_index(data)
     args$times <- NULL
     if (!helpers$times %in% names(data)) {
       cli::cli_abort("Missing time column: {.val {helpers$times}}.")

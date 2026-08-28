@@ -19,7 +19,7 @@ test_that("filter_na_confidence filters with default threshold (2D)", {
     y = 6:10,
     confidence = c(0.5, 0.7, 0.4, 0.8, 0.9)
   ) |>
-    aniframe::as_aniframe()
+    anicore::as_aniframe()
 
   result <- filter_na_across(data, "confidence")
 
@@ -37,7 +37,7 @@ test_that("filter_na_confidence filters with default threshold (3D)", {
     z = 11:15,
     confidence = c(0.5, 0.7, 0.4, 0.8, 0.9)
   ) |>
-    aniframe::as_aniframe(variables_where = c("x", "y", "z"))
+    anicore::as_aniframe(variables_where = c("x", "y", "z"))
 
   result <- filter_na_across(data, "confidence")
 
@@ -56,7 +56,7 @@ test_that("filter_na_confidence filters with custom threshold", {
     z = 11:15,
     confidence = c(0.5, 0.7, 0.4, 0.8, 0.9)
   ) |>
-    aniframe::as_aniframe(variables_where = c("x", "y", "z"))
+    anicore::as_aniframe(variables_where = c("x", "y", "z"))
 
   result <- filter_na_across(data, "confidence", threshold = 0.75)
 
@@ -74,7 +74,7 @@ test_that("filter_na_confidence handles boundary values", {
     y = 5:8,
     confidence = c(0.5, 0.6, 0.7, 0.8)
   ) |>
-    aniframe::as_aniframe()
+    anicore::as_aniframe()
 
   result <- filter_na_across(data, "confidence", threshold = 0.6)
 
@@ -91,7 +91,7 @@ test_that("filter_na_confidence handles threshold of 0", {
     y = 4:6,
     confidence = c(-0.1, 0, 0.5)
   ) |>
-    aniframe::as_aniframe()
+    anicore::as_aniframe()
 
   result <- filter_na_across(data, "confidence", threshold = 0)
 
@@ -107,7 +107,7 @@ test_that("filter_na_confidence handles threshold of 1", {
     y = 4:6,
     confidence = c(0.5, 0.99, 1)
   ) |>
-    aniframe::as_aniframe()
+    anicore::as_aniframe()
 
   result <- filter_na_across(data, "confidence", threshold = 1)
 
@@ -123,7 +123,7 @@ test_that("filter_na_confidence preserves existing NAs in x and y", {
     y = c(5, 6, NA, 8),
     confidence = c(0.5, 0.7, 0.8, 0.4)
   ) |>
-    aniframe::as_aniframe()
+    anicore::as_aniframe()
 
   result <- filter_na_across(data, "confidence", threshold = 0.6)
 
@@ -147,7 +147,7 @@ test_that("filter_na_confidence preserves existing NAs in z", {
     z = c(9, NA, 11, 12),
     confidence = c(0.7, 0.8, 0.5, 0.9)
   ) |>
-    aniframe::as_aniframe(variables_where = c("x", "y", "z"))
+    anicore::as_aniframe(variables_where = c("x", "y", "z"))
 
   result <- filter_na_across(data, "confidence", threshold = 0.6)
 
@@ -166,7 +166,7 @@ test_that("filter_na_confidence leaves rows with a missing confidence alone", {
     y = 5:8,
     confidence = c(0.5, NA, 0.8, 0.9)
   ) |>
-    aniframe::as_aniframe()
+    anicore::as_aniframe()
 
   result <- suppressWarnings(filter_na_across(
     data,
@@ -195,7 +195,7 @@ test_that("filter_na_confidence warns about missing confidence values", {
     y = 5:8,
     confidence = c(0.5, NA, NA, 0.9)
   ) |>
-    aniframe::as_aniframe()
+    anicore::as_aniframe()
 
   expect_warning(
     filter_na_across(data, "confidence", threshold = 0.6),
@@ -210,7 +210,7 @@ test_that("filter_na_confidence handles all NAs in confidence", {
     y = 4:6,
     confidence = c(NA_real_, NA_real_, NA_real_)
   ) |>
-    aniframe::as_aniframe()
+    anicore::as_aniframe()
 
   result <- suppressWarnings(filter_na_across(
     data,
@@ -233,7 +233,7 @@ test_that("filter_na_confidence preserves other columns", {
     id = c("a", "b", "c"),
     value = c(10, 20, 30)
   ) |>
-    aniframe::as_aniframe()
+    anicore::as_aniframe()
 
   result <- filter_na_across(data, "confidence", threshold = 0.6)
 
@@ -249,7 +249,7 @@ test_that("filter_na_confidence works with 2D data", {
     y = 4:6,
     confidence = c(0.5, 0.7, 0.9)
   ) |>
-    aniframe::as_aniframe()
+    anicore::as_aniframe()
 
   result <- filter_na_across(data, "confidence", threshold = 0.6)
 
@@ -266,7 +266,7 @@ test_that("filter_na_confidence works with 3D data", {
     z = 7:9,
     confidence = c(0.5, 0.7, 0.9)
   ) |>
-    aniframe::as_aniframe(variables_where = c("x", "y", "z"))
+    anicore::as_aniframe(variables_where = c("x", "y", "z"))
 
   result <- filter_na_across(data, "confidence", threshold = 0.6)
 
@@ -283,7 +283,7 @@ test_that("filter_na_confidence works with polar coordinates", {
     phi = c(0.5, 1.0, 1.5),
     confidence = c(0.5, 0.7, 0.9)
   ) |>
-    aniframe::as_aniframe(variables_where = c("rho", "phi"))
+    anicore::as_aniframe(variables_where = c("rho", "phi"))
 
   result <- filter_na_across(data, "confidence", threshold = 0.6)
 
@@ -320,7 +320,7 @@ test_that("filter_na_confidence validates required columns exist", {
     y = 4:6,
     confidence = c(0.5, 0.7, 0.9)
   ) |>
-    aniframe::as_aniframe()
+    anicore::as_aniframe()
 
   # Dropping a declared column leaves `variables_where` promising it
   data <- dplyr::select(data, -x)
@@ -337,7 +337,7 @@ test_that("filter_na_confidence validates confidence column exists", {
     x = 1:3,
     y = 4:6
   ) |>
-    aniframe::as_aniframe()
+    anicore::as_aniframe()
 
   expect_error(
     filter_na_across(data, "confidence"),
@@ -352,7 +352,7 @@ test_that("filter_na_confidence validates threshold is single numeric", {
     y = 4:6,
     confidence = c(0.5, 0.7, 0.9)
   ) |>
-    aniframe::as_aniframe()
+    anicore::as_aniframe()
 
   # Non-numeric
   expect_error(
@@ -380,7 +380,7 @@ test_that("filter_na_confidence validates threshold is between 0 and 1", {
     y = 4:6,
     confidence = c(0.5, 0.7, 0.9)
   ) |>
-    aniframe::as_aniframe()
+    anicore::as_aniframe()
 
   # Below 0
   expect_error(
@@ -403,7 +403,7 @@ test_that("filter_na_confidence returns an aniframe", {
     z = 7:9,
     confidence = c(0.5, 0.7, 0.9)
   ) |>
-    aniframe::as_aniframe(variables_where = c("x", "y", "z"))
+    anicore::as_aniframe(variables_where = c("x", "y", "z"))
 
   result <- filter_na_across(data, "confidence", threshold = 0.6)
 
@@ -419,7 +419,7 @@ test_that("filter_na_confidence validates confidence column is numeric", {
     y = 4:6,
     confidence = c("low", "medium", "high")
   ) |>
-    aniframe::as_aniframe()
+    anicore::as_aniframe()
 
   expect_error(
     filter_na_across(data, "confidence"),
@@ -453,7 +453,7 @@ test_that("filter_na_confidence coordinate-frame form masks the coordinates", {
 
 test_that("filter_na_confidence coordinate-frame form matches the aniframe form", {
   conf <- c(0.9, 0.2, NA, 0.7)
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:4,
     x = c(1, 2, 3, 4),
     y = c(5, 6, 7, 8),

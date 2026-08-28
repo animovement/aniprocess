@@ -11,7 +11,7 @@
 test_that("filter_ccma reduces radius shrinkage on a noiseless circle", {
   n <- 100
   t <- seq(0, 2 * pi, length.out = n)
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(n),
     x = cos(t),
     y = sin(t),
@@ -40,7 +40,7 @@ test_that("filter_ccma reduces radius shrinkage on a noiseless circle", {
 test_that("filter_ccma cc_mode = FALSE returns only the moving-average result", {
   n <- 50
   t <- seq(0, 2 * pi, length.out = n)
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(n),
     x = cos(t),
     y = sin(t),
@@ -53,7 +53,7 @@ test_that("filter_ccma cc_mode = FALSE returns only the moving-average result", 
 
 test_that("filter_ccma preserves input length and aniframe class", {
   n <- 60
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(n),
     x = rnorm(n),
     y = rnorm(n),
@@ -67,7 +67,7 @@ test_that("filter_ccma preserves input length and aniframe class", {
 test_that("filter_ccma works in 3D", {
   n <- 60
   t <- seq(0, 4 * pi, length.out = n)
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(n),
     x = cos(t),
     y = sin(t),
@@ -87,7 +87,7 @@ test_that("filter_ccma preserves NAs by default and fills with keep_na = FALSE",
   x <- cos(t)
   y <- sin(t)
   x[c(10, 30)] <- NA
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(n),
     x = x,
     y = y,
@@ -105,7 +105,7 @@ test_that("filter_ccma preserves NAs by default and fills with keep_na = FALSE",
 })
 
 test_that("filter_ccma errors when na_action = 'error' and NAs are present", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:10,
     x = c(rnorm(9), NA),
     y = rnorm(10),
@@ -118,7 +118,7 @@ test_that("filter_ccma operates per group", {
   # Two tracks, second one has different curvature
   n <- 60
   t <- seq(0, 2 * pi, length.out = n)
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     track = rep(c("a", "b"), each = n),
     time = rep(seq_len(n), 2),
     x = c(cos(t), 2 * cos(t)),
@@ -137,7 +137,7 @@ test_that("filter_ccma operates per group", {
 })
 
 test_that("filter_ccma rejects 1-D variables_where", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:10,
     x = rnorm(10),
     variables_where = "x",
@@ -147,7 +147,7 @@ test_that("filter_ccma rejects 1-D variables_where", {
 })
 
 test_that("filter_ccma validates window widths", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:20,
     x = rnorm(20),
     y = rnorm(20),
@@ -163,7 +163,7 @@ test_that("filter_ccma rounds even window widths up to odd", {
   # next odd width up (i.e. the rounding actually happens).
   n <- 60
   t <- seq(0, 2 * pi, length.out = n)
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(n),
     x = cos(t),
     y = sin(t),
@@ -182,7 +182,7 @@ test_that("filter_ccma rounds even window widths up to odd", {
 test_that("filter_ccma uniform kernel runs and returns expected length", {
   n <- 60
   t <- seq(0, 2 * pi, length.out = n)
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(n),
     x = cos(t),
     y = sin(t),
@@ -211,7 +211,7 @@ test_that("filter_ccma accepts a coordinate frame and returns one", {
 
 test_that("filter_ccma coordinate-frame form matches the aniframe form", {
   t <- seq(0, 2 * pi, length.out = 60)
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(60),
     x = cos(t),
     y = sin(t),
@@ -232,7 +232,7 @@ test_that("filter_ccma rejects a coordinate frame with a non-numeric column", {
 })
 
 test_that("filter_ccma errors when a variables_where column is missing", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:10,
     x = rnorm(10),
     y = rnorm(10),
@@ -243,7 +243,7 @@ test_that("filter_ccma errors when a variables_where column is missing", {
 })
 
 test_that("filter_ccma errors when a spatial column is non-numeric", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:10,
     x = rnorm(10),
     y = rnorm(10),
@@ -257,7 +257,7 @@ test_that("filter_ccma returns the input when NAs cannot be filled", {
   # An all-NA column triggers the can't-interpolate fallback.
   n <- 30
   t <- seq(0, 2 * pi, length.out = n)
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(n),
     x = rep(NA_real_, n),
     y = sin(t),
@@ -268,7 +268,7 @@ test_that("filter_ccma returns the input when NAs cannot be filled", {
 })
 
 test_that("filter_ccma passes through trajectories shorter than 3 points", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:2,
     x = c(0, 1),
     y = c(0, 1),
@@ -285,7 +285,7 @@ test_that("filter_ccma handles straight-line trajectories (zero curvature)", {
   # under both MA and the (zero) curvature shift, and the interior of a
   # linear column is reproduced exactly.
   n <- 30
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = seq_len(n),
     x = seq_len(n) * 1.0,
     y = rep(0, n),
@@ -303,15 +303,15 @@ test_that("ccma_kernel rejects unknown kernel types", {
 })
 
 test_that("filter_ccma rejects non-Cartesian coordinate systems", {
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:10,
     x = rnorm(10),
     y = rnorm(10),
     variables_what = character(0)
   )
-  cs_levels <- levels(aniframe::get_metadata(d, "coordinate_system"))
+  cs_levels <- levels(anicore::get_metadata(d, "coordinate_system"))
   for (cs in c("polar", "cylindrical", "spherical", "unknown")) {
-    bad <- aniframe::set_metadata(
+    bad <- anicore::set_metadata(
       d,
       coordinate_system = factor(cs, levels = cs_levels)
     )
@@ -328,7 +328,7 @@ test_that("filter_ccma smooths each group independently", {
   a <- data.frame(time = seq_len(np), x = cos(t), y = sin(t))
   b <- data.frame(time = seq_len(np), x = cos(t) + 5000, y = sin(t) + 5000)
 
-  grouped <- aniframe::aniframe(
+  grouped <- anicore::aniframe(
     time = c(a$time, b$time),
     individual = rep(c("a", "b"), each = np),
     x = c(a$x, b$x),

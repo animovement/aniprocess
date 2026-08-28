@@ -12,7 +12,7 @@
 # - Error messages are clear
 
 test_that("filter_na_roi filters rectangular ROI with x_min", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:4,
     x = c(0, 5, 10, 15),
     y = c(0, 5, 10, 15)
@@ -25,7 +25,7 @@ test_that("filter_na_roi filters rectangular ROI with x_min", {
 })
 
 test_that("filter_na_roi filters rectangular ROI with x_max", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:4,
     x = c(0, 5, 10, 15),
     y = c(0, 5, 10, 15)
@@ -38,7 +38,7 @@ test_that("filter_na_roi filters rectangular ROI with x_max", {
 })
 
 test_that("filter_na_roi filters rectangular ROI with y_min", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:4,
     x = c(0, 5, 10, 15),
     y = c(0, 5, 10, 15)
@@ -51,7 +51,7 @@ test_that("filter_na_roi filters rectangular ROI with y_min", {
 })
 
 test_that("filter_na_roi filters rectangular ROI with y_max", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:4,
     x = c(0, 5, 10, 15),
     y = c(0, 5, 10, 15)
@@ -64,7 +64,7 @@ test_that("filter_na_roi filters rectangular ROI with y_max", {
 })
 
 test_that("filter_na_roi filters rectangular ROI with multiple boundaries", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:5,
     x = c(0, 5, 10, 15, 20),
     y = c(0, 5, 10, 15, 20)
@@ -84,7 +84,7 @@ test_that("filter_na_roi filters rectangular ROI with multiple boundaries", {
 })
 
 test_that("filter_na_roi handles points on rectangular boundary correctly", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:3,
     x = c(5, 10, 15),
     y = c(5, 10, 15)
@@ -105,7 +105,7 @@ test_that("filter_na_roi handles points on rectangular boundary correctly", {
 })
 
 test_that("filter_na_roi filters cuboid ROI with z_min", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:4,
     x = c(10, 10, 10, 10),
     y = c(10, 10, 10, 10),
@@ -121,7 +121,7 @@ test_that("filter_na_roi filters cuboid ROI with z_min", {
 })
 
 test_that("filter_na_roi filters cuboid ROI with z_max", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:4,
     x = c(10, 10, 10, 10),
     y = c(10, 10, 10, 10),
@@ -137,7 +137,7 @@ test_that("filter_na_roi filters cuboid ROI with z_max", {
 })
 
 test_that("filter_na_roi filters cuboid ROI with all boundaries", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:8,
     x = rep(c(0, 10), 4),
     y = rep(c(0, 10), each = 2, times = 2),
@@ -164,7 +164,7 @@ test_that("filter_na_roi filters cuboid ROI with all boundaries", {
 })
 
 test_that("filter_na_roi filters circular ROI correctly", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:4,
     x = c(0, 3, 6, 9),
     y = c(0, 0, 0, 0)
@@ -185,7 +185,7 @@ test_that("filter_na_roi filters circular ROI correctly", {
 })
 
 test_that("filter_na_roi handles circular ROI with various distances", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:3,
     x = c(5, 8, 10),
     y = c(5, 5, 5)
@@ -208,7 +208,7 @@ test_that("filter_na_roi handles circular ROI with various distances", {
 })
 
 test_that("filter_na_roi filters spherical ROI correctly", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:5,
     x = c(5, 5, 5, 5, 10),
     y = c(5, 5, 5, 8, 5),
@@ -237,7 +237,7 @@ test_that("filter_na_roi filters spherical ROI correctly", {
 })
 
 test_that("filter_na_roi handles spherical ROI boundary", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:3,
     x = c(5, 7, 9),
     y = c(5, 5, 5),
@@ -262,7 +262,7 @@ test_that("filter_na_roi handles spherical ROI boundary", {
 })
 
 test_that("filter_na_roi preserves existing NAs in rectangular ROI", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:4,
     x = c(0, NA, 10, 15),
     y = c(0, 5, NA, 15)
@@ -276,7 +276,7 @@ test_that("filter_na_roi preserves existing NAs in rectangular ROI", {
 })
 
 test_that("filter_na_roi preserves existing NAs in circular ROI", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:3,
     x = c(5, NA, 6),
     y = c(5, 5, NA)
@@ -295,7 +295,7 @@ test_that("filter_na_roi preserves existing NAs in circular ROI", {
 })
 
 test_that("filter_na_roi preserves existing NAs in 3D ROI", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:4,
     x = c(10, NA, 10, 10),
     y = c(10, 10, NA, 10),
@@ -311,7 +311,7 @@ test_that("filter_na_roi preserves existing NAs in 3D ROI", {
 })
 
 test_that("filter_na_roi errors when no parameters provided", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:3,
     x = c(1, 2, 3),
     y = c(1, 2, 3)
@@ -324,7 +324,7 @@ test_that("filter_na_roi errors when no parameters provided", {
 })
 
 test_that("filter_na_roi errors when circular ROI parameters incomplete", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:3,
     x = c(1, 2, 3),
     y = c(1, 2, 3)
@@ -350,7 +350,7 @@ test_that("filter_na_roi errors when circular ROI parameters incomplete", {
 })
 
 test_that("filter_na_roi errors when spherical ROI missing z_center for 3D data", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:3,
     x = c(1, 2, 3),
     y = c(1, 2, 3),
@@ -365,7 +365,7 @@ test_that("filter_na_roi errors when spherical ROI missing z_center for 3D data"
 })
 
 test_that("filter_na_roi errors when z parameters used with 2D data", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:3,
     x = c(1, 2, 3),
     y = c(1, 2, 3)
@@ -390,7 +390,7 @@ test_that("filter_na_roi errors when z parameters used with 2D data", {
 })
 
 test_that("filter_na_roi errors when mixing rectangular and circular params", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:3,
     x = c(1, 2, 3),
     y = c(1, 2, 3)
@@ -415,7 +415,7 @@ test_that("filter_na_roi rejects input that is neither aniframe nor data frame",
 
 test_that("filter_na_roi coordinate-frame form matches the aniframe form", {
   coords <- data.frame(x = c(0, 10, 20), y = c(0, 10, 20))
-  d <- aniframe::aniframe(
+  d <- anicore::aniframe(
     time = 1:3,
     x = coords$x,
     y = coords$y,
@@ -439,7 +439,7 @@ test_that("filter_na_roi needs x and y coordinates", {
 })
 
 test_that("filter_na_roi_rect handles each boundary independently", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:3,
     x = c(0, 10, 20),
     y = c(0, 10, 20)
@@ -499,7 +499,7 @@ test_that("filter_na_roi_rect handles each boundary independently", {
 })
 
 test_that("filter_na_roi_rect handles z boundaries in 3D", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:3,
     x = c(10, 10, 10),
     y = c(10, 10, 10),
@@ -537,7 +537,7 @@ test_that("filter_na_roi_rect handles z boundaries in 3D", {
 })
 
 test_that("filter_na_roi_sphere calculates 2D distance correctly", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:5,
     x = c(2, 3, 5, 7, 8),
     y = c(4, 4, 4, 4, 4)
@@ -558,7 +558,7 @@ test_that("filter_na_roi_sphere calculates 2D distance correctly", {
 })
 
 test_that("filter_na_roi_sphere calculates 3D distance correctly", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:4,
     x = c(5, 5, 5, 8),
     y = c(5, 5, 8, 5),
@@ -584,7 +584,7 @@ test_that("filter_na_roi_sphere calculates 3D distance correctly", {
 })
 
 test_that("filter_na_roi returns an aniframe", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:3,
     x = c(1, 5, 10),
     y = c(1, 5, 10)
@@ -596,7 +596,7 @@ test_that("filter_na_roi returns an aniframe", {
 })
 
 test_that("filter_na_roi works with grid data", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:9,
     x = rep(c(0, 5, 10), 3),
     y = rep(c(0, 5, 10), each = 3)
@@ -619,7 +619,7 @@ test_that("filter_na_roi works with grid data", {
 })
 
 test_that("filter_na_roi errors when no ROI parameters are given (3D)", {
-  data <- aniframe::aniframe(
+  data <- anicore::aniframe(
     time = 1:5,
     x = 1:5,
     y = 1:5,

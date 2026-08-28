@@ -1,3 +1,9 @@
+# aniprocess (development version)
+
+## Changed
+
+* The core data structures come from `anicore`, which is what the `aniframe` package was renamed to in its 0.8.0 (animovement/anicore#84). The `aniframe` class keeps its name; only the package providing it changed, so `anicore` replaces `aniframe` in `Imports` and in every `aniframe::` call.
+
 # aniprocess 0.4.0 (2026-08-18)
 
 ## Added
@@ -8,7 +14,7 @@
 
 ## Changed
 
-* The aniframe-aware filters use `aniframe::ensure_is_spatial()` in place of a local copy, so the metadata contract is enforced by the package that defines it (animovement/aniframe#79). Requires aniframe 0.7.0.
+* The aniframe-aware filters use `anicore::ensure_is_spatial()` in place of a local copy, so the metadata contract is enforced by the package that defines it (animovement/aniframe#79). Requires aniframe 0.7.0.
 
 # aniprocess 0.3.0
 
