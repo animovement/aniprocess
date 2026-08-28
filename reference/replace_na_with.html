@@ -65,6 +65,7 @@ an argument rather than by choosing a function.</p>
 <span>  value <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  min_gap <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  max_gap <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  times <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -99,6 +100,14 @@ shorter than this are left as <code>NA</code>. Default <code>1</code> (fill all 
 <dt id="arg-max-gap">max_gap<a class="anchor" aria-label="anchor" href="#arg-max-gap"></a></dt>
 <dd><p>Integer or <code>Inf</code> specifying the maximum gap size to fill.
 Gaps longer than this are left as <code>NA</code>. Default <code>Inf</code> (no limit).</p></dd>
+
+
+<dt id="arg-times">times<a class="anchor" aria-label="anchor" href="#arg-times"></a></dt>
+<dd><p>Optional numeric vector of positions for the values in <code>x</code>,
+normally the frame's index. Interpolation is then over elapsed time
+rather than over row position, so an irregularly sampled gap is filled
+correctly. Defaults to row position, and is ignored by the methods
+that do not interpolate.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

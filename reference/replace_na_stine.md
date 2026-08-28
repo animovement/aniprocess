@@ -6,7 +6,7 @@ both minimum and maximum gap sizes to interpolate.
 ## Usage
 
 ``` r
-replace_na_stine(x, min_gap = 1, max_gap = Inf, ...)
+replace_na_stine(x, min_gap = 1, max_gap = Inf, times = NULL, ...)
 ```
 
 ## Arguments
@@ -24,6 +24,13 @@ replace_na_stine(x, min_gap = 1, max_gap = Inf, ...)
 
   Integer or Inf specifying maximum gap size to interpolate. Gaps longer
   than this will be left as NA. Default is Inf (no upper limit).
+
+- times:
+
+  Optional numeric vector of positions for the values in `x`, normally
+  the frame's index. Interpolation is then over elapsed time rather than
+  over row position, so an irregularly sampled gap is filled correctly.
+  Defaults to row position.
 
 - ...:
 

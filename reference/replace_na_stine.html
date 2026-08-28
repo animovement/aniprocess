@@ -59,7 +59,7 @@ minimum and maximum gap sizes to interpolate.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">replace_na_stine</span><span class="op">(</span><span class="va">x</span>, min_gap <span class="op">=</span> <span class="fl">1</span>, max_gap <span class="op">=</span> <span class="cn">Inf</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">replace_na_stine</span><span class="op">(</span><span class="va">x</span>, min_gap <span class="op">=</span> <span class="fl">1</span>, max_gap <span class="op">=</span> <span class="cn">Inf</span>, times <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -78,6 +78,13 @@ than this will be left as NA. Default is 1 (interpolate all gaps).</p></dd>
 <dt id="arg-max-gap">max_gap<a class="anchor" aria-label="anchor" href="#arg-max-gap"></a></dt>
 <dd><p>Integer or Inf specifying maximum gap size to interpolate. Gaps longer
 than this will be left as NA. Default is Inf (no upper limit).</p></dd>
+
+
+<dt id="arg-times">times<a class="anchor" aria-label="anchor" href="#arg-times"></a></dt>
+<dd><p>Optional numeric vector of positions for the values in <code>x</code>,
+normally the frame's index. Interpolation is then over elapsed time
+rather than over row position, so an irregularly sampled gap is filled
+correctly. Defaults to row position.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

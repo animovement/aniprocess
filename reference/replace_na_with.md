@@ -12,6 +12,7 @@ replace_na_with(
   value = NULL,
   min_gap = 1,
   max_gap = Inf,
+  times = NULL,
   ...
 )
 ```
@@ -50,6 +51,14 @@ replace_na_with(
 
   Integer or `Inf` specifying the maximum gap size to fill. Gaps longer
   than this are left as `NA`. Default `Inf` (no limit).
+
+- times:
+
+  Optional numeric vector of positions for the values in `x`, normally
+  the frame's index. Interpolation is then over elapsed time rather than
+  over row position, so an irregularly sampled gap is filled correctly.
+  Defaults to row position, and is ignored by the methods that do not
+  interpolate.
 
 - ...:
 
