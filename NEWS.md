@@ -1,4 +1,24 @@
-# aniprocess (development version)
+# aniprocess 0.5.0 (2026-08-28)
+
+## Added
+
+* `replace_na_linear()`, `replace_na_spline()` and `replace_na_stine()` take a `times` argument, the positions the values sit at. It defaults to row position, which is what they used before.
+
+## Fixed
+
+* The interpolators fill gaps against the index rather than row position (#67). They built their abscissa as `seq_len(n)`. On a regularly sampled frame row position and elapsed time are proportional and the two agree; on an irregular one they do not, and the imputed value landed at the wrong moment with no error or warning:
+
+  ```r
+  time <- c(0, 1, 10); x <- c(0, NA, 100)
+  #>  50   interpolating on row position
+  #>  10   interpolating on the index
+  ```
+
+  A factor of five on three points, and it grows with how uneven the sampling is. `replace_na_across()` resolves the index and passes it down.
+
+  Two further faults surfaced while fixing it. The data was indexed by *time value* rather than position — correct only while the abscissa was `seq_len(n)`. And `replace_na_spline()` asked `stats::spline()` for `n` points spread across the whole range rather than evaluated at the positions being filled, so with leading or trailing `NA`s the interpolated values were misaligned even on regularly sampled data.
+
+* The column holding time is read from the frame's index rather than the first `variables_when` entry. `variables_when` now holds only the temporal context, so on an ordinary frame it is empty and the lookup failed with `Cannot determine which column holds time.` It also repairs a latent fault: the first entry was `session` on any frame carrying a temporal context, so the wrong column was used whenever one was present.
 
 ## Fixed
 
@@ -8,6 +28,8 @@
 
 
 ## Changed
+
+* The minimum `anicore` is 0.8.0, which is the first version published under that name. The constraint read `>= 0.7.0` — a version of `anicore` that never existed, carried over unchanged from `aniframe` when the dependency was renamed.
 
 * The core data structures come from `anicore`, which is what the `aniframe` package was renamed to in its 0.8.0 (animovement/anicore#84). The `aniframe` class keeps its name; only the package providing it changed, so `anicore` replaces `aniframe` in `Imports` and in every `aniframe::` call.
 
