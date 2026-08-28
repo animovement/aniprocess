@@ -22,6 +22,11 @@
 #'   shorter than this are left as `NA`. Default `1` (fill all gaps).
 #' @param max_gap Integer or `Inf` specifying the maximum gap size to fill.
 #'   Gaps longer than this are left as `NA`. Default `Inf` (no limit).
+#' @param times Optional numeric vector of positions for the values in `x`,
+#'   normally the frame's index. Interpolation is then over elapsed time
+#'   rather than over row position, so an irregularly sampled gap is filled
+#'   correctly. Defaults to row position, and is ignored by the methods
+#'   that do not interpolate.
 #' @param ... Additional parameters passed to the underlying function.
 #'
 #' @return The same shape as `x`, with gaps filled where the gap-length
