@@ -7,6 +7,10 @@ home:
 template:
   bootstrap: 5
   package: animovementtemplate
+  bslib:
+    primary: "#FFBB44"
+    # The hue itself is too light for body text on white.
+    link_color: "#966E28"
 
 reference:
 - title: "Work on a whole aniframe"
