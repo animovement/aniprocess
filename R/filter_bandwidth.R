@@ -106,6 +106,10 @@ filter_lowpass <- function(
   na_action <- match.arg(na_action)
   ensure_keep_na(keep_na)
 
+  if (length(x) == 0) {
+    return(x)
+  }
+
   prepared <- prepare_na(x, na_action, list(...))
   x <- prepared$x
 
@@ -113,7 +117,7 @@ filter_lowpass <- function(
   nyquist_freq <- sampling_rate / 2
   normalized_cutoff <- cutoff_freq / nyquist_freq
 
-  if (normalized_cutoff < 0.001 & order > 2) {
+  if (normalized_cutoff < 0.001 && order > 2) {
     order <- min(order, 2) # Limit order for very low frequencies
     cli::cli_warn(
       "Very low cutoff frequency detected. Reducing filter order to 2 for stability."
@@ -121,17 +125,17 @@ filter_lowpass <- function(
   }
 
   # Add reflection padding to reduce edge effects
-  n_pad <- max(round(sampling_rate / cutoff_freq), order * 10)
-  start_pad <- rev(x[1:min(n_pad, length(x))])
-  end_pad <- rev(x[(length(x) - min(n_pad, length(x)) + 1):length(x)])
-  x_padded <- c(start_pad, x, end_pad)
+  x_padded <- pad_reflect(
+    x,
+    max(round(sampling_rate / cutoff_freq), order * 10)
+  )
 
   # Create and apply filter
   bf <- signal::butter(order, normalized_cutoff, type = "low")
   filtered_padded <- signal::filtfilt(bf, x_padded)
 
   # Remove padding and ensure original length
-  filtered <- filtered_padded[(n_pad + 1):(n_pad + length(x))]
+  filtered <- trim_reflect(filtered_padded, attr(x_padded, "pad"), length(x))
 
   restore_na(filtered, prepared$na_positions, keep_na)
 }
@@ -243,6 +247,10 @@ filter_highpass <- function(
   na_action <- match.arg(na_action)
   ensure_keep_na(keep_na)
 
+  if (length(x) == 0) {
+    return(x)
+  }
+
   prepared <- prepare_na(x, na_action, list(...))
   x <- prepared$x
 
@@ -250,7 +258,7 @@ filter_highpass <- function(
   nyquist_freq <- sampling_rate / 2
   normalized_cutoff <- cutoff_freq / nyquist_freq
 
-  if (normalized_cutoff < 0.001 & order > 2) {
+  if (normalized_cutoff < 0.001 && order > 2) {
     order <- min(order, 2) # Limit order for very low frequencies
     cli::cli_warn(
       "Very low cutoff frequency detected. Reducing filter order to 2 for stability."
@@ -258,17 +266,17 @@ filter_highpass <- function(
   }
 
   # Add reflection padding to reduce edge effects
-  n_pad <- max(round(sampling_rate / cutoff_freq), order * 10)
-  start_pad <- rev(x[1:min(n_pad, length(x))])
-  end_pad <- rev(x[(length(x) - min(n_pad, length(x)) + 1):length(x)])
-  x_padded <- c(start_pad, x, end_pad)
+  x_padded <- pad_reflect(
+    x,
+    max(round(sampling_rate / cutoff_freq), order * 10)
+  )
 
   # Create and apply filter
   bf <- signal::butter(order, normalized_cutoff, type = "high")
   filtered_padded <- signal::filtfilt(bf, x_padded)
 
   # Remove padding and ensure original length
-  filtered <- filtered_padded[(n_pad + 1):(n_pad + length(x))]
+  filtered <- trim_reflect(filtered_padded, attr(x_padded, "pad"), length(x))
 
   restore_na(filtered, prepared$na_positions, keep_na)
 }
