@@ -8,7 +8,7 @@ filter_rollmean(
   x,
   window_width = 5,
   min_obs = 1,
-  align = c("right", "left", "center"),
+  align = c("center", "right", "left"),
   keep_na = TRUE
 )
 }
@@ -21,8 +21,11 @@ calculation.}
 \item{min_obs}{Minimum number of non-NA values required in the window.
 Positions with fewer non-NA values return \code{NA}. Defaults to \code{1}.}
 
-\item{align}{Window alignment. One of \code{"right"} (default), \code{"left"}, or
-\code{"center"}.}
+\item{align}{Window alignment. One of \code{"center"} (default), \code{"right"}, or
+\code{"left"}. A centred window is symmetric about the point, so the filtered
+signal keeps its timing; \code{"right"} looks only backwards, which is what you
+want when the next sample does not exist yet, at the cost of lagging the
+signal by \code{(window_width - 1) / 2} samples.}
 
 \item{keep_na}{Logical. If \code{TRUE} (default), positions that were \code{NA} in
 the input are \code{NA} in the output — gaps stay gaps. If \code{FALSE}, the
@@ -38,6 +41,18 @@ Applies a rolling mean filter to a numeric vector using
 \code{\link[data.table:frollmean]{data.table::frollmean()}}.
 }
 \details{
+A centred window is symmetric about the point it replaces, so the filtered
+signal keeps its timing. A right-aligned one looks only backwards, which is
+what you want when the next sample does not exist yet — real-time tracking,
+closed-loop experiments — and lags the signal by \code{(window_width - 1) / 2}
+samples in exchange. Smoothing before \code{\link[animetric:calculate_kinematics]{animetric::calculate_kinematics()}}
+with a lagging filter moves every event later by that much.
+
+The trade runs the other way at the edges: a centred window has no data
+beyond the ends of the series, so the first and last \code{(window_width - 1) / 2}
+values are \code{NA}, where a right-aligned window fills them from a partial
+window.
+
 \code{keep_na} and \code{min_obs} control different things and are usually worth
 setting together. \code{keep_na} governs positions that were \code{NA} in the
 \emph{input}; \code{min_obs} governs positions that were observed but whose

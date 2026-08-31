@@ -8,7 +8,7 @@ filter_rollmedian(
   x,
   window_width = 5,
   min_obs = 1,
-  align = c("right", "left", "center"),
+  align = c("center", "right", "left"),
   keep_na = TRUE
 )
 }
@@ -21,8 +21,11 @@ calculation.}
 \item{min_obs}{Minimum number of non-NA values required in the window.
 Positions with fewer non-NA values return \code{NA}. Defaults to \code{1}.}
 
-\item{align}{Window alignment. One of \code{"right"} (default), \code{"left"}, or
-\code{"center"}.}
+\item{align}{Window alignment. One of \code{"center"} (default), \code{"right"}, or
+\code{"left"}. A centred window is symmetric about the point, so the filtered
+signal keeps its timing; \code{"right"} looks only backwards, which is what you
+want when the next sample does not exist yet, at the cost of lagging the
+signal by \code{(window_width - 1) / 2} samples.}
 
 \item{keep_na}{Logical. If \code{TRUE} (default), positions that were \code{NA} in
 the input are \code{NA} in the output — gaps stay gaps. If \code{FALSE}, the

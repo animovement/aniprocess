@@ -1,5 +1,13 @@
 # aniprocess (development version)
 
+## Changed
+
+* `filter_rollmean()` and `filter_rollmedian()` centre their window by default, instead of aligning it to the right (#83). A right-aligned window looks only backwards, so the filtered signal lagged by `(window_width - 1) / 2` samples: with `window_width = 11` a feature peaking at frame 100 came out at frame 105, and smoothing before `calculate_kinematics()` moved every speed peak 200 ms later at 30 Hz. Nothing warned, because a lagged trace looks entirely plausible.
+
+  The other five smoothers do not shift the signal — `filter_triangular()` already defaulted to `"center"`, and the Butterworth filters use `filtfilt()` precisely to avoid it — so this brings the rolling pair into line rather than introducing a new convention.
+
+  **Results change.** Centred output keeps its timing but has no data beyond the ends of the series, so the first and last `(window_width - 1) / 2` values are now `NA` where a partial window used to fill them. Pass `align = "right"` for the old behaviour, which is still the right choice when the next sample does not exist yet — real-time tracking, closed-loop experiments.
+
 ## Fixed
 
 * `filter_lowpass()` and `filter_highpass()` return the filtered signal rather than its reversed tail, for any signal shorter than the padding they apply (#79). The reflection padding is clamped to the length of the signal, but the code that removed it afterwards used the width it had *asked* for. With the default order of 4 the pad is at least 40 samples, so every signal shorter than that was affected: under about 20 samples the result was entirely `NA`, and between there and 40 it was the mirrored end of the signal, reversed in time, with no `NA` and no warning to show for it. A 20-sample trace came back correlating `-0.73` with its own filtered self. Signals longer than the pad were never affected and are unchanged.
