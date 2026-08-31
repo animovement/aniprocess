@@ -84,16 +84,17 @@ filter_lowpass_fft <- function(
   na_action <- match.arg(na_action)
   ensure_keep_na(keep_na)
 
+  if (length(x) == 0) {
+    return(x)
+  }
+
   prepared <- prepare_na(x, na_action, list(...))
   x <- prepared$x
 
   N <- length(x)
 
   # Add reflection padding to reduce edge effects
-  n_pad <- ceiling(N / 10) # 10% padding
-  start_pad <- rev(x[1:n_pad])
-  end_pad <- rev(x[(length(x) - n_pad + 1):length(x)])
-  x_padded <- c(start_pad, x, end_pad)
+  x_padded <- pad_reflect(x, ceiling(N / 10)) # 10% padding
 
   # Compute FFT
   X <- stats::fft(x_padded)
@@ -125,7 +126,7 @@ filter_lowpass_fft <- function(
   filtered_padded <- Re(stats::fft(X_filtered, inverse = TRUE) / N_padded)
 
   # Remove padding
-  filtered <- filtered_padded[(n_pad + 1):(n_pad + N)]
+  filtered <- trim_reflect(filtered_padded, attr(x_padded, "pad"), N)
 
   restore_na(filtered, prepared$na_positions, keep_na)
 }
@@ -223,16 +224,17 @@ filter_highpass_fft <- function(
   na_action <- match.arg(na_action)
   ensure_keep_na(keep_na)
 
+  if (length(x) == 0) {
+    return(x)
+  }
+
   prepared <- prepare_na(x, na_action, list(...))
   x <- prepared$x
 
   N <- length(x)
 
   # Add reflection padding to reduce edge effects
-  n_pad <- ceiling(N / 10) # 10% padding
-  start_pad <- rev(x[1:n_pad])
-  end_pad <- rev(x[(length(x) - n_pad + 1):length(x)])
-  x_padded <- c(start_pad, x, end_pad)
+  x_padded <- pad_reflect(x, ceiling(N / 10)) # 10% padding
 
   # Compute FFT
   X <- stats::fft(x_padded)
@@ -263,7 +265,7 @@ filter_highpass_fft <- function(
   filtered_padded <- Re(stats::fft(X_filtered, inverse = TRUE) / N_padded)
 
   # Remove padding
-  filtered <- filtered_padded[(n_pad + 1):(n_pad + N)]
+  filtered <- trim_reflect(filtered_padded, attr(x_padded, "pad"), N)
 
   restore_na(filtered, prepared$na_positions, keep_na)
 }

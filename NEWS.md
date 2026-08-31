@@ -1,5 +1,15 @@
 # aniprocess (development version)
 
+## Fixed
+
+* `filter_lowpass()` and `filter_highpass()` return the filtered signal rather than its reversed tail, for any signal shorter than the padding they apply (#79). The reflection padding is clamped to the length of the signal, but the code that removed it afterwards used the width it had *asked* for. With the default order of 4 the pad is at least 40 samples, so every signal shorter than that was affected: under about 20 samples the result was entirely `NA`, and between there and 40 it was the mirrored end of the signal, reversed in time, with no `NA` and no warning to show for it. A 20-sample trace came back correlating `-0.73` with its own filtered self. Signals longer than the pad were never affected and are unchanged.
+
+* The four bandwidth filters return an empty vector for an empty signal, instead of two `NA`s (#79). `1:0` counts backwards, so the padding indexed positions 1 and 0 of a vector with neither.
+
+## Changed
+
+* `filter_lowpass()`, `filter_highpass()`, `filter_lowpass_fft()` and `filter_highpass_fft()` share one reflection-padding helper, so the width applied and the width removed cannot drift apart again (#79).
+
 # aniprocess 0.5.0 (2026-08-28)
 
 ## Added
