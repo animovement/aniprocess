@@ -2,6 +2,33 @@
 
 ## aniprocess (development version)
 
+### Changed
+
+- [`filter_rollmean()`](https://animovement.dev/aniprocess/reference/filter_rollmean.md)
+  and
+  [`filter_rollmedian()`](https://animovement.dev/aniprocess/reference/filter_rollmedian.md)
+  centre their window by default, instead of aligning it to the right
+  ([\#83](https://github.com/animovement/aniprocess/issues/83)). A
+  right-aligned window looks only backwards, so the filtered signal
+  lagged by `(window_width - 1) / 2` samples: with `window_width = 11` a
+  feature peaking at frame 100 came out at frame 105, and smoothing
+  before `calculate_kinematics()` moved every speed peak 200 ms later at
+  30 Hz. Nothing warned, because a lagged trace looks entirely
+  plausible.
+
+  The other five smoothers do not shift the signal —
+  [`filter_triangular()`](https://animovement.dev/aniprocess/reference/filter_triangular.md)
+  already defaulted to `"center"`, and the Butterworth filters use
+  `filtfilt()` precisely to avoid it — so this brings the rolling pair
+  into line rather than introducing a new convention.
+
+  **Results change.** Centred output keeps its timing but has no data
+  beyond the ends of the series, so the first and last
+  `(window_width - 1) / 2` values are now `NA` where a partial window
+  used to fill them. Pass `align = "right"` for the old behaviour, which
+  is still the right choice when the next sample does not exist yet —
+  real-time tracking, closed-loop experiments.
+
 ### Fixed
 
 - [`filter_lowpass()`](https://animovement.dev/aniprocess/reference/filter_lowpass.md)

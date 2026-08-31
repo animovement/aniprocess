@@ -9,7 +9,7 @@ data.table::frollmean()."><meta property="og:image" content="https://animovement
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,7 +63,7 @@ data.table::frollmean()."><meta property="og:image" content="https://animovement
 <span>  <span class="va">x</span>,</span>
 <span>  window_width <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  min_obs <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  align <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"right"</span>, <span class="st">"left"</span>, <span class="st">"center"</span><span class="op">)</span>,</span>
+<span>  align <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"center"</span>, <span class="st">"right"</span>, <span class="st">"left"</span><span class="op">)</span>,</span>
 <span>  keep_na <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -87,8 +87,11 @@ Positions with fewer non-NA values return <code>NA</code>. Defaults to <code>1</
 
 
 <dt id="arg-align">align<a class="anchor" aria-label="anchor" href="#arg-align"></a></dt>
-<dd><p>Window alignment. One of <code>"right"</code> (default), <code>"left"</code>, or
-<code>"center"</code>.</p></dd>
+<dd><p>Window alignment. One of <code>"center"</code> (default), <code>"right"</code>, or
+<code>"left"</code>. A centred window is symmetric about the point, so the filtered
+signal keeps its timing; <code>"right"</code> looks only backwards, which is what you
+want when the next sample does not exist yet, at the cost of lagging the
+signal by <code>(window_width - 1) / 2</code> samples.</p></dd>
 
 
 <dt id="arg-keep-na">keep_na<a class="anchor" aria-label="anchor" href="#arg-keep-na"></a></dt>
@@ -105,7 +108,17 @@ interpolated estimates.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p><code>keep_na</code> and <code>min_obs</code> control different things and are usually worth
+    <p>A centred window is symmetric about the point it replaces, so the filtered
+signal keeps its timing. A right-aligned one looks only backwards, which is
+what you want when the next sample does not exist yet — real-time tracking,
+closed-loop experiments — and lags the signal by <code>(window_width - 1) / 2</code>
+samples in exchange. Smoothing before <code>animetric::calculate_kinematics()</code>
+with a lagging filter moves every event later by that much.</p>
+<p>The trade runs the other way at the edges: a centred window has no data
+beyond the ends of the series, so the first and last <code>(window_width - 1) / 2</code>
+values are <code>NA</code>, where a right-aligned window fills them from a partial
+window.</p>
+<p><code>keep_na</code> and <code>min_obs</code> control different things and are usually worth
 setting together. <code>keep_na</code> governs positions that were <code>NA</code> in the
 <em>input</em>; <code>min_obs</code> governs positions that were observed but whose
 <em>window</em> is too sparse to trust. Neither substitutes for the other:
@@ -124,7 +137,7 @@ positions return <code>NA</code>. This is a limitation of the underlying
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">100</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span>, <span class="fl">7</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">filter_rollmean</span><span class="op">(</span><span class="va">x</span>, window_width <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  1.00000  1.50000 34.33333 35.33333 36.33333  5.00000  6.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]       NA 34.33333 35.33333 36.33333  5.00000  6.00000       NA</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Centring the window changes which samples are averaged, and leaves NA at</span></span></span>
 <span class="r-in"><span><span class="co"># both edges rather than one</span></span></span>

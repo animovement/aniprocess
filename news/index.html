@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,12 +52,20 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="aniprocess-development-version">aniprocess (development version)<a class="anchor" aria-label="anchor" href="#aniprocess-development-version"></a></h2>
 <div class="section level3">
+<h3 id="changed-development-version">Changed<a class="anchor" aria-label="anchor" href="#changed-development-version"></a></h3>
+<ul><li>
+<p><code><a href="../reference/filter_rollmean.html">filter_rollmean()</a></code> and <code><a href="../reference/filter_rollmedian.html">filter_rollmedian()</a></code> centre their window by default, instead of aligning it to the right (<a href="https://github.com/animovement/aniprocess/issues/83" class="external-link">#83</a>). A right-aligned window looks only backwards, so the filtered signal lagged by <code>(window_width - 1) / 2</code> samples: with <code>window_width = 11</code> a feature peaking at frame 100 came out at frame 105, and smoothing before <code>calculate_kinematics()</code> moved every speed peak 200 ms later at 30 Hz. Nothing warned, because a lagged trace looks entirely plausible.</p>
+<p>The other five smoothers do not shift the signal — <code><a href="../reference/filter_triangular.html">filter_triangular()</a></code> already defaulted to <code>"center"</code>, and the Butterworth filters use <code>filtfilt()</code> precisely to avoid it — so this brings the rolling pair into line rather than introducing a new convention.</p>
+<p><strong>Results change.</strong> Centred output keeps its timing but has no data beyond the ends of the series, so the first and last <code>(window_width - 1) / 2</code> values are now <code>NA</code> where a partial window used to fill them. Pass <code>align = "right"</code> for the old behaviour, which is still the right choice when the next sample does not exist yet — real-time tracking, closed-loop experiments.</p>
+</li>
+</ul></div>
+<div class="section level3">
 <h3 id="fixed-development-version">Fixed<a class="anchor" aria-label="anchor" href="#fixed-development-version"></a></h3>
 <ul><li><p><code><a href="../reference/filter_lowpass.html">filter_lowpass()</a></code> and <code><a href="../reference/filter_highpass.html">filter_highpass()</a></code> return the filtered signal rather than its reversed tail, for any signal shorter than the padding they apply (<a href="https://github.com/animovement/aniprocess/issues/79" class="external-link">#79</a>). The reflection padding is clamped to the length of the signal, but the code that removed it afterwards used the width it had <em>asked</em> for. With the default order of 4 the pad is at least 40 samples, so every signal shorter than that was affected: under about 20 samples the result was entirely <code>NA</code>, and between there and 40 it was the mirrored end of the signal, reversed in time, with no <code>NA</code> and no warning to show for it. A 20-sample trace came back correlating <code>-0.73</code> with its own filtered self. Signals longer than the pad were never affected and are unchanged.</p></li>
 <li><p>The four bandwidth filters return an empty vector for an empty signal, instead of two <code>NA</code>s (<a href="https://github.com/animovement/aniprocess/issues/79" class="external-link">#79</a>). <code>1:0</code> counts backwards, so the padding indexed positions 1 and 0 of a vector with neither.</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="changed-development-version">Changed<a class="anchor" aria-label="anchor" href="#changed-development-version"></a></h3>
+<h3 id="changed-development-version-1">Changed<a class="anchor" aria-label="anchor" href="#changed-development-version-1"></a></h3>
 <ul><li>
 <code><a href="../reference/filter_lowpass.html">filter_lowpass()</a></code>, <code><a href="../reference/filter_highpass.html">filter_highpass()</a></code>, <code><a href="../reference/filter_lowpass_fft.html">filter_lowpass_fft()</a></code> and <code><a href="../reference/filter_highpass_fft.html">filter_highpass_fft()</a></code> share one reflection-padding helper, so the width applied and the width removed cannot drift apart again (<a href="https://github.com/animovement/aniprocess/issues/79" class="external-link">#79</a>).</li>
 </ul></div>

@@ -10,7 +10,7 @@ filter_rollmedian(
   x,
   window_width = 5,
   min_obs = 1,
-  align = c("right", "left", "center"),
+  align = c("center", "right", "left"),
   keep_na = TRUE
 )
 ```
@@ -32,7 +32,11 @@ filter_rollmedian(
 
 - align:
 
-  Window alignment. One of `"right"` (default), `"left"`, or `"center"`.
+  Window alignment. One of `"center"` (default), `"right"`, or `"left"`.
+  A centred window is symmetric about the point, so the filtered signal
+  keeps its timing; `"right"` looks only backwards, which is what you
+  want when the next sample does not exist yet, at the cost of lagging
+  the signal by `(window_width - 1) / 2` samples.
 
 - keep_na:
 
@@ -58,10 +62,10 @@ edges for `align = "center"`.
 ``` r
 x <- c(1, 2, 100, 4, 5, 6, 7)
 filter_rollmedian(x, window_width = 3)
-#> [1] 1.0 1.5 2.0 4.0 5.0 5.0 6.0
+#> [1] NA  2  4  5  5  6 NA
 
 # The median discards the spike; a rolling mean smears it across three
 # neighbouring samples instead
 filter_rollmean(x, window_width = 3)
-#> [1]  1.00000  1.50000 34.33333 35.33333 36.33333  5.00000  6.00000
+#> [1]       NA 34.33333 35.33333 36.33333  5.00000  6.00000       NA
 ```

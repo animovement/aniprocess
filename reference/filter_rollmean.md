@@ -10,7 +10,7 @@ filter_rollmean(
   x,
   window_width = 5,
   min_obs = 1,
-  align = c("right", "left", "center"),
+  align = c("center", "right", "left"),
   keep_na = TRUE
 )
 ```
@@ -32,7 +32,11 @@ filter_rollmean(
 
 - align:
 
-  Window alignment. One of `"right"` (default), `"left"`, or `"center"`.
+  Window alignment. One of `"center"` (default), `"right"`, or `"left"`.
+  A centred window is symmetric about the point, so the filtered signal
+  keeps its timing; `"right"` looks only backwards, which is what you
+  want when the next sample does not exist yet, at the cost of lagging
+  the signal by `(window_width - 1) / 2` samples.
 
 - keep_na:
 
@@ -47,6 +51,19 @@ filter_rollmean(
 Filtered numeric vector, same length as `x`.
 
 ## Details
+
+A centred window is symmetric about the point it replaces, so the
+filtered signal keeps its timing. A right-aligned one looks only
+backwards, which is what you want when the next sample does not exist
+yet — real-time tracking, closed-loop experiments — and lags the signal
+by `(window_width - 1) / 2` samples in exchange. Smoothing before
+`animetric::calculate_kinematics()` with a lagging filter moves every
+event later by that much.
+
+The trade runs the other way at the edges: a centred window has no data
+beyond the ends of the series, so the first and last
+`(window_width - 1) / 2` values are `NA`, where a right-aligned window
+fills them from a partial window.
 
 `keep_na` and `min_obs` control different things and are usually worth
 setting together. `keep_na` governs positions that were `NA` in the
@@ -69,7 +86,7 @@ implementation.
 ``` r
 x <- c(1, 2, 100, 4, 5, 6, 7)
 filter_rollmean(x, window_width = 3)
-#> [1]  1.00000  1.50000 34.33333 35.33333 36.33333  5.00000  6.00000
+#> [1]       NA 34.33333 35.33333 36.33333  5.00000  6.00000       NA
 
 # Centring the window changes which samples are averaged, and leaves NA at
 # both edges rather than one

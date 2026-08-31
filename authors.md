@@ -33,6 +33,6 @@ and filtering of movement data.”
       author = {Mikkel Roald-Arbøl},
       year = {2026},
       doi = {10.5281/zenodo.17357777},
-      version = {0.5.0.9001},
+      version = {0.5.0.9002},
       url = {https://animovement.dev/aniprocess/},
     }
