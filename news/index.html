@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">aniprocess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,6 +51,16 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="aniprocess-development-version">aniprocess (development version)<a class="anchor" aria-label="anchor" href="#aniprocess-development-version"></a></h2>
+<div class="section level3">
+<h3 id="fixed-development-version">Fixed<a class="anchor" aria-label="anchor" href="#fixed-development-version"></a></h3>
+<ul><li><p><code><a href="../reference/filter_lowpass.html">filter_lowpass()</a></code> and <code><a href="../reference/filter_highpass.html">filter_highpass()</a></code> return the filtered signal rather than its reversed tail, for any signal shorter than the padding they apply (<a href="https://github.com/animovement/aniprocess/issues/79" class="external-link">#79</a>). The reflection padding is clamped to the length of the signal, but the code that removed it afterwards used the width it had <em>asked</em> for. With the default order of 4 the pad is at least 40 samples, so every signal shorter than that was affected: under about 20 samples the result was entirely <code>NA</code>, and between there and 40 it was the mirrored end of the signal, reversed in time, with no <code>NA</code> and no warning to show for it. A 20-sample trace came back correlating <code>-0.73</code> with its own filtered self. Signals longer than the pad were never affected and are unchanged.</p></li>
+<li><p>The four bandwidth filters return an empty vector for an empty signal, instead of two <code>NA</code>s (<a href="https://github.com/animovement/aniprocess/issues/79" class="external-link">#79</a>). <code>1:0</code> counts backwards, so the padding indexed positions 1 and 0 of a vector with neither.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="changed-development-version">Changed<a class="anchor" aria-label="anchor" href="#changed-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/filter_lowpass.html">filter_lowpass()</a></code>, <code><a href="../reference/filter_highpass.html">filter_highpass()</a></code>, <code><a href="../reference/filter_lowpass_fft.html">filter_lowpass_fft()</a></code> and <code><a href="../reference/filter_highpass_fft.html">filter_highpass_fft()</a></code> share one reflection-padding helper, so the width applied and the width removed cannot drift apart again (<a href="https://github.com/animovement/aniprocess/issues/79" class="external-link">#79</a>).</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.5.0" id="aniprocess-050-2026-08-28">aniprocess 0.5.0 (2026-08-28)<a class="anchor" aria-label="anchor" href="#aniprocess-050-2026-08-28"></a></h2>
