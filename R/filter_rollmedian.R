@@ -23,7 +23,7 @@ filter_rollmedian <- function(
   x,
   window_width = 5,
   min_obs = 1,
-  align = c("right", "left", "center"),
+  align = c("center", "right", "left"),
   keep_na = TRUE
 ) {
   align <- match.arg(align)

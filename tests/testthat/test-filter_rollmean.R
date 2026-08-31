@@ -83,3 +83,27 @@ test_that("filter_rollmean masks rows with fewer than min_obs non-NA values", {
 test_that("filter_rollmean validates align argument", {
   expect_error(filter_rollmean(1:5, align = "bogus"))
 })
+
+test_that("the default window is centred, so the signal keeps its timing", {
+  # A right-aligned window lags by (window_width - 1) / 2, which moves every
+  # event later -- including the peaks kinematics are derived from (#83).
+  x <- dnorm(1:200, mean = 100, sd = 6)
+
+  expect_identical(which.max(filter_rollmean(x, window_width = 11)), 100L)
+  expect_identical(
+    which.max(filter_rollmean(x, window_width = 11, align = "right")),
+    105L
+  )
+})
+
+test_that("a centred window has no data beyond the ends", {
+  # The other half of the trade: the edges are NA rather than filled from a
+  # partial window, because there is nothing there to average.
+  x <- as.numeric(1:10)
+
+  expect_identical(
+    which(is.na(filter_rollmean(x, window_width = 5))),
+    c(1L, 2L, 9L, 10L)
+  )
+  expect_false(anyNA(filter_rollmean(x, window_width = 5, align = "right")))
+})
