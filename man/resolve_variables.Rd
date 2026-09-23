@@ -17,7 +17,7 @@ resolve_variables(data, variables, call = rlang::caller_env())
 A character vector of column names.
 }
 \description{
-Defaults to the columns named by the \code{variables_where} metadata field.
+Defaults to the position columns declared under \code{where}.
 A tidyselect expression overrides that.
 }
 \keyword{internal}

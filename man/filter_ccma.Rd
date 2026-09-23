@@ -20,8 +20,8 @@ filter_ccma(
 \item{data}{A data frame of 2 or 3 numeric coordinate columns. The
 curvature math is Cartesian-specific (cross products, Euclidean norms,
 circumradius), so coordinates must be Cartesian. For a whole aniframe
-use \code{\link[=filter_across]{filter_across()}}, which selects the spatial columns from
-\code{variables_where} and rejects non-Cartesian frames.}
+use \code{\link[=filter_across]{filter_across()}}, which selects the declared position columns
+and rejects non-Cartesian frames.}
 
 \item{window_width_ma}{Integer width of the moving-average kernel
 (must be odd; even values are rounded up). Larger = more smoothing.
@@ -114,7 +114,7 @@ coords <- data.frame(x = sin(seq(0, 6, length.out = 40)), y = seq(0, 6, length.o
 head(filter_ccma(coords, window_width_ma = 11, window_width_cc = 7))
 
 # The aniframe tier
-af <- anicore::example_aniframe(n_obs = 60, n_individuals = 1, n_keypoints = 1)
+af <- anicore::example_anipoint(n_obs = 60, n_individuals = 1, n_keypoints = 1)
 filter_across(af, "ccma", window_width_ma = 11, window_width_cc = 7)
 
 }

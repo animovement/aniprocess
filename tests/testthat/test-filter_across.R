@@ -7,7 +7,7 @@
 # - use_derivatives round trip
 
 grouped_fixture <- function(np = 30, sampling_rate = 30) {
-  d <- anicore::aniframe(
+  d <- anicore::anipoint(
     time = rep(seq_len(np), 2),
     individual = rep(c("a", "b"), each = np),
     x = c(seq_len(np), seq_len(np) + 1000),
@@ -49,7 +49,7 @@ test_that("filter_across takes sampling_rate from metadata", {
 })
 
 test_that("filter_across errors when sampling_rate is unavailable", {
-  d <- anicore::aniframe(
+  d <- anicore::anipoint(
     time = 1:20,
     x = as.numeric(1:20),
     y = as.numeric(1:20),
@@ -64,7 +64,7 @@ test_that("filter_across errors when sampling_rate is unavailable", {
 })
 
 test_that("filter_across takes the time column from variables_when", {
-  d <- anicore::aniframe(
+  d <- anicore::anipoint(
     time = c(0, 0.1, 0.3, 0.35, 0.5, 0.8),
     x = c(1, 1.1, 2, 0.9, 1.2, 0.8),
     y = c(1, 1.1, 2, 0.9, 1.2, 0.8),
@@ -104,7 +104,7 @@ test_that("filter_across rejects a selection with no columns or non-numeric ones
 test_that("filter_across applies ccma jointly", {
   np <- 60
   t <- seq(0, 2 * pi, length.out = np)
-  d <- anicore::aniframe(
+  d <- anicore::anipoint(
     time = seq_len(np),
     x = cos(t),
     y = sin(t),
@@ -140,7 +140,7 @@ test_that("filter_across returns an aniframe and preserves grouping", {
   d <- grouped_fixture()
   out <- filter_across(d, "gaussian")
 
-  expect_s3_class(out, "aniframe")
+  expect_s3_class(out, "anipoint")
   expect_true(inherits(out, "grouped_df"))
   expect_equal(dplyr::group_vars(out), "individual")
 })
@@ -148,7 +148,7 @@ test_that("filter_across returns an aniframe and preserves grouping", {
 test_that("on_deltas round trips when the filter does nothing", {
   # window_width = 1 makes rollmean the identity, so differencing and
   # re-integrating must return the input unchanged.
-  d <- anicore::aniframe(
+  d <- anicore::anipoint(
     time = 1:5,
     x = c(10, 11, 13, 16, 20),
     y = c(-3, -3, -1, 2, 6),
@@ -161,7 +161,7 @@ test_that("on_deltas round trips when the filter does nothing", {
 })
 
 test_that("on_deltas keeps the original starting value", {
-  d <- anicore::aniframe(
+  d <- anicore::anipoint(
     time = 1:20,
     x = 100 + cumsum(c(0, rnorm(19))),
     y = rep(0, 20),
@@ -174,7 +174,7 @@ test_that("on_deltas keeps the original starting value", {
 })
 
 test_that("on_deltas restores NA at a missing step without blanking the rest", {
-  d <- anicore::aniframe(
+  d <- anicore::anipoint(
     time = 1:6,
     x = c(10, 11, NA, 16, 20, 25),
     y = rep(0, 6),
@@ -198,7 +198,7 @@ test_that("on_deltas respects grouping", {
 })
 
 test_that("filter_across errors on a missing selected column", {
-  d <- anicore::aniframe(
+  d <- anicore::anipoint(
     time = 1:5,
     x = as.numeric(1:5),
     y = as.numeric(1:5),
@@ -212,7 +212,7 @@ test_that("filter_across errors on a missing selected column", {
 
 test_that("filter_across dispatches every method", {
   np <- 40
-  d <- anicore::aniframe(
+  d <- anicore::anipoint(
     time = seq_len(np),
     x = sin(2 * pi * 2 * seq(0, 1, length.out = np)),
     y = cos(2 * pi * 2 * seq(0, 1, length.out = np)),
@@ -235,7 +235,7 @@ test_that("filter_across dispatches every method", {
 })
 
 test_that("filter_across errors when variables_when names a missing column", {
-  d <- anicore::aniframe(
+  d <- anicore::anipoint(
     time = 1:6,
     x = as.numeric(1:6),
     y = as.numeric(1:6),
@@ -250,17 +250,17 @@ test_that("filter_across errors when variables_when names a missing column", {
 # --- aniframe shapes: identity columns, metadata edge cases, 3D ------------
 
 test_that("filter_across works with the default example aniframe", {
-  d <- anicore::example_aniframe()
+  d <- anicore::example_anipoint()
   expect_no_error(filter_across(d))
-  expect_s3_class(filter_across(d), "aniframe")
+  expect_s3_class(filter_across(d), "anipoint")
 })
 
 test_that("filter_across inherits the grouping aniframe derives from variables_what", {
-  # aniframe() groups by variables_what at construction, so filter_across()
+  # anipoint() groups by variables_what at construction, so filter_across()
   # never has to read that metadata itself -- it just honours the grouping
   # that is already on the frame.
   n <- 10
-  d <- anicore::aniframe(
+  d <- anicore::anipoint(
     track = rep(c("a", "b"), each = n / 2),
     time = rep(seq_len(n / 2), 2),
     x = c(seq_len(n / 2), seq_len(n / 2) + 1000),
@@ -288,12 +288,12 @@ test_that("filter_across inherits the grouping aniframe derives from variables_w
 test_that("filter_across works when variables_what names a missing column", {
   # aniframe can carry a default variables_what (e.g. "keypoint") even when
   # the column is absent. Nothing reads it, so this must simply work.
-  d <- anicore::aniframe(time = 1:20, x = rnorm(20), y = rnorm(20))
+  d <- anicore::anipoint(time = 1:20, x = rnorm(20), y = rnorm(20))
   expect_no_error(filter_across(d, "rollmean", window_width = 3))
 })
 
 test_that("filter_across filters z when it is a spatial variable", {
-  d <- anicore::aniframe(
+  d <- anicore::anipoint(
     time = 1:20,
     x = rnorm(20),
     y = rnorm(20),

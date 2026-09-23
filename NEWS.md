@@ -2,6 +2,8 @@
 
 ## Changed
 
+* Works with anicore's `anipoint` class and rebuilt accessor API (animovement/anicore#154). The `*_across()` verbs take their default columns from `get_variables(data, "where", "position")`.
+
 * `filter_rollmean()` and `filter_rollmedian()` centre their window by default, instead of aligning it to the right (#83). A right-aligned window looks only backwards, so the filtered signal lagged by `(window_width - 1) / 2` samples: with `window_width = 11` a feature peaking at frame 100 came out at frame 105, and smoothing before `calculate_kinematics()` moved every speed peak 200 ms later at 30 Hz. Nothing warned, because a lagged trace looks entirely plausible.
 
   The other five smoothers do not shift the signal — `filter_triangular()` already defaulted to `"center"`, and the Butterworth filters use `filtfilt()` precisely to avoid it — so this brings the rolling pair into line rather than introducing a new convention.

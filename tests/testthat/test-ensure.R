@@ -38,7 +38,7 @@ test_that("ensure_replace_na_args returns invisibly on valid input", {
 })
 
 test_that("ensure_coords() names the aniframe tier when it knows it", {
-  af <- anicore::example_aniframe(n_obs = 5, n_individuals = 1, n_keypoints = 1)
+  af <- anicore::example_anipoint(n_obs = 5, n_individuals = 1, n_keypoints = 1)
 
   with_hint <- tryCatch(
     ensure_coords(af, across = "filter_na_across"),

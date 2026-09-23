@@ -1,6 +1,6 @@
 #' Resolve which columns an `*_across()` verb should operate on.
 #'
-#' Defaults to the columns named by the `variables_where` metadata field.
+#' Defaults to the position columns declared under `where`.
 #' A tidyselect expression overrides that.
 #'
 #' @param data An aniframe.
@@ -11,7 +11,7 @@
 #' @keywords internal
 resolve_variables <- function(data, variables, call = rlang::caller_env()) {
   if (rlang::quo_is_null(variables)) {
-    return(anicore::get_metadata(data, "variables_where"))
+    return(unname(anicore::get_variables(data, "where", "position")))
   }
 
   selected <- names(tidyselect::eval_select(variables, data, error_call = call))

@@ -23,7 +23,7 @@ filter_across(
 \code{"one_euro"} or \code{"ccma"}.}
 
 \item{variables}{Columns to filter, as a tidyselect expression.
-Defaults to the \code{variables_where} metadata field.}
+Defaults to the declared position columns.}
 
 \item{...}{Arguments passed to the underlying filter.}
 
@@ -45,8 +45,8 @@ filtered.
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
 The aniframe-level entry point to the \verb{filter_*()} family. Applies a
-named filter to the columns given by the \code{variables_where} metadata
-field, within the frame's existing grouping.
+named filter to the frame's declared position columns, within its
+existing grouping.
 }
 \details{
 This is the aniframe tier of the interface:
@@ -59,8 +59,8 @@ This is the aniframe tier of the interface:
 
 Beyond looping over columns, it fills in what the frame already knows:
 \code{sampling_rate} comes from metadata for the methods that need it, and
-\code{"kalman_irregular"} takes its \code{times} from the column named by
-\code{variables_when}. Either can still be passed explicitly to override.
+\code{"kalman_irregular"} takes its \code{times} from the index column
+(\code{\link[anicore:get_index]{anicore::get_index()}}). Either can still be passed explicitly to override.
 
 \code{"ccma"} is multivariate — each output coordinate depends on all of
 them — so it is applied jointly rather than column by column.
