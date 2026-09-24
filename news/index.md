@@ -4,6 +4,10 @@
 
 ### Changed
 
+- Works with anicore’s `anipoint` class and rebuilt accessor API
+  (animovement/anicore#154). The `*_across()` verbs take their default
+  columns from `get_variables(data, "where", "position")`.
+
 - [`filter_rollmean()`](https://animovement.dev/aniprocess/reference/filter_rollmean.md)
   and
   [`filter_rollmedian()`](https://animovement.dev/aniprocess/reference/filter_rollmedian.md)

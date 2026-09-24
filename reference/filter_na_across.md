@@ -3,9 +3,9 @@
 **\[experimental\]**
 
 The aniframe-level entry point to the `filter_na_*()` family. Applies a
-named criterion to the columns given by the `variables_where` metadata
-field, within the frame's existing grouping — so a criterion is never
-evaluated across a track boundary.
+named criterion to the frame's declared position columns, within its
+existing grouping — so a criterion is never evaluated across a track
+boundary.
 
 ## Usage
 
@@ -32,8 +32,8 @@ filter_na_across(
 
 - variables:
 
-  Columns to mask, as a tidyselect expression. Defaults to the
-  `variables_where` metadata field.
+  Columns to mask, as a tidyselect expression. Defaults to the declared
+  position columns.
 
 - ...:
 
@@ -63,7 +63,8 @@ An aniframe of the same shape, with failing values replaced by `NA`.
 ## Details
 
 Beyond looping over columns, it fills in what the frame already knows:
-`"speed"` takes its `time` from the column named by `variables_when`,
+`"speed"` takes its `time` from the index column
+([`anicore::get_index()`](https://animovement.dev/anicore/reference/get_index.html)),
 and `"confidence"` takes its `confidence` from the column of that name.
 Either can be passed explicitly to override.
 

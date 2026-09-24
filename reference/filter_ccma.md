@@ -29,8 +29,8 @@ filter_ccma(
   is Cartesian-specific (cross products, Euclidean norms, circumradius),
   so coordinates must be Cartesian. For a whole aniframe use
   [`filter_across()`](https://animovement.dev/aniprocess/reference/filter_across.md),
-  which selects the spatial columns from `variables_where` and rejects
-  non-Cartesian frames.
+  which selects the declared position columns and rejects non-Cartesian
+  frames.
 
 - window_width_ma:
 
@@ -155,7 +155,7 @@ head(filter_ccma(coords, window_width_ma = 11, window_width_cc = 7))
 #> 6 0.6818460 0.7529515
 
 # The aniframe tier
-af <- anicore::example_aniframe(n_obs = 60, n_individuals = 1, n_keypoints = 1)
+af <- anicore::example_anipoint(n_obs = 60, n_individuals = 1, n_keypoints = 1)
 filter_across(af, "ccma", window_width_ma = 11, window_width_cc = 7)
 #> # Individuals: 1
 #> # Keypoints:   centroid

@@ -1,7 +1,7 @@
 # Resolve which columns an `*_across()` verb should operate on.
 
-Defaults to the columns named by the `variables_where` metadata field. A
-tidyselect expression overrides that.
+Defaults to the position columns declared under `where`. A tidyselect
+expression overrides that.
 
 ## Usage
 

@@ -3,9 +3,9 @@
 **\[experimental\]**
 
 The aniframe-level entry point to the `replace_na_*()` family. Fills
-gaps in the columns given by the `variables_where` metadata field,
-within the frame's existing grouping — so a gap is never filled by
-interpolating between two different tracks.
+gaps in the frame's declared position columns, within its existing
+grouping — so a gap is never filled by interpolating between two
+different tracks.
 
 ## Usage
 
@@ -40,8 +40,8 @@ replace_na_across(
 
 - variables:
 
-  Columns to fill, as a tidyselect expression. Defaults to the
-  `variables_where` metadata field.
+  Columns to fill, as a tidyselect expression. Defaults to the declared
+  position columns.
 
 - ...:
 

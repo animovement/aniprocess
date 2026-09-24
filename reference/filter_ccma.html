@@ -83,8 +83,8 @@ a plain moving average introduces on curved paths.</p>
 <dd><p>A data frame of 2 or 3 numeric coordinate columns. The
 curvature math is Cartesian-specific (cross products, Euclidean norms,
 circumradius), so coordinates must be Cartesian. For a whole aniframe
-use <code><a href="filter_across.html">filter_across()</a></code>, which selects the spatial columns from
-<code>variables_where</code> and rejects non-Cartesian frames.</p></dd>
+use <code><a href="filter_across.html">filter_across()</a></code>, which selects the declared position columns
+and rejects non-Cartesian frames.</p></dd>
 
 
 <dt id="arg-window-width-ma">window_width_ma<a class="anchor" aria-label="anchor" href="#arg-window-width-ma"></a></dt>
@@ -199,7 +199,7 @@ Intelligent Vehicles Symposium (IV)</em>.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 0.6818460 0.7529515</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The aniframe tier</span></span></span>
-<span class="r-in"><span><span class="va">af</span> <span class="op">&lt;-</span> <span class="fu">anicore</span><span class="fu">::</span><span class="fu"><a href="https://animovement.dev/anicore/reference/example_aniframe.html" class="external-link">example_aniframe</a></span><span class="op">(</span>n_obs <span class="op">=</span> <span class="fl">60</span>, n_individuals <span class="op">=</span> <span class="fl">1</span>, n_keypoints <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">af</span> <span class="op">&lt;-</span> <span class="fu">anicore</span><span class="fu">::</span><span class="fu"><a href="https://animovement.dev/anicore/reference/example_anipoint.html" class="external-link">example_anipoint</a></span><span class="op">(</span>n_obs <span class="op">=</span> <span class="fl">60</span>, n_individuals <span class="op">=</span> <span class="fl">1</span>, n_keypoints <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="filter_across.html">filter_across</a></span><span class="op">(</span><span class="va">af</span>, <span class="st">"ccma"</span>, window_width_ma <span class="op">=</span> <span class="fl">11</span>, window_width_cc <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Individuals: 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Keypoints:   centroid</span></span>

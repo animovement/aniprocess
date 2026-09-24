@@ -3,8 +3,8 @@
 **\[experimental\]**
 
 The aniframe-level entry point to the `filter_*()` family. Applies a
-named filter to the columns given by the `variables_where` metadata
-field, within the frame's existing grouping.
+named filter to the frame's declared position columns, within its
+existing grouping.
 
 ## Usage
 
@@ -36,7 +36,7 @@ filter_across(
 - variables:
 
   Columns to filter, as a tidyselect expression. Defaults to the
-  `variables_where` metadata field.
+  declared position columns.
 
 - ...:
 
@@ -73,8 +73,9 @@ This is the aniframe tier of the interface:
 
 Beyond looping over columns, it fills in what the frame already knows:
 `sampling_rate` comes from metadata for the methods that need it, and
-`"kalman_irregular"` takes its `times` from the column named by
-`variables_when`. Either can still be passed explicitly to override.
+`"kalman_irregular"` takes its `times` from the index column
+([`anicore::get_index()`](https://animovement.dev/anicore/reference/get_index.html)).
+Either can still be passed explicitly to override.
 
 `"ccma"` is multivariate — each output coordinate depends on all of them
 — so it is applied jointly rather than column by column.
