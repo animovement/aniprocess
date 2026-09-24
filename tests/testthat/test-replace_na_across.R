@@ -6,7 +6,7 @@
 
 gap_fixture <- function() {
   np <- 10
-  d <- anicore::aniframe(
+  d <- anicore::anipoint(
     time = rep(seq_len(np), 2),
     individual = rep(c("a", "b"), each = np),
     x = c(c(1, NA, 3, 4, 5, 6, 7, 8, 9, 10), c(101:110)),
@@ -54,7 +54,7 @@ test_that("replace_na_across fills within groups only", {
   # Track a ends with a gap; track b starts far away. A cross-boundary
   # fill would interpolate between the two.
   np <- 5
-  d <- anicore::aniframe(
+  d <- anicore::anipoint(
     time = rep(seq_len(np), 2),
     individual = rep(c("a", "b"), each = np),
     x = c(c(1, 2, 3, 4, NA), c(1000, 1001, 1002, 1003, 1004)),
@@ -79,7 +79,7 @@ test_that("replace_na_across returns an aniframe and preserves grouping", {
   d <- gap_fixture()
   out <- replace_na_across(d, "linear")
 
-  expect_s3_class(out, "aniframe")
+  expect_s3_class(out, "anipoint")
   expect_equal(dplyr::group_vars(out), "individual")
 })
 

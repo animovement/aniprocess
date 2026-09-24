@@ -4,8 +4,8 @@
 #' `r lifecycle::badge('experimental')`
 #'
 #' The aniframe-level entry point to the `replace_na_*()` family. Fills
-#' gaps in the columns given by the `variables_where` metadata field,
-#' within the frame's existing grouping — so a gap is never filled by
+#' gaps in the frame's declared position columns, within its existing
+#' grouping — so a gap is never filled by
 #' interpolating between two different tracks.
 #'
 #' @param data An aniframe.
@@ -16,7 +16,7 @@
 #'   - `"locf"`: Last observation carried forward
 #'   - `"value"`: Replace with a constant value
 #' @param variables Columns to fill, as a tidyselect expression. Defaults
-#'   to the `variables_where` metadata field.
+#'   to the declared position columns.
 #' @param ... Arguments passed to [replace_na_with()], such as `value`,
 #'   `min_gap` and `max_gap`.
 #'

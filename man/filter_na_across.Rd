@@ -19,7 +19,7 @@ filter_na_across(
 \code{"excursion"}, \code{"roi"} or \code{"confidence"}.}
 
 \item{variables}{Columns to mask, as a tidyselect expression. Defaults
-to the \code{variables_where} metadata field.}
+to the declared position columns.}
 
 \item{...}{Arguments passed to the underlying function.
 
@@ -46,13 +46,13 @@ An aniframe of the same shape, with failing values replaced by
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
 The aniframe-level entry point to the \verb{filter_na_*()} family. Applies a
-named criterion to the columns given by the \code{variables_where} metadata
-field, within the frame's existing grouping — so a criterion is never
+named criterion to the frame's declared position columns, within its
+existing grouping — so a criterion is never
 evaluated across a track boundary.
 }
 \details{
 Beyond looping over columns, it fills in what the frame already knows:
-\code{"speed"} takes its \code{time} from the column named by \code{variables_when},
+\code{"speed"} takes its \code{time} from the index column (\code{\link[anicore:get_index]{anicore::get_index()}}),
 and \code{"confidence"} takes its \code{confidence} from the column of that name.
 Either can be passed explicitly to override.
 

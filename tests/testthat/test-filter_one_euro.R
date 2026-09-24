@@ -226,7 +226,7 @@ test_that("filter_one_euro is reachable through the generics", {
     filter_one_euro(x, sampling_rate = 60, beta = 0.5)
   )
 
-  d <- anicore::aniframe(
+  d <- anicore::anipoint(
     time = seq_len(60),
     x = x,
     y = rev(x),

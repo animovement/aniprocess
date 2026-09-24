@@ -24,7 +24,7 @@ replace_na_across(
 }}
 
 \item{variables}{Columns to fill, as a tidyselect expression. Defaults
-to the \code{variables_where} metadata field.}
+to the declared position columns.}
 
 \item{...}{Arguments passed to \code{\link[=replace_na_with]{replace_na_with()}}, such as \code{value},
 \code{min_gap} and \code{max_gap}.}
@@ -36,8 +36,8 @@ An aniframe of the same shape, with gaps filled.
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
 The aniframe-level entry point to the \verb{replace_na_*()} family. Fills
-gaps in the columns given by the \code{variables_where} metadata field,
-within the frame's existing grouping — so a gap is never filled by
+gaps in the frame's declared position columns, within its existing
+grouping — so a gap is never filled by
 interpolating between two different tracks.
 }
 \examples{

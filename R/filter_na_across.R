@@ -4,13 +4,13 @@
 #' `r lifecycle::badge('experimental')`
 #'
 #' The aniframe-level entry point to the `filter_na_*()` family. Applies a
-#' named criterion to the columns given by the `variables_where` metadata
-#' field, within the frame's existing grouping — so a criterion is never
+#' named criterion to the frame's declared position columns, within its
+#' existing grouping — so a criterion is never
 #' evaluated across a track boundary.
 #'
 #' @details
 #' Beyond looping over columns, it fills in what the frame already knows:
-#' `"speed"` takes its `time` from the column named by `variables_when`,
+#' `"speed"` takes its `time` from the index column ([anicore::get_index()]),
 #' and `"confidence"` takes its `confidence` from the column of that name.
 #' Either can be passed explicitly to override.
 #'
@@ -40,7 +40,7 @@
 #' @param method Criterion to apply. One of `"range"`, `"speed"`,
 #'   `"excursion"`, `"roi"` or `"confidence"`.
 #' @param variables Columns to mask, as a tidyselect expression. Defaults
-#'   to the `variables_where` metadata field.
+#'   to the declared position columns.
 #' @param ... Arguments passed to the underlying function.
 #'
 #'   For `"speed"`, `threshold` additionally accepts `"pooled"`: `"auto"`
