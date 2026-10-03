@@ -6,7 +6,7 @@
 \usage{
 filter_na_across(
   data,
-  method = c("range", "speed", "excursion", "roi", "confidence"),
+  method = c("range", "speed", "excursion", "hampel", "roi", "confidence"),
   variables = NULL,
   ...,
   on_deltas = FALSE
@@ -16,7 +16,7 @@ filter_na_across(
 \item{data}{An aniframe.}
 
 \item{method}{Criterion to apply. One of \code{"range"}, \code{"speed"},
-\code{"excursion"}, \code{"roi"} or \code{"confidence"}.}
+\code{"excursion"}, \code{"hampel"}, \code{"roi"} or \code{"confidence"}.}
 
 \item{variables}{Columns to mask, as a tidyselect expression. Defaults
 to the declared position columns.}
@@ -33,8 +33,8 @@ and re-integrate from the original starting value — rejecting
 implausible single-window displacements rather than implausible
 positions. See \emph{Masking on displacements} below.
 
-Only \code{"range"} accepts it. The others either already judge
-between-sample change, or are not about displacement at all, so
+Only \code{"range"} accepts it. The others either already judge a sample
+against its neighbours, or are not about displacement at all, so
 differencing first would answer a different question than their name
 promises; they error rather than quietly compute it.}
 }

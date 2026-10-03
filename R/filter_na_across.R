@@ -38,7 +38,7 @@
 #'
 #' @param data An aniframe.
 #' @param method Criterion to apply. One of `"range"`, `"speed"`,
-#'   `"excursion"`, `"roi"` or `"confidence"`.
+#'   `"excursion"`, `"hampel"`, `"roi"` or `"confidence"`.
 #' @param variables Columns to mask, as a tidyselect expression. Defaults
 #'   to the declared position columns.
 #' @param ... Arguments passed to the underlying function.
@@ -52,8 +52,8 @@
 #'   implausible single-window displacements rather than implausible
 #'   positions. See *Masking on displacements* below.
 #'
-#'   Only `"range"` accepts it. The others either already judge
-#'   between-sample change, or are not about displacement at all, so
+#'   Only `"range"` accepts it. The others either already judge a sample
+#'   against its neighbours, or are not about displacement at all, so
 #'   differencing first would answer a different question than their name
 #'   promises; they error rather than quietly compute it.
 #'
@@ -82,7 +82,7 @@
 #' @export
 filter_na_across <- function(
   data,
-  method = c("range", "speed", "excursion", "roi", "confidence"),
+  method = c("range", "speed", "excursion", "hampel", "roi", "confidence"),
   variables = NULL,
   ...,
   on_deltas = FALSE
@@ -215,6 +215,11 @@ ensure_on_deltas_supported <- function(
       "differences it would become second-order: a question about",
       "acceleration, not about the displacement its name promises."
     ),
+    hampel = paste(
+      "{.val hampel} judges a position against its neighbours, so on",
+      "differences it would judge a step against the neighbouring steps:",
+      "a question about acceleration, not about displacement."
+    ),
     roi = "A region of space is not a region of displacement.",
     confidence = "Confidence is not spatial, so it has no displacement."
   )
@@ -238,6 +243,7 @@ filter_na_method_fn <- function(method) {
     method,
     speed = filter_na_speed,
     excursion = filter_na_excursion,
+    hampel = filter_na_hampel,
     roi = filter_na_roi,
     confidence = filter_na_confidence
   )

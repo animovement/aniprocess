@@ -127,3 +127,32 @@ ensure_non_negative_scalar <- function(
   }
   invisible(NULL)
 }
+
+#' Validate a centred window width.
+#'
+#' A window centred on a row needs as many rows on each side, so its width
+#' is odd; and a width of 1 holds only the row itself.
+#'
+#' @param window_width The value to validate.
+#' @param call Environment used for the error's call context.
+#'
+#' @return Invisibly `NULL`. Called for side effects (errors).
+#' @keywords internal
+ensure_odd_window <- function(window_width, call = rlang::caller_env()) {
+  if (
+    !is.numeric(window_width) ||
+      length(window_width) != 1L ||
+      !is.finite(window_width) ||
+      window_width < 3 ||
+      window_width %% 2 != 1
+  ) {
+    cli::cli_abort(
+      c(
+        "{.arg window_width} must be an odd whole number of at least 3.",
+        "i" = "The window is centred on the row it judges, with as many rows on either side."
+      ),
+      call = call
+    )
+  }
+  invisible(NULL)
+}

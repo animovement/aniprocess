@@ -6,7 +6,7 @@
 \usage{
 filter_na_with(
   x,
-  method = c("range", "speed", "excursion", "roi", "confidence"),
+  method = c("range", "speed", "excursion", "hampel", "roi", "confidence"),
   ...
 )
 }
@@ -14,7 +14,7 @@ filter_na_with(
 \item{x}{A numeric vector, or a data frame of numeric coordinate columns.}
 
 \item{method}{Criterion to apply. One of \code{"range"}, \code{"speed"},
-\code{"excursion"}, \code{"roi"} or \code{"confidence"}.}
+\code{"excursion"}, \code{"hampel"}, \code{"roi"} or \code{"confidence"}.}
 
 \item{...}{Arguments passed to the underlying function.}
 }
@@ -37,8 +37,9 @@ with \code{\link[dplyr:across]{dplyr::across()}}.
 
 Method-specific arguments go through \code{...}: \code{min_value}/\code{max_value} for
 \code{"range"}, \code{threshold} and \code{time} for \code{"speed"}, \code{outlier_sd}/\code{return_sd}
-for \code{"excursion"}, the ROI bounds for \code{"roi"}, and \code{threshold} plus
-\code{confidence} for \code{"confidence"}.
+for \code{"excursion"}, \code{window_width}, \code{k} and \code{min_distance} for \code{"hampel"},
+the ROI bounds for \code{"roi"}, and \code{threshold} plus \code{confidence} for
+\code{"confidence"}.
 }
 \examples{
 filter_na_with(c(1, 5, 10, 15), "range", min_value = 3, max_value = 12)
