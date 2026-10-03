@@ -10,7 +10,7 @@
 #'
 #' @param data A data frame of numeric coordinate columns — typically supplied
 #'   by [dplyr::pick()] inside [dplyr::mutate()]. To filter a whole aniframe,
-#'   use [filter_na_across()].
+#'   use [mask_na_across()].
 #' @param outlier_sd Threshold (in standard deviations) for flagging
 #'   frame-to-frame jumps and for the "return to pre-excursion position"
 #'   acceptance check. Todd's default is `5`.
@@ -21,7 +21,7 @@
 #'   per-axis behaviour is used: each spatial column has its own σ,
 #'   median, and excursion state machine, and a row is blanked if any
 #'   axis flags it. If `FALSE`, a single state machine runs on the
-#'   joint Euclidean displacement (consistent with [filter_na_speed()]).
+#'   joint Euclidean displacement (consistent with [mask_na_speed()]).
 #'
 #' @details
 #' For each coordinate column, the algorithm:
@@ -42,7 +42,7 @@
 #' median, in which case it is accepted via the second criterion.
 #'
 #' Every coordinate column is set to `NA` at a flagged row. `confidence` is
-#' not a coordinate and so is never modified here; [filter_na_across()]
+#' not a coordinate and so is never modified here; [mask_na_across()]
 #' blanks it too.
 #'
 #' @return `data`, with flagged rows blanked.
@@ -56,22 +56,22 @@
 #' @examples
 #' \dontrun{
 #' # Default Todd thresholds, per-axis.
-#' filter_na_excursion(coords)
+#' mask_na_excursion(coords)
 #'
 #' # Joint Euclidean variant, looser thresholds.
-#' filter_na_excursion(coords, outlier_sd = 4, by_axis = FALSE)
+#' mask_na_excursion(coords, outlier_sd = 4, by_axis = FALSE)
 #' }
 #'
-#' @seealso [filter_na_speed()] for single-frame outliers.
+#' @seealso [mask_na_speed()] for single-frame outliers.
 #'
 #' @export
-filter_na_excursion <- function(
+mask_na_excursion <- function(
   data,
   outlier_sd = 5,
   return_sd = 1,
   by_axis = TRUE
 ) {
-  ensure_coords(data, across = "filter_na_across")
+  ensure_coords(data, across = "mask_na_across")
 
   for (sd_arg in c("outlier_sd", "return_sd")) {
     val <- get(sd_arg)

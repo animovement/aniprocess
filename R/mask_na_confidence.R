@@ -6,7 +6,7 @@
 #'
 #' @param data A data frame of numeric coordinate columns — typically supplied
 #'   by [dplyr::pick()] inside [dplyr::mutate()]. To filter a whole aniframe,
-#'   use [filter_na_across()].
+#'   use [mask_na_across()].
 #' @param threshold A numeric value specifying the minimum confidence level to
 #'   retain data. Must be a single value between 0 and 1. Default is 0.6.
 #' @param confidence Numeric vector of confidence values, one per row.
@@ -21,7 +21,7 @@
 #' can exceed it — so `NA` is the sensible thing to record rather than a
 #' sentinel value. A warning reports how many were missing, since silently
 #' skipping them would hide that those rows were never checked. To drop them
-#' as well, filter `confidence` directly with [filter_na_range()].
+#' as well, filter `confidence` directly with [mask_na_range()].
 #'
 #' @section Input shape:
 #' Takes and returns a frame of coordinate columns, so it composes inside
@@ -29,32 +29,32 @@
 #'
 #' ```r
 #' data |> mutate(
-#'   filter_na_confidence(pick(all_of(c("x", "y"))), confidence = confidence)
+#'   mask_na_confidence(pick(all_of(c("x", "y"))), confidence = confidence)
 #' )
 #' ```
 #'
 #' The decision uses all coordinates at once, so this cannot be used with
 #' [dplyr::across()]. `confidence` is not a coordinate and so is never
-#' modified here; [filter_na_across()] filters it as well.
+#' modified here; [mask_na_across()] filters it as well.
 #'
 #' @examples
 #' coords <- data.frame(x = 1:5, y = 6:10)
-#' filter_na_confidence(
+#' mask_na_confidence(
 #'   coords,
 #'   threshold = 0.6,
 #'   confidence = c(0.5, 0.7, 0.4, 0.8, 0.9)
 #' )
 #'
 #' @export
-filter_na_confidence <- function(data, threshold = 0.6, confidence = NULL) {
-  ensure_coords(data, across = "filter_na_across")
+mask_na_confidence <- function(data, threshold = 0.6, confidence = NULL) {
+  ensure_coords(data, across = "mask_na_across")
   variables_where <- names(data)
 
   if (is.null(confidence)) {
     cli::cli_abort(c(
       "{.arg confidence} is required.",
-      "i" = "Inside {.fn dplyr::mutate}: {.code filter_na_confidence(pick(all_of(...)), confidence = confidence)}.",
-      "i" = "For a whole aniframe, use {.fn filter_na_across}."
+      "i" = "Inside {.fn dplyr::mutate}: {.code mask_na_confidence(pick(all_of(...)), confidence = confidence)}.",
+      "i" = "For a whole aniframe, use {.fn mask_na_across}."
     ))
   }
 
@@ -86,7 +86,7 @@ filter_na_confidence <- function(data, threshold = 0.6, confidence = NULL) {
     cli::cli_warn(
       c(
         "{n_missing} confidence value{?s} {?is/are} missing.",
-        "i" = "Those rows are left unfiltered. Use {.fn filter_na_range} on {.field confidence} to drop them."
+        "i" = "Those rows are left unfiltered. Use {.fn mask_na_range} on {.field confidence} to drop them."
       ),
       .frequency = "regularly",
       .frequency_id = "aniprocess_confidence_na"

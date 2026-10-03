@@ -162,7 +162,7 @@ test_that("ensure_coords rejects non-data-frame input", {
 test_that("ensure_coords rejects a frame with no columns", {
   expect_error(ensure_coords(data.frame()), "has no columns")
   # and through a public entry point
-  expect_error(filter_na_excursion(data.frame()), "has no columns")
+  expect_error(mask_na_excursion(data.frame()), "has no columns")
 })
 
 test_that("ensure_coords names the non-numeric columns", {

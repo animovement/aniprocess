@@ -1,4 +1,4 @@
-# Tests for filter_na_confidence
+# Tests for mask_na_confidence
 # - Basic filtering with default threshold (2D)
 # - Basic filtering with default threshold (3D with z)
 # - Custom threshold values
@@ -12,7 +12,7 @@
 # - Validates threshold is single numeric value
 # - Validates threshold is between 0 and 1
 
-test_that("filter_na_confidence filters with default threshold (2D)", {
+test_that("mask_na_confidence filters with default threshold (2D)", {
   data <- data.frame(
     time = 1:5,
     x = 1:5,
@@ -21,7 +21,7 @@ test_that("filter_na_confidence filters with default threshold (2D)", {
   ) |>
     anicore::as_anipoint()
 
-  result <- filter_na_across(data, "confidence")
+  result <- mask_na_across(data, "confidence")
 
   # threshold = 0.6, so rows 1 and 3 should be NA
   expect_equal(result$x, c(NA, 2, NA, 4, 5))
@@ -29,7 +29,7 @@ test_that("filter_na_confidence filters with default threshold (2D)", {
   expect_equal(result$confidence, c(NA, 0.7, NA, 0.8, 0.9))
 })
 
-test_that("filter_na_confidence filters with default threshold (3D)", {
+test_that("mask_na_confidence filters with default threshold (3D)", {
   data <- data.frame(
     time = 1:5,
     x = 1:5,
@@ -39,7 +39,7 @@ test_that("filter_na_confidence filters with default threshold (3D)", {
   ) |>
     anicore::as_anipoint(variables_where = c("x", "y", "z"))
 
-  result <- filter_na_across(data, "confidence")
+  result <- mask_na_across(data, "confidence")
 
   # threshold = 0.6, so rows 1 and 3 should be NA
   expect_equal(result$x, c(NA, 2, NA, 4, 5))
@@ -48,7 +48,7 @@ test_that("filter_na_confidence filters with default threshold (3D)", {
   expect_equal(result$confidence, c(NA, 0.7, NA, 0.8, 0.9))
 })
 
-test_that("filter_na_confidence filters with custom threshold", {
+test_that("mask_na_confidence filters with custom threshold", {
   data <- data.frame(
     time = 1:5,
     x = 1:5,
@@ -58,7 +58,7 @@ test_that("filter_na_confidence filters with custom threshold", {
   ) |>
     anicore::as_anipoint(variables_where = c("x", "y", "z"))
 
-  result <- filter_na_across(data, "confidence", threshold = 0.75)
+  result <- mask_na_across(data, "confidence", threshold = 0.75)
 
   # threshold = 0.75, so rows 1, 2, and 3 should be NA
   expect_equal(result$x, c(NA, NA, NA, 4, 5))
@@ -67,7 +67,7 @@ test_that("filter_na_confidence filters with custom threshold", {
   expect_equal(result$confidence, c(NA, NA, NA, 0.8, 0.9))
 })
 
-test_that("filter_na_confidence handles boundary values", {
+test_that("mask_na_confidence handles boundary values", {
   data <- data.frame(
     time = 1:4,
     x = 1:4,
@@ -76,7 +76,7 @@ test_that("filter_na_confidence handles boundary values", {
   ) |>
     anicore::as_anipoint()
 
-  result <- filter_na_across(data, "confidence", threshold = 0.6)
+  result <- mask_na_across(data, "confidence", threshold = 0.6)
 
   # 0.6 exactly should be kept (threshold is minimum to retain)
   expect_equal(result$x, c(NA, 2, 3, 4))
@@ -84,7 +84,7 @@ test_that("filter_na_confidence handles boundary values", {
   expect_equal(result$confidence, c(NA, 0.6, 0.7, 0.8))
 })
 
-test_that("filter_na_confidence handles threshold of 0", {
+test_that("mask_na_confidence handles threshold of 0", {
   data <- data.frame(
     time = 1:3,
     x = 1:3,
@@ -93,14 +93,14 @@ test_that("filter_na_confidence handles threshold of 0", {
   ) |>
     anicore::as_anipoint()
 
-  result <- filter_na_across(data, "confidence", threshold = 0)
+  result <- mask_na_across(data, "confidence", threshold = 0)
 
   # Only negative values should be filtered
   expect_equal(result$x, c(NA, 2, 3))
   expect_equal(result$confidence, c(NA, 0, 0.5))
 })
 
-test_that("filter_na_confidence handles threshold of 1", {
+test_that("mask_na_confidence handles threshold of 1", {
   data <- data.frame(
     time = 1:3,
     x = 1:3,
@@ -109,14 +109,14 @@ test_that("filter_na_confidence handles threshold of 1", {
   ) |>
     anicore::as_anipoint()
 
-  result <- filter_na_across(data, "confidence", threshold = 1)
+  result <- mask_na_across(data, "confidence", threshold = 1)
 
   # Only value >= 1 should be kept
   expect_equal(result$x, c(NA, NA, 3))
   expect_equal(result$confidence, c(NA, NA, 1))
 })
 
-test_that("filter_na_confidence preserves existing NAs in x and y", {
+test_that("mask_na_confidence preserves existing NAs in x and y", {
   data <- data.frame(
     time = 1:4,
     x = c(1, NA, 3, 4),
@@ -125,7 +125,7 @@ test_that("filter_na_confidence preserves existing NAs in x and y", {
   ) |>
     anicore::as_anipoint()
 
-  result <- filter_na_across(data, "confidence", threshold = 0.6)
+  result <- mask_na_across(data, "confidence", threshold = 0.6)
 
   # Row 1: confidence < 0.6, becomes NA
   # Row 2: x already NA, confidence >= 0.6
@@ -139,7 +139,7 @@ test_that("filter_na_confidence preserves existing NAs in x and y", {
   expect_true(is.na(result$y[3]))
 })
 
-test_that("filter_na_confidence preserves existing NAs in z", {
+test_that("mask_na_confidence preserves existing NAs in z", {
   data <- data.frame(
     time = 1:4,
     x = 1:4,
@@ -149,7 +149,7 @@ test_that("filter_na_confidence preserves existing NAs in z", {
   ) |>
     anicore::as_anipoint(variables_where = c("x", "y", "z"))
 
-  result <- filter_na_across(data, "confidence", threshold = 0.6)
+  result <- mask_na_across(data, "confidence", threshold = 0.6)
 
   # Row 2: z already NA, confidence >= 0.6
   # Row 3: confidence < 0.6, becomes NA
@@ -159,7 +159,7 @@ test_that("filter_na_confidence preserves existing NAs in z", {
   expect_equal(result$z[4], 12)
 })
 
-test_that("filter_na_confidence leaves rows with a missing confidence alone", {
+test_that("mask_na_confidence leaves rows with a missing confidence alone", {
   data <- data.frame(
     time = 1:4,
     x = 1:4,
@@ -168,7 +168,7 @@ test_that("filter_na_confidence leaves rows with a missing confidence alone", {
   ) |>
     anicore::as_anipoint()
 
-  result <- suppressWarnings(filter_na_across(
+  result <- suppressWarnings(mask_na_across(
     data,
     "confidence",
     threshold = 0.6
@@ -184,7 +184,7 @@ test_that("filter_na_confidence leaves rows with a missing confidence alone", {
   expect_true(is.na(result$x[1]))
 })
 
-test_that("filter_na_confidence warns about missing confidence values", {
+test_that("mask_na_confidence warns about missing confidence values", {
   # The warning is rate-limited so a grouped mutate() does not emit one per
   # group; reset the counter so this test sees it regardless of run order.
   rlang::reset_warning_verbosity("aniprocess_confidence_na")
@@ -198,12 +198,12 @@ test_that("filter_na_confidence warns about missing confidence values", {
     anicore::as_anipoint()
 
   expect_warning(
-    filter_na_across(data, "confidence", threshold = 0.6),
+    mask_na_across(data, "confidence", threshold = 0.6),
     "2 confidence values are missing"
   )
 })
 
-test_that("filter_na_confidence handles all NAs in confidence", {
+test_that("mask_na_confidence handles all NAs in confidence", {
   data <- data.frame(
     time = 1:3,
     x = 1:3,
@@ -212,7 +212,7 @@ test_that("filter_na_confidence handles all NAs in confidence", {
   ) |>
     anicore::as_anipoint()
 
-  result <- suppressWarnings(filter_na_across(
+  result <- suppressWarnings(mask_na_across(
     data,
     "confidence",
     threshold = 0.6
@@ -224,7 +224,7 @@ test_that("filter_na_confidence handles all NAs in confidence", {
   expect_true(all(is.na(result$confidence)))
 })
 
-test_that("filter_na_confidence preserves other columns", {
+test_that("mask_na_confidence preserves other columns", {
   data <- data.frame(
     time = 1:3,
     x = 1:3,
@@ -235,14 +235,14 @@ test_that("filter_na_confidence preserves other columns", {
   ) |>
     anicore::as_anipoint()
 
-  result <- filter_na_across(data, "confidence", threshold = 0.6)
+  result <- mask_na_across(data, "confidence", threshold = 0.6)
 
   # Other columns should remain unchanged
   expect_equal(result$id, c("a", "b", "c"))
   expect_equal(result$value, c(10, 20, 30))
 })
 
-test_that("filter_na_confidence works with 2D data", {
+test_that("mask_na_confidence works with 2D data", {
   data <- data.frame(
     time = 1:3,
     x = 1:3,
@@ -251,14 +251,14 @@ test_that("filter_na_confidence works with 2D data", {
   ) |>
     anicore::as_anipoint()
 
-  result <- filter_na_across(data, "confidence", threshold = 0.6)
+  result <- mask_na_across(data, "confidence", threshold = 0.6)
 
   expect_equal(result$x, c(NA, 2, 3))
   expect_equal(result$y, c(NA, 5, 6))
   expect_false("z" %in% names(result))
 })
 
-test_that("filter_na_confidence works with 3D data", {
+test_that("mask_na_confidence works with 3D data", {
   data <- data.frame(
     time = 1:3,
     x = 1:3,
@@ -268,7 +268,7 @@ test_that("filter_na_confidence works with 3D data", {
   ) |>
     anicore::as_anipoint(variables_where = c("x", "y", "z"))
 
-  result <- filter_na_across(data, "confidence", threshold = 0.6)
+  result <- mask_na_across(data, "confidence", threshold = 0.6)
 
   # Should filter z along with x and y
   expect_equal(result$x, c(NA, 2, 3))
@@ -276,7 +276,7 @@ test_that("filter_na_confidence works with 3D data", {
   expect_equal(result$z, c(NA, 8, 9))
 })
 
-test_that("filter_na_confidence works with polar coordinates", {
+test_that("mask_na_confidence works with polar coordinates", {
   data <- data.frame(
     time = 1:3,
     rho = c(1, 2, 3),
@@ -285,13 +285,13 @@ test_that("filter_na_confidence works with polar coordinates", {
   ) |>
     anicore::as_anipoint(variables_where = c("rho", "phi"))
 
-  result <- filter_na_across(data, "confidence", threshold = 0.6)
+  result <- mask_na_across(data, "confidence", threshold = 0.6)
 
   expect_equal(result$rho, c(NA, 2, 3))
   expect_equal(result$phi, c(NA, 1.0, 1.5))
 })
 
-test_that("filter_na_confidence validates data is an aniframe", {
+test_that("mask_na_confidence validates data is an aniframe", {
   # Regular data frame should error
   data <- data.frame(
     time = 1:3,
@@ -301,18 +301,18 @@ test_that("filter_na_confidence validates data is an aniframe", {
   )
 
   expect_error(
-    filter_na_across(data, "confidence"),
+    mask_na_across(data, "confidence"),
     class = "rlang_error"
   )
 
   # Vector should error
   expect_error(
-    filter_na_confidence(c(1, 2, 3)),
+    mask_na_confidence(c(1, 2, 3)),
     class = "rlang_error"
   )
 })
 
-test_that("filter_na_confidence validates required columns exist", {
+test_that("mask_na_confidence validates required columns exist", {
   # Create aniframe then modify metadata to have missing spatial variable
   data <- data.frame(
     time = 1:3,
@@ -326,12 +326,12 @@ test_that("filter_na_confidence validates required columns exist", {
   data <- dplyr::select(data, -x)
 
   expect_error(
-    filter_na_across(data, "confidence"),
+    mask_na_across(data, "confidence"),
     "Missing spatial column"
   )
 })
 
-test_that("filter_na_confidence validates confidence column exists", {
+test_that("mask_na_confidence validates confidence column exists", {
   data <- data.frame(
     time = 1:3,
     x = 1:3,
@@ -340,12 +340,12 @@ test_that("filter_na_confidence validates confidence column exists", {
     anicore::as_anipoint()
 
   expect_error(
-    filter_na_across(data, "confidence"),
+    mask_na_across(data, "confidence"),
     "Missing required column.*confidence"
   )
 })
 
-test_that("filter_na_confidence validates threshold is single numeric", {
+test_that("mask_na_confidence validates threshold is single numeric", {
   data <- data.frame(
     time = 1:3,
     x = 1:3,
@@ -356,24 +356,24 @@ test_that("filter_na_confidence validates threshold is single numeric", {
 
   # Non-numeric
   expect_error(
-    filter_na_across(data, "confidence", threshold = "0.5"),
+    mask_na_across(data, "confidence", threshold = "0.5"),
     class = "rlang_error"
   )
 
   # NA threshold
   expect_error(
-    filter_na_across(data, "confidence", threshold = NA),
+    mask_na_across(data, "confidence", threshold = NA),
     class = "rlang_error"
   )
 
   # Vector threshold
   expect_error(
-    filter_na_across(data, "confidence", threshold = c(0.5, 0.6)),
+    mask_na_across(data, "confidence", threshold = c(0.5, 0.6)),
     class = "rlang_error"
   )
 })
 
-test_that("filter_na_confidence validates threshold is between 0 and 1", {
+test_that("mask_na_confidence validates threshold is between 0 and 1", {
   data <- data.frame(
     time = 1:3,
     x = 1:3,
@@ -384,18 +384,18 @@ test_that("filter_na_confidence validates threshold is between 0 and 1", {
 
   # Below 0
   expect_error(
-    filter_na_across(data, "confidence", threshold = -0.1),
+    mask_na_across(data, "confidence", threshold = -0.1),
     class = "rlang_error"
   )
 
   # Above 1
   expect_error(
-    filter_na_across(data, "confidence", threshold = 1.1),
+    mask_na_across(data, "confidence", threshold = 1.1),
     class = "rlang_error"
   )
 })
 
-test_that("filter_na_confidence returns an aniframe", {
+test_that("mask_na_confidence returns an aniframe", {
   data <- data.frame(
     time = 1:3,
     x = 1:3,
@@ -405,14 +405,14 @@ test_that("filter_na_confidence returns an aniframe", {
   ) |>
     anicore::as_anipoint(variables_where = c("x", "y", "z"))
 
-  result <- filter_na_across(data, "confidence", threshold = 0.6)
+  result <- mask_na_across(data, "confidence", threshold = 0.6)
 
   expect_s3_class(result, "anipoint")
   expect_equal(result$x, c(NA, 2, 3))
   expect_equal(result$z, c(NA, 8, 9))
 })
 
-test_that("filter_na_confidence validates confidence column is numeric", {
+test_that("mask_na_confidence validates confidence column is numeric", {
   data <- data.frame(
     time = 1:3,
     x = 1:3,
@@ -422,26 +422,26 @@ test_that("filter_na_confidence validates confidence column is numeric", {
     anicore::as_anipoint()
 
   expect_error(
-    filter_na_across(data, "confidence"),
+    mask_na_across(data, "confidence"),
     "confidence.*must be numeric"
   )
 })
 
 # --- coordinate-frame form (#30 step 2) -------------------------------------
 
-test_that("filter_na_confidence requires confidence for a coordinate frame", {
+test_that("mask_na_confidence requires confidence for a coordinate frame", {
   expect_error(
-    filter_na_confidence(data.frame(x = 1:5, y = 1:5)),
+    mask_na_confidence(data.frame(x = 1:5, y = 1:5)),
     "`confidence` is required"
   )
 })
 
-test_that("filter_na_confidence coordinate-frame form masks the coordinates", {
+test_that("mask_na_confidence coordinate-frame form masks the coordinates", {
   coords <- data.frame(x = c(1, 2, 3, 4), y = c(5, 6, 7, 8))
   conf <- c(0.9, 0.2, NA, 0.7)
 
   res <- suppressWarnings(
-    filter_na_confidence(coords, threshold = 0.6, confidence = conf)
+    mask_na_confidence(coords, threshold = 0.6, confidence = conf)
   )
 
   # Only the row below threshold is blanked; the missing one is left alone
@@ -451,7 +451,7 @@ test_that("filter_na_confidence coordinate-frame form masks the coordinates", {
   expect_equal(names(res), c("x", "y"))
 })
 
-test_that("filter_na_confidence coordinate-frame form matches the aniframe form", {
+test_that("mask_na_confidence coordinate-frame form matches the aniframe form", {
   conf <- c(0.9, 0.2, NA, 0.7)
   d <- anicore::anipoint(
     time = 1:4,
@@ -460,12 +460,12 @@ test_that("filter_na_confidence coordinate-frame form matches the aniframe form"
     confidence = conf
   )
   expect_equal(
-    filter_na_confidence(
+    mask_na_confidence(
       data.frame(x = c(1, 2, 3, 4), y = c(5, 6, 7, 8)),
       threshold = 0.6,
       confidence = conf
     ),
-    as.data.frame(filter_na_across(d, "confidence", threshold = 0.6))[, c(
+    as.data.frame(mask_na_across(d, "confidence", threshold = 0.6))[, c(
       "x",
       "y"
     )],
@@ -473,9 +473,9 @@ test_that("filter_na_confidence coordinate-frame form matches the aniframe form"
   )
 })
 
-test_that("filter_na_confidence rejects a mismatched confidence length", {
+test_that("mask_na_confidence rejects a mismatched confidence length", {
   expect_error(
-    filter_na_confidence(
+    mask_na_confidence(
       data.frame(x = 1:5, y = 1:5),
       confidence = c(0.9, 0.8)
     ),
@@ -483,9 +483,9 @@ test_that("filter_na_confidence rejects a mismatched confidence length", {
   )
 })
 
-test_that("filter_na_confidence rejects a non-numeric confidence", {
+test_that("mask_na_confidence rejects a non-numeric confidence", {
   expect_error(
-    filter_na_confidence(
+    mask_na_confidence(
       data.frame(x = 1:5, y = 1:5),
       confidence = letters[1:5]
     ),

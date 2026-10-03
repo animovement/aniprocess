@@ -2,11 +2,13 @@
 
 ## Added
 
-* `filter_na_segment_length()` masks points whose segments are far off their usual length (#91), such as a foot matched wrongly in multi-camera 3D that stays confident and steady for many frames. Each segment of the structure attached with `anicore::set_structure()` is compared with the structure's `length`, or else with its median length over the track, and is off when it differs by more than both `tolerance` (relative) and `min_difference` (absolute). The point to blame is masked rather than its neighbours: a wrong ankle stretches shin and foot, so the ankle goes and the knee and the toe stay. `segments` restricts the judging to the segments meant to be rigid.
+* `mask_na_segment_length()` masks points whose segments are far off their usual length (#91), such as a foot matched wrongly in multi-camera 3D that stays confident and steady for many frames. Each segment of the structure attached with `anicore::set_structure()` is compared with the structure's `length`, or else with its median length over the track, and is off when it differs by more than both `tolerance` (relative) and `min_difference` (absolute). The point to blame is masked rather than its neighbours: a wrong ankle stretches shin and foot, so the ankle goes and the knee and the toe stay. `segments` restricts the judging to the segments meant to be rigid.
 
-* `filter_na_hampel()` masks spikes — a point that jumps away for a frame or two and comes back — by its distance from the rolling median of the window around it, against `k` robust deviations of that window (#90). The threshold is local, so it is tight on slow stretches and loose on fast ones, where a single speed threshold has to accommodate the fastest movement in the track. With several coordinate columns the distance is Euclidean and a point is masked in all axes at once; `min_distance` floors the threshold so a keypoint that barely moves does not lose its noise. Also available as `filter_na_across(method = "hampel")` and `filter_na_with(method = "hampel")`.
+* `mask_na_hampel()` masks spikes — a point that jumps away for a frame or two and comes back — by its distance from the rolling median of the window around it, against `k` robust deviations of that window (#90). The threshold is local, so it is tight on slow stretches and loose on fast ones, where a single speed threshold has to accommodate the fastest movement in the track. With several coordinate columns the distance is Euclidean and a point is masked in all axes at once; `min_distance` floors the threshold so a keypoint that barely moves does not lose its noise. Also available as `mask_na_across(method = "hampel")` and `mask_na_with(method = "hampel")`.
 
 ## Changed
+
+* The NA-masking functions are renamed from `filter_na_*()` to `mask_na_*()` (#94). They set bad values to `NA` and keep every row, which `filter_` — the prefix of `dplyr::filter()`, and of this package's smoothers — suggested they did not. Masking then filling now reads as `mask_na_*()` then `replace_na_*()`.
 
 * Works with anicore's `anipoint` class and rebuilt accessor API (animovement/anicore#154). The `*_across()` verbs take their default columns from `get_variables(data, "where", "position")`.
 
@@ -17,6 +19,10 @@
   **Results change.** Centred output keeps its timing but has no data beyond the ends of the series, so the first and last `(window_width - 1) / 2` values are now `NA` where a partial window used to fill them. Pass `align = "right"` for the old behaviour, which is still the right choice when the next sample does not exist yet — real-time tracking, closed-loop experiments.
 
 * `filter_lowpass()`, `filter_highpass()`, `filter_lowpass_fft()` and `filter_highpass_fft()` share one reflection-padding helper, so the width applied and the width removed cannot drift apart again (#79).
+
+## Deprecated
+
+* `filter_na_across()`, `filter_na_with()`, `filter_na_confidence()`, `filter_na_excursion()`, `filter_na_range()`, `filter_na_roi()` and `filter_na_speed()` are deprecated in favour of `mask_na_across()`, `mask_na_with()`, `mask_na_confidence()`, `mask_na_excursion()`, `mask_na_range()`, `mask_na_roi()` and `mask_na_speed()` (#94). They warn and forward to the new name, and will be removed after the next release.
 
 ## Fixed
 

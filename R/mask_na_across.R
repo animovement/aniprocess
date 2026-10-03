@@ -3,7 +3,7 @@
 #' @description
 #' `r lifecycle::badge('experimental')`
 #'
-#' The aniframe-level entry point to the `filter_na_*()` family. Applies a
+#' The aniframe-level entry point to the `mask_na_*()` family. Applies a
 #' named criterion to the frame's declared position columns, within its
 #' existing grouping — so a criterion is never
 #' evaluated across a track boundary.
@@ -63,13 +63,13 @@
 #' @examples
 #' \dontrun{
 #' # time comes from the aniframe's metadata
-#' filter_na_across(tracking_data, "speed", threshold = "auto")
+#' mask_na_across(tracking_data, "speed", threshold = "auto")
 #'
-#' filter_na_across(tracking_data, "range", min_value = 0, max_value = 1920)
+#' mask_na_across(tracking_data, "range", min_value = 0, max_value = 1920)
 #'
 #' # trackball positions are integrated displacements: reject the step,
 #' # not the position it left behind
-#' filter_na_across(
+#' mask_na_across(
 #'   trackball_data,
 #'   "range",
 #'   min_value = -10,
@@ -78,9 +78,9 @@
 #' )
 #' }
 #'
-#' @seealso [filter_na_with()] for the vector-level generic.
+#' @seealso [mask_na_with()] for the vector-level generic.
 #' @export
-filter_na_across <- function(
+mask_na_across <- function(
   data,
   method = c("range", "speed", "excursion", "hampel", "roi", "confidence"),
   variables = NULL,
@@ -96,7 +96,7 @@ filter_na_across <- function(
 
   # "range" is univariate: applied one column at a time.
   if (method == "range") {
-    fn <- filter_na_range
+    fn <- mask_na_range
     if (isTRUE(on_deltas)) {
       fn <- derivative_wrapper(fn)
     }
@@ -115,7 +115,7 @@ filter_na_across <- function(
   # slice them per group alongside the coordinates.
   helpers <- list()
   if (method == "speed") {
-    helpers$time <- helper_column(args$time, "time", "filter_na_with") %||%
+    helpers$time <- helper_column(args$time, "time", "mask_na_with") %||%
       anicore::get_index(data)
     args$time <- NULL
   }
@@ -123,7 +123,7 @@ filter_na_across <- function(
     helpers$confidence <- helper_column(
       args$confidence,
       "confidence",
-      "filter_na_with"
+      "mask_na_with"
     ) %||%
       "confidence"
     args$confidence <- NULL
@@ -134,10 +134,10 @@ filter_na_across <- function(
     }
   }
 
-  fn <- filter_na_method_fn(method)
+  fn <- mask_na_method_fn(method)
   needed <- unique(c(variables, unlist(helpers, use.names = FALSE)))
 
-  # "auto" is resolved per group by filter_na_speed(), which sees one
+  # "auto" is resolved per group by mask_na_speed(), which sees one
   # group at a time. "pooled" is resolved here instead, from every group's
   # speeds at once, and passed down as a number.
   if (method == "speed" && identical(args$threshold, "pooled")) {
@@ -172,8 +172,8 @@ filter_na_across <- function(
 
   # Filtering on confidence also drops the failing confidence values.
   if (method == "confidence") {
-    threshold <- args$threshold %||% formals(filter_na_confidence)$threshold
-    out$confidence <- filter_na_range(
+    threshold <- args$threshold %||% formals(mask_na_confidence)$threshold
+    out$confidence <- mask_na_range(
       out$confidence,
       min_value = as.numeric(threshold)
     )
@@ -237,15 +237,15 @@ ensure_on_deltas_supported <- function(
 
 #' Look up the function implementing an NA-masking method.
 #' @keywords internal
-filter_na_method_fn <- function(method) {
+mask_na_method_fn <- function(method) {
   # "range" is handled before this lookup, being the only univariate method
   switch(
     method,
-    speed = filter_na_speed,
-    excursion = filter_na_excursion,
-    hampel = filter_na_hampel,
-    roi = filter_na_roi,
-    confidence = filter_na_confidence
+    speed = mask_na_speed,
+    excursion = mask_na_excursion,
+    hampel = mask_na_hampel,
+    roi = mask_na_roi,
+    confidence = mask_na_confidence
   )
 }
 

@@ -15,10 +15,10 @@
 #' that sits wrong for many frames with a confident score, such as a match
 #' in multi-camera 3D that several cameras happen to agree on.
 #'
-#' Unlike the other `filter_na_*()` functions, it judges each point by its
+#' Unlike the other `mask_na_*()` functions, it judges each point by its
 #' neighbours, so it needs all of an individual's points at once. It takes
 #' the whole anipoint rather than one track at a time, and is not a method of
-#' [filter_na_across()].
+#' [mask_na_across()].
 #'
 #' @details
 #' # Reference length
@@ -83,7 +83,7 @@
 #' # What is masked
 #'
 #' A masked point has every axis set to `NA`, and its `confidence` too where
-#' the frame has that column, as [filter_na_across()] does. A point that is
+#' the frame has that column, as [mask_na_across()] does. A point that is
 #' already `NA`, in any axis, has no measured segment, so it is not judged,
 #' and its neighbours are judged by their other segments.
 #'
@@ -135,12 +135,12 @@
 #' leg$x[leg$keypoint == "ankle" & leg$time == 3] <- 2
 #'
 #' # Only the ankle is masked, not the knee or the toe
-#' filter_na_segment_length(leg) |>
+#' mask_na_segment_length(leg) |>
 #'   dplyr::filter(time == 3)
 #'
 #' # Judge thigh and shin alone: the ankle is now an end point, and goes
 #' # because the knee's other segment, the thigh, is fine
-#' filter_na_segment_length(leg, segments = c("thigh", "shin")) |>
+#' mask_na_segment_length(leg, segments = c("thigh", "shin")) |>
 #'   dplyr::filter(time == 3)
 #'
 #' # Expected lengths recorded in the structure are used instead of the median
@@ -155,14 +155,14 @@
 #'     )
 #'   )
 #' )
-#' filter_na_segment_length(leg, min_difference = 0.5) |>
+#' mask_na_segment_length(leg, min_difference = 0.5) |>
 #'   dplyr::filter(time == 3)
 #'
 #' @seealso [anicore::as_anisegment()] for the lengths, and
-#'   [anicore::set_structure()] to attach a structure. [filter_na_across()]
+#'   [anicore::set_structure()] to attach a structure. [mask_na_across()]
 #'   for the criteria judged one track at a time.
 #' @export
-filter_na_segment_length <- function(
+mask_na_segment_length <- function(
   data,
   structure = NULL,
   tolerance = 0.3,
@@ -223,7 +223,7 @@ filter_na_segment_length <- function(
 #'   variable, and its index.
 #' @param index Name of the index column.
 #' @param tolerance,min_difference The thresholds, as in
-#'   [filter_na_segment_length()].
+#'   [mask_na_segment_length()].
 #'
 #' @return A data frame of the measured segments, one row per segment and
 #'   frame: the `by` columns, `segment`, `.aniprocess_frame` (an integer
@@ -324,7 +324,7 @@ blame_segment_points <- function(judged, struct, by) {
 }
 
 
-#' Validate the frame given to `filter_na_segment_length()`.
+#' Validate the frame given to `mask_na_segment_length()`.
 #'
 #' @param data The value to validate.
 #' @param call Environment used for the error's call context.

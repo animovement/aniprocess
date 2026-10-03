@@ -1,4 +1,4 @@
-# Tests for filter_na_across()
+# Tests for mask_na_across()
 # - "range" is applied column by column; the rest jointly
 # - time and confidence come from the aniframe
 # - confidence is blanked on rows this call masked
@@ -16,36 +16,36 @@ na_fixture <- function(np = 20) {
     dplyr::group_by(individual)
 }
 
-test_that("filter_na_across applies range column by column", {
+test_that("mask_na_across applies range column by column", {
   d <- na_fixture()
-  out <- filter_na_across(d, "range", min_value = 0, max_value = 100)
+  out <- mask_na_across(d, "range", min_value = 0, max_value = 100)
 
-  expect_equal(out$x, filter_na_range(d$x, min_value = 0, max_value = 100))
-  expect_equal(out$y, filter_na_range(d$y, min_value = 0, max_value = 100))
+  expect_equal(out$x, mask_na_range(d$x, min_value = 0, max_value = 100))
+  expect_equal(out$y, mask_na_range(d$y, min_value = 0, max_value = 100))
 })
 
-test_that("filter_na_across takes the time column from metadata", {
+test_that("mask_na_across takes the time column from metadata", {
   d <- na_fixture()
 
   # naming the column explicitly gives the same answer as the metadata default
   expect_equal(
-    filter_na_across(d, "speed", threshold = 100)$x,
-    filter_na_across(d, "speed", threshold = 100, time = "time")$x
+    mask_na_across(d, "speed", threshold = 100)$x,
+    mask_na_across(d, "speed", threshold = 100, time = "time")$x
   )
 })
 
-test_that("filter_na_across rejects a vector for a per-row argument", {
+test_that("mask_na_across rejects a vector for a per-row argument", {
   d <- na_fixture()
 
   expect_error(
-    filter_na_across(d, "speed", threshold = 100, time = d$time),
+    mask_na_across(d, "speed", threshold = 100, time = d$time),
     "must be the name of a column"
   )
 })
 
-test_that("filter_na_across masks the outlier and blanks its confidence", {
+test_that("mask_na_across masks the outlier and blanks its confidence", {
   d <- na_fixture()
-  out <- filter_na_across(d, "speed", threshold = 100)
+  out <- mask_na_across(d, "speed", threshold = 100)
 
   expect_equal(which(is.na(out$x)), 10L)
   expect_true(is.na(out$confidence[10]))
@@ -53,15 +53,15 @@ test_that("filter_na_across masks the outlier and blanks its confidence", {
   expect_false(any(is.na(out$confidence[-10])))
 })
 
-test_that("filter_na_across leaves confidence alone where nothing was masked", {
+test_that("mask_na_across leaves confidence alone where nothing was masked", {
   d <- na_fixture()
-  out <- filter_na_across(d, "speed", threshold = 1e6)
+  out <- mask_na_across(d, "speed", threshold = 1e6)
 
   expect_false(any(is.na(out$x)))
   expect_false(any(is.na(out$confidence)))
 })
 
-test_that("filter_na_across dispatches excursion and roi", {
+test_that("mask_na_across dispatches excursion and roi", {
   set.seed(31)
   np <- 40
   x <- rnorm(np, sd = 2)
@@ -74,8 +74,8 @@ test_that("filter_na_across dispatches excursion and roi", {
   )
 
   expect_equal(
-    as.data.frame(filter_na_across(d, "excursion"))[, c("x", "y")],
-    as.data.frame(filter_na_excursion(d))[, c("x", "y")]
+    as.data.frame(mask_na_across(d, "excursion"))[, c("x", "y")],
+    as.data.frame(mask_na_excursion(d))[, c("x", "y")]
   )
 
   coords <- data.frame(x = c(0, 10, 20), y = c(0, 10, 20))
@@ -86,28 +86,28 @@ test_that("filter_na_across dispatches excursion and roi", {
     variables_what = character(0)
   )
   expect_equal(
-    as.data.frame(filter_na_across(d2, "roi", x_min = 5, x_max = 15))[,
+    as.data.frame(mask_na_across(d2, "roi", x_min = 5, x_max = 15))[,
       c("x", "y")
     ],
-    as.data.frame(filter_na_roi(d2, x_min = 5, x_max = 15))[, c("x", "y")]
+    as.data.frame(mask_na_roi(d2, x_min = 5, x_max = 15))[, c("x", "y")]
   )
 })
 
-test_that("filter_na_across dispatches confidence and filters the column", {
+test_that("mask_na_across dispatches confidence and filters the column", {
   d <- anicore::anipoint(
     time = 1:4,
     x = c(1, 2, 3, 4),
     y = c(5, 6, 7, 8),
     confidence = c(0.9, 0.2, 0.8, 0.7)
   )
-  out <- filter_na_across(d, "confidence", threshold = 0.6)
+  out <- mask_na_across(d, "confidence", threshold = 0.6)
 
   expect_equal(which(is.na(out$x)), 2L)
   expect_true(is.na(out$confidence[2]))
   expect_equal(out$confidence[c(1, 3, 4)], c(0.9, 0.8, 0.7))
 })
 
-test_that("filter_na_across errors when a required column is absent", {
+test_that("mask_na_across errors when a required column is absent", {
   d <- anicore::anipoint(
     time = 1:4,
     x = c(1, 2, 3, 4),
@@ -115,19 +115,19 @@ test_that("filter_na_across errors when a required column is absent", {
     variables_what = character(0)
   )
   expect_error(
-    filter_na_across(d, "confidence", threshold = 0.6),
+    mask_na_across(d, "confidence", threshold = 0.6),
     "Missing required column"
   )
 })
 
-test_that("filter_na_across respects grouping", {
+test_that("mask_na_across respects grouping", {
   d <- na_fixture()
-  grouped <- filter_na_across(d, "speed", threshold = 100)
+  grouped <- mask_na_across(d, "speed", threshold = 100)
 
   rows <- split(seq_len(nrow(d)), d$individual)
   alone <- unlist(
     lapply(rows, function(i) {
-      filter_na_speed(
+      mask_na_speed(
         data.frame(x = d$x[i], y = d$y[i]),
         threshold = 100,
         time = d$time[i]
@@ -138,9 +138,9 @@ test_that("filter_na_across respects grouping", {
   expect_equal(grouped$x, alone)
 })
 
-test_that("filter_na_across returns an aniframe and preserves grouping", {
+test_that("mask_na_across returns an aniframe and preserves grouping", {
   d <- na_fixture()
-  out <- filter_na_across(d, "speed", threshold = 100)
+  out <- mask_na_across(d, "speed", threshold = 100)
 
   expect_s3_class(out, "anipoint")
   expect_equal(dplyr::group_vars(out), "individual")
@@ -159,15 +159,15 @@ test_that("auto estimates a threshold per group, pooled estimates one overall", 
   ) |>
     dplyr::group_by(individual)
 
-  expect_length(which(is.na(filter_na_across(d, "speed")$x)), 0)
+  expect_length(which(is.na(mask_na_across(d, "speed")$x)), 0)
   expect_equal(
-    which(is.na(filter_na_across(d, "speed", threshold = "pooled")$x)),
+    which(is.na(mask_na_across(d, "speed", threshold = "pooled")$x)),
     5L
   )
 
   # An explicit threshold is passed through untouched
   expect_equal(
-    which(is.na(filter_na_across(d, "speed", threshold = 100)$x)),
+    which(is.na(mask_na_across(d, "speed", threshold = 100)$x)),
     5L
   )
 })
@@ -191,7 +191,7 @@ test_that("a per-group auto threshold judges each track on its own noise", {
   ) |>
     dplyr::group_by(individual)
 
-  per_group <- which(is.na(filter_na_across(d, "speed")$x))
+  per_group <- which(is.na(mask_na_across(d, "speed")$x))
   expect_true(10L %in% per_group)
   expect_true((np + 10L) %in% per_group)
 })
@@ -221,7 +221,7 @@ delta_fixture <- function(individuals = "a") {
 
 test_that("on_deltas removes a spurious jump from every later position", {
   d <- delta_fixture()
-  out <- filter_na_across(
+  out <- mask_na_across(
     d,
     "range",
     min_value = -10,
@@ -234,13 +234,13 @@ test_that("on_deltas removes a spurious jump from every later position", {
   expect_equal(out$x, c(100, 101, 102, 103, NA, 104, 105, 106))
 
   # Masking the position instead leaves the jump baked in downstream.
-  positions <- filter_na_across(d, "range", min_value = -10, max_value = 110)
+  positions <- mask_na_across(d, "range", min_value = -10, max_value = 110)
   expect_equal(positions$x, c(100, 101, 102, 103, NA, NA, NA, NA))
 })
 
 test_that("on_deltas blanks only the sample whose step was masked", {
   d <- delta_fixture()
-  out <- filter_na_across(
+  out <- mask_na_across(
     d,
     "range",
     min_value = -10,
@@ -258,7 +258,7 @@ test_that("on_deltas never masks the first sample", {
   # Inverted range: every real step of 1 is rejected, only the jump of 50
   # survives. The first sample has no step into it, so it is the starting
   # point rather than something to reject.
-  out <- filter_na_across(
+  out <- mask_na_across(
     d,
     "range",
     min_value = 2,
@@ -272,7 +272,7 @@ test_that("on_deltas never masks the first sample", {
 
 test_that("on_deltas respects grouping", {
   d <- delta_fixture(c("a", "b"))
-  out <- filter_na_across(
+  out <- mask_na_across(
     d,
     "range",
     min_value = -10,
@@ -291,8 +291,8 @@ test_that("on_deltas = FALSE leaves the position-level behaviour alone", {
   d <- na_fixture()
 
   expect_equal(
-    filter_na_across(d, "range", min_value = 0, max_value = 100),
-    filter_na_across(
+    mask_na_across(d, "range", min_value = 0, max_value = 100),
+    mask_na_across(
       d,
       "range",
       min_value = 0,
@@ -306,23 +306,23 @@ test_that("on_deltas is refused by the criteria it does not suit", {
   d <- na_fixture()
 
   expect_error(
-    filter_na_across(d, "speed", threshold = 100, on_deltas = TRUE),
+    mask_na_across(d, "speed", threshold = 100, on_deltas = TRUE),
     "second-order"
   )
   expect_error(
-    filter_na_across(d, "excursion", on_deltas = TRUE),
+    mask_na_across(d, "excursion", on_deltas = TRUE),
     "second-order"
   )
   expect_error(
-    filter_na_across(d, "hampel", on_deltas = TRUE),
+    mask_na_across(d, "hampel", on_deltas = TRUE),
     "neighbouring steps"
   )
   expect_error(
-    filter_na_across(d, "roi", on_deltas = TRUE),
+    mask_na_across(d, "roi", on_deltas = TRUE),
     "not a region of displacement"
   )
   expect_error(
-    filter_na_across(d, "confidence", on_deltas = TRUE),
+    mask_na_across(d, "confidence", on_deltas = TRUE),
     "not spatial"
   )
 })

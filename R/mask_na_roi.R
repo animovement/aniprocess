@@ -8,7 +8,7 @@
 #'
 #' @param data A data frame with numeric `x` and `y` columns (and optionally
 #'   `z`) — typically supplied by [dplyr::pick()] inside [dplyr::mutate()].
-#'   To filter a whole aniframe, use [filter_na_across()].
+#'   To filter a whole aniframe, use [mask_na_across()].
 #' @param x_min,x_max Bounds for x-coordinate (rectangular/cuboid ROI).
 #' @param y_min,y_max Bounds for y-coordinate (rectangular/cuboid ROI).
 #' @param z_min,z_max Bounds for z-coordinate (cuboid ROI, 3D only).
@@ -26,10 +26,10 @@
 #' )
 #'
 #' # Rectangular ROI
-#' filter_na_roi(coords, x_min = 20, x_max = 60, y_min = 20, y_max = 60)
+#' mask_na_roi(coords, x_min = 20, x_max = 60, y_min = 20, y_max = 60)
 #'
 #' # Circular ROI
-#' filter_na_roi(coords, x_center = 50, y_center = 50, radius = 30)
+#' mask_na_roi(coords, x_center = 50, y_center = 50, radius = 30)
 #'
 #' # 3D cuboid ROI
 #' coords_3d <- data.frame(
@@ -38,13 +38,13 @@
 #'   z = rep(c(25, 75), each = 4)
 #' )
 #'
-#' filter_na_roi(
+#' mask_na_roi(
 #'   coords_3d,
 #'   x_min = 20, x_max = 60,
 #'   y_min = 20, y_max = 60,
 #'   z_min = 20, z_max = 60
 #' )
-filter_na_roi <- function(
+mask_na_roi <- function(
   data,
   x_min = NULL,
   x_max = NULL,
@@ -57,7 +57,7 @@ filter_na_roi <- function(
   z_center = NULL,
   radius = NULL
 ) {
-  ensure_coords(data, across = "filter_na_across")
+  ensure_coords(data, across = "mask_na_across")
   variables_where <- names(data)
   missing_axes <- setdiff(c("x", "y"), variables_where)
   if (length(missing_axes) > 0L) {
@@ -115,7 +115,7 @@ filter_na_roi <- function(
         )
       )
     }
-    data <- filter_na_roi_rect(
+    data <- mask_na_roi_rect(
       data,
       x_min,
       x_max,
@@ -159,7 +159,7 @@ filter_na_roi <- function(
         )
       )
     }
-    data <- filter_na_roi_sphere(
+    data <- mask_na_roi_sphere(
       data,
       x_center,
       y_center,
@@ -175,19 +175,19 @@ filter_na_roi <- function(
 #' Filter coordinates outside a rectangular/cuboid ROI
 #'
 #' @description
-#' Helper function for filter_na_roi() that handles rectangular (2D) or
+#' Helper function for mask_na_roi() that handles rectangular (2D) or
 #' cuboid (3D) ROIs. Sets coordinates to NA if they fall outside the
 #' specified bounds.
 #'
 #' @param data A data frame with numeric `x` and `y` columns (and optionally
 #'   `z`) — typically supplied by [dplyr::pick()] inside [dplyr::mutate()].
-#'   To filter a whole aniframe, use [filter_na_across()].
+#'   To filter a whole aniframe, use [mask_na_across()].
 #' @param x_min,x_max,y_min,y_max,z_min,z_max Bounds of the ROI.
 #' @param has_z Logical indicating whether data has z coordinate.
 #'
 #' @return An aniframe with coordinates outside ROI set to NA.
 #' @keywords internal
-filter_na_roi_rect <- function(
+mask_na_roi_rect <- function(
   data,
   x_min,
   x_max,
@@ -245,7 +245,7 @@ filter_na_roi_rect <- function(
 #' Filter coordinates outside a circular/spherical ROI
 #'
 #' @description
-#' Helper function for filter_na_roi() that handles circular (2D) or
+#' Helper function for mask_na_roi() that handles circular (2D) or
 #' spherical (3D) ROIs. Sets coordinates to NA if they fall outside the
 #' specified circle/sphere.
 #'
@@ -256,7 +256,7 @@ filter_na_roi_rect <- function(
 #'
 #' @return An aniframe with coordinates outside ROI set to NA.
 #' @keywords internal
-filter_na_roi_sphere <- function(
+mask_na_roi_sphere <- function(
   data,
   x_center,
   y_center,

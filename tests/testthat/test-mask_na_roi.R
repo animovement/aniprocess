@@ -1,4 +1,4 @@
-# Tests for filter_na_roi and helper functions
+# Tests for mask_na_roi and helper functions
 # - Rectangular ROI with individual boundaries (x_min, x_max, y_min, y_max)
 # - Rectangular ROI with multiple boundaries
 # - Cuboid ROI (3D) with z boundaries
@@ -11,66 +11,66 @@
 # - Validates z parameters only used with 3D data
 # - Error messages are clear
 
-test_that("filter_na_roi filters rectangular ROI with x_min", {
+test_that("mask_na_roi filters rectangular ROI with x_min", {
   data <- anicore::anipoint(
     time = 1:4,
     x = c(0, 5, 10, 15),
     y = c(0, 5, 10, 15)
   )
 
-  result <- filter_na_across(data, "roi", x_min = 7)
+  result <- mask_na_across(data, "roi", x_min = 7)
 
   expect_equal(result$x, c(NA, NA, 10, 15))
   expect_equal(result$y, c(NA, NA, 10, 15))
 })
 
-test_that("filter_na_roi filters rectangular ROI with x_max", {
+test_that("mask_na_roi filters rectangular ROI with x_max", {
   data <- anicore::anipoint(
     time = 1:4,
     x = c(0, 5, 10, 15),
     y = c(0, 5, 10, 15)
   )
 
-  result <- filter_na_across(data, "roi", x_max = 7)
+  result <- mask_na_across(data, "roi", x_max = 7)
 
   expect_equal(result$x, c(0, 5, NA, NA))
   expect_equal(result$y, c(0, 5, NA, NA))
 })
 
-test_that("filter_na_roi filters rectangular ROI with y_min", {
+test_that("mask_na_roi filters rectangular ROI with y_min", {
   data <- anicore::anipoint(
     time = 1:4,
     x = c(0, 5, 10, 15),
     y = c(0, 5, 10, 15)
   )
 
-  result <- filter_na_across(data, "roi", y_min = 7)
+  result <- mask_na_across(data, "roi", y_min = 7)
 
   expect_equal(result$x, c(NA, NA, 10, 15))
   expect_equal(result$y, c(NA, NA, 10, 15))
 })
 
-test_that("filter_na_roi filters rectangular ROI with y_max", {
+test_that("mask_na_roi filters rectangular ROI with y_max", {
   data <- anicore::anipoint(
     time = 1:4,
     x = c(0, 5, 10, 15),
     y = c(0, 5, 10, 15)
   )
 
-  result <- filter_na_across(data, "roi", y_max = 7)
+  result <- mask_na_across(data, "roi", y_max = 7)
 
   expect_equal(result$x, c(0, 5, NA, NA))
   expect_equal(result$y, c(0, 5, NA, NA))
 })
 
-test_that("filter_na_roi filters rectangular ROI with multiple boundaries", {
+test_that("mask_na_roi filters rectangular ROI with multiple boundaries", {
   data <- anicore::anipoint(
     time = 1:5,
     x = c(0, 5, 10, 15, 20),
     y = c(0, 5, 10, 15, 20)
   )
 
-  result <- filter_na_across(
+  result <- mask_na_across(
     data,
     "roi",
     x_min = 5,
@@ -83,14 +83,14 @@ test_that("filter_na_roi filters rectangular ROI with multiple boundaries", {
   expect_equal(result$y, c(NA, 5, 10, 15, NA))
 })
 
-test_that("filter_na_roi handles points on rectangular boundary correctly", {
+test_that("mask_na_roi handles points on rectangular boundary correctly", {
   data <- anicore::anipoint(
     time = 1:3,
     x = c(5, 10, 15),
     y = c(5, 10, 15)
   )
 
-  result <- filter_na_across(
+  result <- mask_na_across(
     data,
     "roi",
     x_min = 5,
@@ -104,7 +104,7 @@ test_that("filter_na_roi handles points on rectangular boundary correctly", {
   expect_equal(result$y, c(5, 10, 15))
 })
 
-test_that("filter_na_roi filters cuboid ROI with z_min", {
+test_that("mask_na_roi filters cuboid ROI with z_min", {
   data <- anicore::anipoint(
     time = 1:4,
     x = c(10, 10, 10, 10),
@@ -113,14 +113,14 @@ test_that("filter_na_roi filters cuboid ROI with z_min", {
     variables_where = c("x", "y", "z")
   )
 
-  result <- filter_na_across(data, "roi", z_min = 7)
+  result <- mask_na_across(data, "roi", z_min = 7)
 
   expect_equal(result$x, c(NA, NA, 10, 10))
   expect_equal(result$y, c(NA, NA, 10, 10))
   expect_equal(result$z, c(NA, NA, 10, 15))
 })
 
-test_that("filter_na_roi filters cuboid ROI with z_max", {
+test_that("mask_na_roi filters cuboid ROI with z_max", {
   data <- anicore::anipoint(
     time = 1:4,
     x = c(10, 10, 10, 10),
@@ -129,14 +129,14 @@ test_that("filter_na_roi filters cuboid ROI with z_max", {
     variables_where = c("x", "y", "z")
   )
 
-  result <- filter_na_across(data, "roi", z_max = 7)
+  result <- mask_na_across(data, "roi", z_max = 7)
 
   expect_equal(result$x, c(10, 10, NA, NA))
   expect_equal(result$y, c(10, 10, NA, NA))
   expect_equal(result$z, c(0, 5, NA, NA))
 })
 
-test_that("filter_na_roi filters cuboid ROI with all boundaries", {
+test_that("mask_na_roi filters cuboid ROI with all boundaries", {
   data <- anicore::anipoint(
     time = 1:8,
     x = rep(c(0, 10), 4),
@@ -145,7 +145,7 @@ test_that("filter_na_roi filters cuboid ROI with all boundaries", {
     variables_where = c("x", "y", "z")
   )
 
-  result <- filter_na_across(
+  result <- mask_na_across(
     data,
     "roi",
     x_min = 5,
@@ -163,14 +163,14 @@ test_that("filter_na_roi filters cuboid ROI with all boundaries", {
   expect_equal(result$z[!is.na(result$z)], 10)
 })
 
-test_that("filter_na_roi filters circular ROI correctly", {
+test_that("mask_na_roi filters circular ROI correctly", {
   data <- anicore::anipoint(
     time = 1:4,
     x = c(0, 3, 6, 9),
     y = c(0, 0, 0, 0)
   )
 
-  result <- filter_na_across(
+  result <- mask_na_across(
     data,
     "roi",
     x_center = 5,
@@ -184,7 +184,7 @@ test_that("filter_na_roi filters circular ROI correctly", {
   expect_equal(result$y, c(NA, 0, 0, NA))
 })
 
-test_that("filter_na_roi handles circular ROI with various distances", {
+test_that("mask_na_roi handles circular ROI with various distances", {
   data <- anicore::anipoint(
     time = 1:3,
     x = c(5, 8, 10),
@@ -192,7 +192,7 @@ test_that("filter_na_roi handles circular ROI with various distances", {
   )
 
   # Circle centered at (5, 5) with radius 4
-  result <- filter_na_across(
+  result <- mask_na_across(
     data,
     "roi",
     x_center = 5,
@@ -207,7 +207,7 @@ test_that("filter_na_roi handles circular ROI with various distances", {
   expect_equal(result$y, c(5, 5, NA))
 })
 
-test_that("filter_na_roi filters spherical ROI correctly", {
+test_that("mask_na_roi filters spherical ROI correctly", {
   data <- anicore::anipoint(
     time = 1:5,
     x = c(5, 5, 5, 5, 10),
@@ -217,7 +217,7 @@ test_that("filter_na_roi filters spherical ROI correctly", {
   )
 
   # Sphere centered at (5, 5, 5) with radius 4
-  result <- filter_na_across(
+  result <- mask_na_across(
     data,
     "roi",
     x_center = 5,
@@ -236,7 +236,7 @@ test_that("filter_na_roi filters spherical ROI correctly", {
   expect_equal(result$z, c(5, 8, 2, 5, NA))
 })
 
-test_that("filter_na_roi handles spherical ROI boundary", {
+test_that("mask_na_roi handles spherical ROI boundary", {
   data <- anicore::anipoint(
     time = 1:3,
     x = c(5, 7, 9),
@@ -246,7 +246,7 @@ test_that("filter_na_roi handles spherical ROI boundary", {
   )
 
   # Sphere at (5, 5, 5) with radius 2
-  result <- filter_na_across(
+  result <- mask_na_across(
     data,
     "roi",
     x_center = 5,
@@ -261,28 +261,28 @@ test_that("filter_na_roi handles spherical ROI boundary", {
   expect_equal(result$x, c(5, 7, NA))
 })
 
-test_that("filter_na_roi preserves existing NAs in rectangular ROI", {
+test_that("mask_na_roi preserves existing NAs in rectangular ROI", {
   data <- anicore::anipoint(
     time = 1:4,
     x = c(0, NA, 10, 15),
     y = c(0, 5, NA, 15)
   )
 
-  result <- filter_na_across(data, "roi", x_min = 5, x_max = 12)
+  result <- mask_na_across(data, "roi", x_min = 5, x_max = 12)
 
   expect_equal(result$x, c(NA, NA, 10, NA))
   expect_true(is.na(result$y[2]))
   expect_true(is.na(result$y[3]))
 })
 
-test_that("filter_na_roi preserves existing NAs in circular ROI", {
+test_that("mask_na_roi preserves existing NAs in circular ROI", {
   data <- anicore::anipoint(
     time = 1:3,
     x = c(5, NA, 6),
     y = c(5, 5, NA)
   )
 
-  result <- filter_na_across(
+  result <- mask_na_across(
     data,
     "roi",
     x_center = 5,
@@ -294,7 +294,7 @@ test_that("filter_na_roi preserves existing NAs in circular ROI", {
   expect_true(is.na(result$y[3]))
 })
 
-test_that("filter_na_roi preserves existing NAs in 3D ROI", {
+test_that("mask_na_roi preserves existing NAs in 3D ROI", {
   data <- anicore::anipoint(
     time = 1:4,
     x = c(10, NA, 10, 10),
@@ -303,14 +303,14 @@ test_that("filter_na_roi preserves existing NAs in 3D ROI", {
     variables_where = c("x", "y", "z")
   )
 
-  result <- filter_na_across(data, "roi", x_min = 5)
+  result <- mask_na_across(data, "roi", x_min = 5)
 
   expect_true(is.na(result$x[2]))
   expect_true(is.na(result$y[3]))
   expect_true(is.na(result$z[4]))
 })
 
-test_that("filter_na_roi errors when no parameters provided", {
+test_that("mask_na_roi errors when no parameters provided", {
   data <- anicore::anipoint(
     time = 1:3,
     x = c(1, 2, 3),
@@ -318,12 +318,12 @@ test_that("filter_na_roi errors when no parameters provided", {
   )
 
   expect_error(
-    filter_na_across(data, "roi"),
+    mask_na_across(data, "roi"),
     "No ROI parameters provided"
   )
 })
 
-test_that("filter_na_roi errors when circular ROI parameters incomplete", {
+test_that("mask_na_roi errors when circular ROI parameters incomplete", {
   data <- anicore::anipoint(
     time = 1:3,
     x = c(1, 2, 3),
@@ -332,24 +332,24 @@ test_that("filter_na_roi errors when circular ROI parameters incomplete", {
 
   # Only x_center provided
   expect_error(
-    filter_na_across(data, "roi", x_center = 5),
+    mask_na_across(data, "roi", x_center = 5),
     class = "rlang_error"
   )
 
   # Only x_center and y_center provided
   expect_error(
-    filter_na_across(data, "roi", x_center = 5, y_center = 5),
+    mask_na_across(data, "roi", x_center = 5, y_center = 5),
     "radius"
   )
 
   # Only radius provided
   expect_error(
-    filter_na_across(data, "roi", radius = 5),
+    mask_na_across(data, "roi", radius = 5),
     class = "rlang_error"
   )
 })
 
-test_that("filter_na_roi errors when spherical ROI missing z_center for 3D data", {
+test_that("mask_na_roi errors when spherical ROI missing z_center for 3D data", {
   data <- anicore::anipoint(
     time = 1:3,
     x = c(1, 2, 3),
@@ -359,12 +359,12 @@ test_that("filter_na_roi errors when spherical ROI missing z_center for 3D data"
   )
 
   expect_error(
-    filter_na_across(data, "roi", x_center = 5, y_center = 5, radius = 3),
+    mask_na_across(data, "roi", x_center = 5, y_center = 5, radius = 3),
     "z_center.*must be provided for 3D data"
   )
 })
 
-test_that("filter_na_roi errors when z parameters used with 2D data", {
+test_that("mask_na_roi errors when z parameters used with 2D data", {
   data <- anicore::anipoint(
     time = 1:3,
     x = c(1, 2, 3),
@@ -372,12 +372,12 @@ test_that("filter_na_roi errors when z parameters used with 2D data", {
   )
 
   expect_error(
-    filter_na_across(data, "roi", z_min = 0),
+    mask_na_across(data, "roi", z_min = 0),
     "Cannot use.*z_min.*with 2D data"
   )
 
   expect_error(
-    filter_na_across(
+    mask_na_across(
       data,
       "roi",
       x_center = 5,
@@ -389,7 +389,7 @@ test_that("filter_na_roi errors when z parameters used with 2D data", {
   )
 })
 
-test_that("filter_na_roi errors when mixing rectangular and circular params", {
+test_that("mask_na_roi errors when mixing rectangular and circular params", {
   data <- anicore::anipoint(
     time = 1:3,
     x = c(1, 2, 3),
@@ -397,7 +397,7 @@ test_that("filter_na_roi errors when mixing rectangular and circular params", {
   )
 
   expect_error(
-    filter_na_across(
+    mask_na_across(
       data,
       "roi",
       x_min = 0,
@@ -409,11 +409,11 @@ test_that("filter_na_roi errors when mixing rectangular and circular params", {
   )
 })
 
-test_that("filter_na_roi rejects input that is neither aniframe nor data frame", {
-  expect_error(filter_na_roi(1:5, x_min = 0), "aniframe or a data frame")
+test_that("mask_na_roi rejects input that is neither aniframe nor data frame", {
+  expect_error(mask_na_roi(1:5, x_min = 0), "aniframe or a data frame")
 })
 
-test_that("filter_na_roi coordinate-frame form matches the aniframe form", {
+test_that("mask_na_roi coordinate-frame form matches the aniframe form", {
   coords <- data.frame(x = c(0, 10, 20), y = c(0, 10, 20))
   d <- anicore::anipoint(
     time = 1:3,
@@ -422,8 +422,8 @@ test_that("filter_na_roi coordinate-frame form matches the aniframe form", {
     variables_what = character(0)
   )
   expect_equal(
-    filter_na_roi(coords, x_min = 5, x_max = 15),
-    as.data.frame(filter_na_across(d, "roi", x_min = 5, x_max = 15))[, c(
+    mask_na_roi(coords, x_min = 5, x_max = 15),
+    as.data.frame(mask_na_across(d, "roi", x_min = 5, x_max = 15))[, c(
       "x",
       "y"
     )],
@@ -431,14 +431,14 @@ test_that("filter_na_roi coordinate-frame form matches the aniframe form", {
   )
 })
 
-test_that("filter_na_roi needs x and y coordinates", {
+test_that("mask_na_roi needs x and y coordinates", {
   expect_error(
-    filter_na_roi(data.frame(a = 1:3, b = 1:3), x_min = 0),
+    mask_na_roi(data.frame(a = 1:3, b = 1:3), x_min = 0),
     "needs coordinate"
   )
 })
 
-test_that("filter_na_roi_rect handles each boundary independently", {
+test_that("mask_na_roi_rect handles each boundary independently", {
   data <- anicore::anipoint(
     time = 1:3,
     x = c(0, 10, 20),
@@ -446,7 +446,7 @@ test_that("filter_na_roi_rect handles each boundary independently", {
   )
 
   # Test x_min only
-  result <- filter_na_roi_rect(
+  result <- mask_na_roi_rect(
     data,
     x_min = 5,
     NULL,
@@ -459,7 +459,7 @@ test_that("filter_na_roi_rect handles each boundary independently", {
   expect_equal(result$x, c(NA, 10, 20))
 
   # Test x_max only
-  result <- filter_na_roi_rect(
+  result <- mask_na_roi_rect(
     data,
     NULL,
     x_max = 15,
@@ -472,7 +472,7 @@ test_that("filter_na_roi_rect handles each boundary independently", {
   expect_equal(result$x, c(0, 10, NA))
 
   # Test y_min only
-  result <- filter_na_roi_rect(
+  result <- mask_na_roi_rect(
     data,
     NULL,
     NULL,
@@ -485,7 +485,7 @@ test_that("filter_na_roi_rect handles each boundary independently", {
   expect_equal(result$y, c(NA, 10, 20))
 
   # Test y_max only
-  result <- filter_na_roi_rect(
+  result <- mask_na_roi_rect(
     data,
     NULL,
     NULL,
@@ -498,7 +498,7 @@ test_that("filter_na_roi_rect handles each boundary independently", {
   expect_equal(result$y, c(0, 10, NA))
 })
 
-test_that("filter_na_roi_rect handles z boundaries in 3D", {
+test_that("mask_na_roi_rect handles z boundaries in 3D", {
   data <- anicore::anipoint(
     time = 1:3,
     x = c(10, 10, 10),
@@ -508,7 +508,7 @@ test_that("filter_na_roi_rect handles z boundaries in 3D", {
   )
 
   # Test z_min only
-  result <- filter_na_roi_rect(
+  result <- mask_na_roi_rect(
     data,
     NULL,
     NULL,
@@ -522,7 +522,7 @@ test_that("filter_na_roi_rect handles z boundaries in 3D", {
   expect_equal(result$x, c(NA, 10, 10))
 
   # Test z_max only
-  result <- filter_na_roi_rect(
+  result <- mask_na_roi_rect(
     data,
     NULL,
     NULL,
@@ -536,7 +536,7 @@ test_that("filter_na_roi_rect handles z boundaries in 3D", {
   expect_equal(result$x, c(10, 10, NA))
 })
 
-test_that("filter_na_roi_sphere calculates 2D distance correctly", {
+test_that("mask_na_roi_sphere calculates 2D distance correctly", {
   data <- anicore::anipoint(
     time = 1:5,
     x = c(2, 3, 5, 7, 8),
@@ -544,7 +544,7 @@ test_that("filter_na_roi_sphere calculates 2D distance correctly", {
   )
 
   # Circle at (5, 4) with radius 2
-  result <- filter_na_roi_sphere(
+  result <- mask_na_roi_sphere(
     data,
     x_center = 5,
     y_center = 4,
@@ -557,7 +557,7 @@ test_that("filter_na_roi_sphere calculates 2D distance correctly", {
   expect_equal(result$y, c(NA, 4, 4, 4, NA))
 })
 
-test_that("filter_na_roi_sphere calculates 3D distance correctly", {
+test_that("mask_na_roi_sphere calculates 3D distance correctly", {
   data <- anicore::anipoint(
     time = 1:4,
     x = c(5, 5, 5, 8),
@@ -567,7 +567,7 @@ test_that("filter_na_roi_sphere calculates 3D distance correctly", {
   )
 
   # Sphere at (5, 5, 5) with radius 2
-  result <- filter_na_roi_sphere(
+  result <- mask_na_roi_sphere(
     data,
     x_center = 5,
     y_center = 5,
@@ -583,26 +583,26 @@ test_that("filter_na_roi_sphere calculates 3D distance correctly", {
   expect_equal(result$x, c(5, NA, NA, NA))
 })
 
-test_that("filter_na_roi returns an aniframe", {
+test_that("mask_na_roi returns an aniframe", {
   data <- anicore::anipoint(
     time = 1:3,
     x = c(1, 5, 10),
     y = c(1, 5, 10)
   )
 
-  result <- filter_na_across(data, "roi", x_min = 3)
+  result <- mask_na_across(data, "roi", x_min = 3)
 
   expect_s3_class(result, "anipoint")
 })
 
-test_that("filter_na_roi works with grid data", {
+test_that("mask_na_roi works with grid data", {
   data <- anicore::anipoint(
     time = 1:9,
     x = rep(c(0, 5, 10), 3),
     y = rep(c(0, 5, 10), each = 3)
   )
 
-  result <- filter_na_across(
+  result <- mask_na_across(
     data,
     "roi",
     x_min = 3,
@@ -618,7 +618,7 @@ test_that("filter_na_roi works with grid data", {
   expect_equal(non_na_rows$y, 5)
 })
 
-test_that("filter_na_roi errors when no ROI parameters are given (3D)", {
+test_that("mask_na_roi errors when no ROI parameters are given (3D)", {
   data <- anicore::anipoint(
     time = 1:5,
     x = 1:5,
@@ -627,5 +627,5 @@ test_that("filter_na_roi errors when no ROI parameters are given (3D)", {
     variables_where = c("x", "y", "z"),
     variables_what = character(0)
   )
-  expect_error(filter_na_across(data, "roi"), "No ROI parameters provided")
+  expect_error(mask_na_across(data, "roi"), "No ROI parameters provided")
 })
