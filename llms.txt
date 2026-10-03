@@ -59,7 +59,7 @@ Apply a named method across the spatial columns, within groups.
 - [`filter_across()`](https://animovement.dev/aniprocess/reference/filter_across.md)
   **\[experimental\]** : Apply a filter across an aniframe's spatial
   columns
-- [`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_across.md)
+- [`mask_na_across()`](https://animovement.dev/aniprocess/reference/mask_na_across.md)
   **\[experimental\]** : Mask values to NA across an aniframe's spatial
   columns
 - [`replace_na_across()`](https://animovement.dev/aniprocess/reference/replace_na_across.md)
@@ -72,7 +72,7 @@ The same, for a vector or a frame of coordinates inside `mutate()`.
 
 - [`filter_with()`](https://animovement.dev/aniprocess/reference/filter_with.md)
   : Apply a filter by name
-- [`filter_na_with()`](https://animovement.dev/aniprocess/reference/filter_na_with.md)
+- [`mask_na_with()`](https://animovement.dev/aniprocess/reference/mask_na_with.md)
   : Mask values to NA by a named criterion
 - [`replace_na_with()`](https://animovement.dev/aniprocess/reference/replace_na_with.md)
   : Fill missing values by a named method
@@ -81,20 +81,20 @@ The same, for a vector or a frame of coordinates inside `mutate()`.
 
 Replace values that fail a quality criterion with `NA`.
 
-- [`filter_na_confidence()`](https://animovement.dev/aniprocess/reference/filter_na_confidence.md)
+- [`mask_na_confidence()`](https://animovement.dev/aniprocess/reference/mask_na_confidence.md)
   : Filter low-confidence values in a dataset
-- [`filter_na_excursion()`](https://animovement.dev/aniprocess/reference/filter_na_excursion.md)
+- [`mask_na_excursion()`](https://animovement.dev/aniprocess/reference/mask_na_excursion.md)
   : Filter Out Position Excursions That Return
-- [`filter_na_hampel()`](https://animovement.dev/aniprocess/reference/filter_na_hampel.md)
+- [`mask_na_hampel()`](https://animovement.dev/aniprocess/reference/mask_na_hampel.md)
   **\[experimental\]** : Mask spikes against a rolling median
-- [`filter_na_range()`](https://animovement.dev/aniprocess/reference/filter_na_range.md)
+- [`mask_na_range()`](https://animovement.dev/aniprocess/reference/mask_na_range.md)
   : Filter values outside a range to NA
-- [`filter_na_roi()`](https://animovement.dev/aniprocess/reference/filter_na_roi.md)
+- [`mask_na_roi()`](https://animovement.dev/aniprocess/reference/mask_na_roi.md)
   : Filter coordinates outside a region of interest (ROI)
-- [`filter_na_segment_length()`](https://animovement.dev/aniprocess/reference/filter_na_segment_length.md)
+- [`mask_na_segment_length()`](https://animovement.dev/aniprocess/reference/mask_na_segment_length.md)
   **\[experimental\]** : Mask points whose segments are far off their
   usual length
-- [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_speed.md)
+- [`mask_na_speed()`](https://animovement.dev/aniprocess/reference/mask_na_speed.md)
   : Filter values by speed threshold
 
 ## Fill missing values

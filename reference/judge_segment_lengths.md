@@ -47,7 +47,7 @@ judge_segment_lengths(
 - tolerance, min_difference:
 
   The thresholds, as in
-  [`filter_na_segment_length()`](https://animovement.dev/aniprocess/reference/filter_na_segment_length.md).
+  [`mask_na_segment_length()`](https://animovement.dev/aniprocess/reference/mask_na_segment_length.md).
 
 ## Value
 

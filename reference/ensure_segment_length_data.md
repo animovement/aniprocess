@@ -1,7 +1,7 @@
-# Validate the frame given to `filter_na_segment_length()`.
+# Validate the frame given to `mask_na_segment_length()`.
 
 Validate the frame given to
-[`filter_na_segment_length()`](https://animovement.dev/aniprocess/reference/filter_na_segment_length.md).
+[`mask_na_segment_length()`](https://animovement.dev/aniprocess/reference/mask_na_segment_length.md).
 
 ## Usage
 

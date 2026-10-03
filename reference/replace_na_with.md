@@ -82,7 +82,7 @@ as well as
 
 [`filter_with()`](https://animovement.dev/aniprocess/reference/filter_with.md)
 for smoothing,
-[`filter_na_with()`](https://animovement.dev/aniprocess/reference/filter_na_with.md)
+[`mask_na_with()`](https://animovement.dev/aniprocess/reference/mask_na_with.md)
 for masking.
 
 ## Examples

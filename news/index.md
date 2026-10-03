@@ -4,7 +4,7 @@
 
 ### Added
 
-- [`filter_na_segment_length()`](https://animovement.dev/aniprocess/reference/filter_na_segment_length.md)
+- [`mask_na_segment_length()`](https://animovement.dev/aniprocess/reference/mask_na_segment_length.md)
   masks points whose segments are far off their usual length
   ([\#91](https://github.com/animovement/aniprocess/issues/91)), such as
   a foot matched wrongly in multi-camera 3D that stays confident and
@@ -17,7 +17,7 @@
   shin and foot, so the ankle goes and the knee and the toe stay.
   `segments` restricts the judging to the segments meant to be rigid.
 
-- [`filter_na_hampel()`](https://animovement.dev/aniprocess/reference/filter_na_hampel.md)
+- [`mask_na_hampel()`](https://animovement.dev/aniprocess/reference/mask_na_hampel.md)
   masks spikes — a point that jumps away for a frame or two and comes
   back — by its distance from the rolling median of the window around
   it, against `k` robust deviations of that window
@@ -27,10 +27,19 @@
   movement in the track. With several coordinate columns the distance is
   Euclidean and a point is masked in all axes at once; `min_distance`
   floors the threshold so a keypoint that barely moves does not lose its
-  noise. Also available as `filter_na_across(method = "hampel")` and
-  `filter_na_with(method = "hampel")`.
+  noise. Also available as `mask_na_across(method = "hampel")` and
+  `mask_na_with(method = "hampel")`.
 
 ### Changed
+
+- The NA-masking functions are renamed from `filter_na_*()` to
+  `mask_na_*()`
+  ([\#94](https://github.com/animovement/aniprocess/issues/94)). They
+  set bad values to `NA` and keep every row, which `filter_` — the
+  prefix of
+  [`dplyr::filter()`](https://dplyr.tidyverse.org/reference/filter.html),
+  and of this package’s smoothers — suggested they did not. Masking then
+  filling now reads as `mask_na_*()` then `replace_na_*()`.
 
 - Works with anicore’s `anipoint` class and rebuilt accessor API
   (animovement/anicore#154). The `*_across()` verbs take their default
@@ -69,6 +78,29 @@
   share one reflection-padding helper, so the width applied and the
   width removed cannot drift apart again
   ([\#79](https://github.com/animovement/aniprocess/issues/79)).
+
+### Deprecated
+
+- [`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md),
+  [`filter_na_with()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md),
+  [`filter_na_confidence()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md),
+  [`filter_na_excursion()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md),
+  [`filter_na_range()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md),
+  [`filter_na_roi()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md)
+  and
+  [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md)
+  are deprecated in favour of
+  [`mask_na_across()`](https://animovement.dev/aniprocess/reference/mask_na_across.md),
+  [`mask_na_with()`](https://animovement.dev/aniprocess/reference/mask_na_with.md),
+  [`mask_na_confidence()`](https://animovement.dev/aniprocess/reference/mask_na_confidence.md),
+  [`mask_na_excursion()`](https://animovement.dev/aniprocess/reference/mask_na_excursion.md),
+  [`mask_na_range()`](https://animovement.dev/aniprocess/reference/mask_na_range.md),
+  [`mask_na_roi()`](https://animovement.dev/aniprocess/reference/mask_na_roi.md)
+  and
+  [`mask_na_speed()`](https://animovement.dev/aniprocess/reference/mask_na_speed.md)
+  ([\#94](https://github.com/animovement/aniprocess/issues/94)). They
+  warn and forward to the new name, and will be removed after the next
+  release.
 
 ### Fixed
 
@@ -174,19 +206,19 @@
   points at
   [`filter_across()`](https://animovement.dev/aniprocess/reference/filter_across.md),
   and
-  [`filter_na_confidence()`](https://animovement.dev/aniprocess/reference/filter_na_confidence.md),
-  [`filter_na_excursion()`](https://animovement.dev/aniprocess/reference/filter_na_excursion.md),
-  [`filter_na_roi()`](https://animovement.dev/aniprocess/reference/filter_na_roi.md)
+  [`filter_na_confidence()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md),
+  [`filter_na_excursion()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md),
+  [`filter_na_roi()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md)
   and
-  [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_speed.md)
+  [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md)
   at
-  [`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_across.md).
+  [`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md).
 
 ## aniprocess 0.4.0 (2026-08-18)
 
 ### Added
 
-- [`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_across.md)
+- [`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md)
   gains `on_deltas`, matching
   [`filter_across()`](https://animovement.dev/aniprocess/reference/filter_across.md):
   it differences each column, masks the differences, and re-integrates
@@ -235,15 +267,15 @@
   which does not collide with `tidyr::replace_na()`.
 
 - [`filter_ccma()`](https://animovement.dev/aniprocess/reference/filter_ccma.md),
-  [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_speed.md),
-  [`filter_na_excursion()`](https://animovement.dev/aniprocess/reference/filter_na_excursion.md),
-  [`filter_na_roi()`](https://animovement.dev/aniprocess/reference/filter_na_roi.md)
+  [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md),
+  [`filter_na_excursion()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md),
+  [`filter_na_roi()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md)
   and
-  [`filter_na_confidence()`](https://animovement.dev/aniprocess/reference/filter_na_confidence.md)
+  [`filter_na_confidence()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md)
   now take a frame of coordinate columns rather than an aniframe. Use
   [`filter_across()`](https://animovement.dev/aniprocess/reference/filter_across.md)
   /
-  [`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_across.md)
+  [`filter_na_across()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md)
   for a whole aniframe.
 
 - Filters preserve gaps by default: `keep_na` is `TRUE` everywhere
@@ -259,9 +291,9 @@
   [`find_troughs()`](https://animovement.dev/aniprocess/reference/find_troughs.md);
   `x` replaces `measurements` in the Kalman filters;
   `min_value`/`max_value` replace `min`/`max` in
-  [`filter_na_range()`](https://animovement.dev/aniprocess/reference/filter_na_range.md).
+  [`filter_na_range()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md).
 
-- [`filter_na_confidence()`](https://animovement.dev/aniprocess/reference/filter_na_confidence.md)
+- [`filter_na_confidence()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md)
   no longer masks rows whose confidence is `NA`, and warns instead — a
   missing score means *not assessed*, not *poor*.
 
@@ -271,7 +303,7 @@
 
 - [`filter_ccma()`](https://animovement.dev/aniprocess/reference/filter_ccma.md)
   and
-  [`filter_na_excursion()`](https://animovement.dev/aniprocess/reference/filter_na_excursion.md)
+  [`filter_na_excursion()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md)
   no longer scale quadratically in the number of groups. At 3,000 groups
   they are roughly 8× and 3.5× faster
   ([\#37](https://github.com/animovement/aniprocess/issues/37)).
@@ -291,7 +323,7 @@
 
 ### Fixed
 
-- [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_speed.md)
+- [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md)
   computes speed within each group, so a step is never formed between
   one track and the next. Where `time` restarts per track that step
   inflated the `"auto"` threshold and caused genuine outliers to be
@@ -300,7 +332,7 @@
   re-integrate from the original starting value; they previously dropped
   the first sample and shifted the whole series
   ([\#30](https://github.com/animovement/aniprocess/issues/30)).
-- [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_speed.md)
+- [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md)
   no longer blanks groups too short to contain a step
   ([\#37](https://github.com/animovement/aniprocess/issues/37)).
 - The `data.table (>= 1.18.0)` requirement is enforced when the package
@@ -318,7 +350,7 @@
   boundary mode
   ([\#11](https://github.com/animovement/aniprocess/issues/11)).
 - New
-  [`filter_na_excursion()`](https://animovement.dev/aniprocess/reference/filter_na_excursion.md):
+  [`filter_na_excursion()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md):
   flags multi-frame tracking excursions using the criterion from Todd,
   Kain & de Bivort (2017) — a jump that eventually returns counts as an
   outlier; a sustained shift does not
@@ -341,7 +373,7 @@
   fixed an asymmetric frequency-domain mask that halved the passband
   amplitude. Lowpass + highpass at the same cutoff now reconstruct the
   input exactly.
-- [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_speed.md)
+- [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md)
   now flags single-frame outliers correctly (the outlier itself is
   blanked, not its neighbours), and a single NA in the input no longer
   contaminates adjacent rows
@@ -389,9 +421,9 @@
 ### Changed
 
 - Updated to the tidy movement data model of aniframe 0.4.0.
-- [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_speed.md)
+- [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md)
   uses `differentiate()` from animetric rather than its own derivative.
-- [`filter_na_roi()`](https://animovement.dev/aniprocess/reference/filter_na_roi.md)
+- [`filter_na_roi()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md)
   accepts 3D regions of interest.
 
 ## aniprocess 0.1.1
@@ -401,11 +433,11 @@ The package takes its present shape: masking, gap filling and smoothing.
 ### Added
 
 - NA masking:
-  [`filter_na_confidence()`](https://animovement.dev/aniprocess/reference/filter_na_confidence.md),
-  [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_speed.md),
-  [`filter_na_range()`](https://animovement.dev/aniprocess/reference/filter_na_range.md)
+  [`filter_na_confidence()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md),
+  [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md),
+  [`filter_na_range()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md)
   and
-  [`filter_na_roi()`](https://animovement.dev/aniprocess/reference/filter_na_roi.md).
+  [`filter_na_roi()`](https://animovement.dev/aniprocess/reference/filter_na_deprecated.md).
 - Gap filling:
   [`replace_na_linear()`](https://animovement.dev/aniprocess/reference/replace_na_linear.md),
   [`replace_na_spline()`](https://animovement.dev/aniprocess/reference/replace_na_spline.md),
