@@ -67,8 +67,8 @@
 #' @param ... Additional arguments passed to [replace_na_with()] (e.g.
 #'   `value`, `min_gap`, `max_gap`).
 #'
-#' @return An aniframe of the same shape as the input, with the
-#'   spatial columns smoothed.
+#' @return A data frame with the same names and shape as `data`, its
+#'   coordinates smoothed.
 #'
 #' @references
 #' Steinecker, T. & Wuensche, H.-J. (2023). A Simple and Model-Free

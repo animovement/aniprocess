@@ -57,8 +57,8 @@ interpolated estimates.}
 \code{value}, \code{min_gap}, \code{max_gap}).}
 }
 \value{
-An aniframe of the same shape as the input, with the
-spatial columns smoothed.
+A data frame with the same names and shape as \code{data}, its
+coordinates smoothed.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
