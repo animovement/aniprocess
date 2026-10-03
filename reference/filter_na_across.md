@@ -12,7 +12,7 @@ boundary.
 ``` r
 filter_na_across(
   data,
-  method = c("range", "speed", "excursion", "roi", "confidence"),
+  method = c("range", "speed", "excursion", "hampel", "roi", "confidence"),
   variables = NULL,
   ...,
   on_deltas = FALSE
@@ -28,7 +28,7 @@ filter_na_across(
 - method:
 
   Criterion to apply. One of `"range"`, `"speed"`, `"excursion"`,
-  `"roi"` or `"confidence"`.
+  `"hampel"`, `"roi"` or `"confidence"`.
 
 - variables:
 
@@ -51,8 +51,8 @@ filter_na_across(
   single-window displacements rather than implausible positions. See
   *Masking on displacements* below.
 
-  Only `"range"` accepts it. The others either already judge
-  between-sample change, or are not about displacement at all, so
+  Only `"range"` accepts it. The others either already judge a sample
+  against its neighbours, or are not about displacement at all, so
   differencing first would answer a different question than their name
   promises; they error rather than quietly compute it.
 

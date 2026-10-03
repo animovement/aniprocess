@@ -10,7 +10,7 @@ smooth.
 ``` r
 filter_na_with(
   x,
-  method = c("range", "speed", "excursion", "roi", "confidence"),
+  method = c("range", "speed", "excursion", "hampel", "roi", "confidence"),
   ...
 )
 ```
@@ -24,7 +24,7 @@ filter_na_with(
 - method:
 
   Criterion to apply. One of `"range"`, `"speed"`, `"excursion"`,
-  `"roi"` or `"confidence"`.
+  `"hampel"`, `"roi"` or `"confidence"`.
 
 - ...:
 
@@ -46,8 +46,9 @@ with
 
 Method-specific arguments go through `...`: `min_value`/`max_value` for
 `"range"`, `threshold` and `time` for `"speed"`,
-`outlier_sd`/`return_sd` for `"excursion"`, the ROI bounds for `"roi"`,
-and `threshold` plus `confidence` for `"confidence"`.
+`outlier_sd`/`return_sd` for `"excursion"`, `window_width`, `k` and
+`min_distance` for `"hampel"`, the ROI bounds for `"roi"`, and
+`threshold` plus `confidence` for `"confidence"`.
 
 ## See also
 

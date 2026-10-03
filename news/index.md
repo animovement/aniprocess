@@ -17,6 +17,19 @@
   shin and foot, so the ankle goes and the knee and the toe stay.
   `segments` restricts the judging to the segments meant to be rigid.
 
+- [`filter_na_hampel()`](https://animovement.dev/aniprocess/reference/filter_na_hampel.md)
+  masks spikes — a point that jumps away for a frame or two and comes
+  back — by its distance from the rolling median of the window around
+  it, against `k` robust deviations of that window
+  ([\#90](https://github.com/animovement/aniprocess/issues/90)). The
+  threshold is local, so it is tight on slow stretches and loose on fast
+  ones, where a single speed threshold has to accommodate the fastest
+  movement in the track. With several coordinate columns the distance is
+  Euclidean and a point is masked in all axes at once; `min_distance`
+  floors the threshold so a keypoint that barely moves does not lose its
+  noise. Also available as `filter_na_across(method = "hampel")` and
+  `filter_na_with(method = "hampel")`.
+
 ### Changed
 
 - Works with anicore’s `anipoint` class and rebuilt accessor API

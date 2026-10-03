@@ -23,6 +23,7 @@
 <url><loc>https://animovement.dev/aniprocess/reference/ensure_coords.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/ensure_keep_na.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/ensure_non_negative_scalar.html</loc></url>
+<url><loc>https://animovement.dev/aniprocess/reference/ensure_odd_window.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/ensure_on_deltas_supported.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/ensure_positive_scalar.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/ensure_replace_na_args.html</loc></url>
@@ -45,6 +46,7 @@
 <url><loc>https://animovement.dev/aniprocess/reference/filter_na_across.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/filter_na_confidence.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/filter_na_excursion.html</loc></url>
+<url><loc>https://animovement.dev/aniprocess/reference/filter_na_hampel.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/filter_na_method_fn.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/filter_na_range.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/filter_na_roi.html</loc></url>
@@ -62,6 +64,7 @@
 <url><loc>https://animovement.dev/aniprocess/reference/filter_with.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/find_peaks.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/find_troughs.html</loc></url>
+<url><loc>https://animovement.dev/aniprocess/reference/hampel_mask.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/helper_column.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/index.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/interpolation_positions.html</loc></url>
@@ -84,5 +87,6 @@
 <url><loc>https://animovement.dev/aniprocess/reference/resolve_variables.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/restore_na.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/rolling_with_min_obs.html</loc></url>
+<url><loc>https://animovement.dev/aniprocess/reference/row_median.html</loc></url>
 </urlset>
 

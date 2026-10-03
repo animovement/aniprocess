@@ -85,6 +85,8 @@ Replace values that fail a quality criterion with `NA`.
   : Filter low-confidence values in a dataset
 - [`filter_na_excursion()`](https://animovement.dev/aniprocess/reference/filter_na_excursion.md)
   : Filter Out Position Excursions That Return
+- [`filter_na_hampel()`](https://animovement.dev/aniprocess/reference/filter_na_hampel.md)
+  **\[experimental\]** : Mask spikes against a rolling median
 - [`filter_na_range()`](https://animovement.dev/aniprocess/reference/filter_na_range.md)
   : Filter values outside a range to NA
 - [`filter_na_roi()`](https://animovement.dev/aniprocess/reference/filter_na_roi.md)
