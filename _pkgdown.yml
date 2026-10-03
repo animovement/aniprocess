@@ -34,6 +34,7 @@ reference:
   - filter_na_excursion
   - filter_na_range
   - filter_na_roi
+  - filter_na_segment_length
   - filter_na_speed
 
 - title: "Fill missing values"
