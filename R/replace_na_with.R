@@ -42,7 +42,7 @@
 #' # A frame is filled column by column
 #' replace_na_with(data.frame(a = x, b = rev(x)), "locf")
 #'
-#' @seealso [filter_with()] for smoothing, [filter_na_with()] for masking.
+#' @seealso [filter_with()] for smoothing, [mask_na_with()] for masking.
 #' @export
 replace_na_with <- function(
   x,

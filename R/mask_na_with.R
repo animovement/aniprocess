@@ -1,7 +1,7 @@
 #' Mask values to NA by a named criterion
 #'
 #' @description
-#' Generic entry point to the `filter_na_*()` family: pick the criterion
+#' Generic entry point to the `mask_na_*()` family: pick the criterion
 #' with an argument rather than by choosing a function. Every method
 #' replaces values that fail its criterion with `NA`; none of them fill or
 #' smooth.
@@ -28,15 +28,15 @@
 #' @return The same shape as `x`, with failing values replaced by `NA`.
 #'
 #' @examples
-#' filter_na_with(c(1, 5, 10, 15), "range", min_value = 3, max_value = 12)
+#' mask_na_with(c(1, 5, 10, 15), "range", min_value = 3, max_value = 12)
 #'
 #' coords <- data.frame(x = c(0, 1, 2, 50, 4), y = c(0, 0, 0, 0, 0))
-#' filter_na_with(coords, "speed", threshold = 10, time = 1:5)
+#' mask_na_with(coords, "speed", threshold = 10, time = 1:5)
 #'
 #' @seealso [filter_with()] for the smoothing and frequency filters,
 #'   [replace_na_with()] for filling gaps.
 #' @export
-filter_na_with <- function(
+mask_na_with <- function(
   x,
   method = c("range", "speed", "excursion", "hampel", "roi", "confidence"),
   ...
@@ -45,12 +45,12 @@ filter_na_with <- function(
 
   fn <- switch(
     method,
-    range = filter_na_range,
-    speed = filter_na_speed,
-    excursion = filter_na_excursion,
-    hampel = filter_na_hampel,
-    roi = filter_na_roi,
-    confidence = filter_na_confidence
+    range = mask_na_range,
+    speed = mask_na_speed,
+    excursion = mask_na_excursion,
+    hampel = mask_na_hampel,
+    roi = mask_na_roi,
+    confidence = mask_na_confidence
   )
 
   dispatch_method(
@@ -58,7 +58,7 @@ filter_na_with <- function(
     method = method,
     fn = fn,
     multivariate = method != "range",
-    generic = "filter_na_with",
+    generic = "mask_na_with",
     ...
   )
 }

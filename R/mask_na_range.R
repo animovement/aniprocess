@@ -13,13 +13,13 @@
 #'   replaced by NA
 #'
 #' @examples
-#' filter_na_range(c(1, 5, 10, 15), min_value = 3, max_value = 12)
+#' mask_na_range(c(1, 5, 10, 15), min_value = 3, max_value = 12)
 #' # Returns: c(NA, 5, 10, NA)
 #'
-#' filter_na_range(c(1, NA, 10), min_value = 5)
+#' mask_na_range(c(1, NA, 10), min_value = 5)
 #' # Returns: c(NA, NA, 10)
 #' @export
-filter_na_range <- function(x, min_value = -Inf, max_value = Inf) {
+mask_na_range <- function(x, min_value = -Inf, max_value = Inf) {
   # Input validation
   if (!is.numeric(x)) {
     cli::cli_abort("{.arg x} must be numeric.")

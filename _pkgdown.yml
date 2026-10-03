@@ -17,26 +17,26 @@ reference:
   desc: Apply a named method across the spatial columns, within groups.
   contents:
   - filter_across
-  - filter_na_across
+  - mask_na_across
   - replace_na_across
 
 - title: "Choose a method by name"
   desc: The same, for a vector or a frame of coordinates inside `mutate()`.
   contents:
   - filter_with
-  - filter_na_with
+  - mask_na_with
   - replace_na_with
 
 - title: "Mask unreliable observations"
   desc: Replace values that fail a quality criterion with `NA`.
   contents:
-  - filter_na_confidence
-  - filter_na_excursion
-  - filter_na_hampel
-  - filter_na_range
-  - filter_na_roi
-  - filter_na_segment_length
-  - filter_na_speed
+  - mask_na_confidence
+  - mask_na_excursion
+  - mask_na_hampel
+  - mask_na_range
+  - mask_na_roi
+  - mask_na_segment_length
+  - mask_na_speed
 
 - title: "Fill missing values"
   desc: Fill gaps by interpolation, carrying forward, or a constant.

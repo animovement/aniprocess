@@ -1,4 +1,4 @@
-# Tests for filter_na_speed
+# Tests for mask_na_speed
 # - Flags single-frame outliers (2D and 3D)
 # - Leaves legitimate step changes alone (sustained moves to a new region)
 # - Does not contaminate neighbors of NA inputs
@@ -13,7 +13,7 @@
 # - Speed helpers: correct values for constant velocity (2D and 3D)
 # - Speed helpers: one-sided fallback at endpoints
 
-test_that("filter_na_speed flags a single-frame outlier (2D)", {
+test_that("mask_na_speed flags a single-frame outlier (2D)", {
   # Smooth motion with one position outlier at index 5
   data <- anicore::anipoint(
     time = 1:9,
@@ -21,7 +21,7 @@ test_that("filter_na_speed flags a single-frame outlier (2D)", {
     y = c(1, 2, 3, 4, 100, 6, 7, 8, 9)
   )
 
-  result <- filter_na_across(data, "speed", threshold = 20)
+  result <- mask_na_across(data, "speed", threshold = 20)
 
   # The outlier itself is flagged
   expect_true(is.na(result$x[5]))
@@ -33,7 +33,7 @@ test_that("filter_na_speed flags a single-frame outlier (2D)", {
   expect_false(is.na(result$y[6]))
 })
 
-test_that("filter_na_speed flags a single-frame outlier (3D)", {
+test_that("mask_na_speed flags a single-frame outlier (3D)", {
   data <- anicore::anipoint(
     time = 1:9,
     x = c(1, 2, 3, 4, 100, 6, 7, 8, 9),
@@ -42,7 +42,7 @@ test_that("filter_na_speed flags a single-frame outlier (3D)", {
     variables_where = c("x", "y", "z")
   )
 
-  result <- filter_na_across(data, "speed", threshold = 20)
+  result <- mask_na_across(data, "speed", threshold = 20)
 
   expect_true(is.na(result$x[5]))
   expect_true(is.na(result$y[5]))
@@ -51,7 +51,7 @@ test_that("filter_na_speed flags a single-frame outlier (3D)", {
   expect_false(is.na(result$x[6]))
 })
 
-test_that("filter_na_speed leaves legitimate step changes alone", {
+test_that("mask_na_speed leaves legitimate step changes alone", {
   # Sustained move to a new region (not an outlier)
   data <- anicore::anipoint(
     time = 1:8,
@@ -59,14 +59,14 @@ test_that("filter_na_speed leaves legitimate step changes alone", {
     y = c(1, 2, 3, 100, 101, 102, 103, 104)
   )
 
-  result <- filter_na_across(data, "speed", threshold = 20)
+  result <- mask_na_across(data, "speed", threshold = 20)
 
   # Nothing should be flagged - this is a state change, not an outlier
   expect_false(any(is.na(result$x)))
   expect_false(any(is.na(result$y)))
 })
 
-test_that("filter_na_speed calculates auto threshold", {
+test_that("mask_na_speed calculates auto threshold", {
   # Data with one single-frame outlier at index 51
   data <- anicore::anipoint(
     time = 1:100,
@@ -74,7 +74,7 @@ test_that("filter_na_speed calculates auto threshold", {
     y = 1:100
   )
 
-  result <- filter_na_across(data, "speed", threshold = "auto")
+  result <- mask_na_across(data, "speed", threshold = "auto")
 
   # The outlier at 51 should be flagged
   expect_true(is.na(result$x[51]))
@@ -82,21 +82,21 @@ test_that("filter_na_speed calculates auto threshold", {
   expect_false(is.na(result$x[70]))
 })
 
-test_that("filter_na_speed preserves existing NAs", {
+test_that("mask_na_speed preserves existing NAs", {
   data <- anicore::anipoint(
     time = 1:5,
     x = c(0, NA, 2, 3, 4),
     y = c(0, 1, NA, 3, 4)
   )
 
-  result <- filter_na_across(data, "speed", threshold = 100)
+  result <- mask_na_across(data, "speed", threshold = 100)
 
   # Existing NAs should remain
   expect_true(is.na(result$x[2]))
   expect_true(is.na(result$y[3]))
 })
 
-test_that("filter_na_speed does not contaminate neighbors of NA inputs", {
+test_that("mask_na_speed does not contaminate neighbors of NA inputs", {
   # Single NA in x at row 3 of an otherwise clean series
   data <- anicore::anipoint(
     time = 1:7,
@@ -104,7 +104,7 @@ test_that("filter_na_speed does not contaminate neighbors of NA inputs", {
     y = c(1, 2, 3, 4, 5, 6, 7)
   )
 
-  result <- filter_na_across(data, "speed", threshold = 100)
+  result <- mask_na_across(data, "speed", threshold = 100)
 
   # Neighbors of the NA row remain clean
   expect_false(is.na(result$x[2]))
@@ -113,7 +113,7 @@ test_that("filter_na_speed does not contaminate neighbors of NA inputs", {
   expect_false(is.na(result$y[4]))
 })
 
-test_that("filter_na_speed preserves other columns", {
+test_that("mask_na_speed preserves other columns", {
   data <- anicore::anipoint(
     time = 1:5,
     x = c(0, 1, 2, 3, 4),
@@ -122,13 +122,13 @@ test_that("filter_na_speed preserves other columns", {
     value = c(10, 20, 30, 40, 50)
   )
 
-  result <- filter_na_across(data, "speed", threshold = 100)
+  result <- mask_na_across(data, "speed", threshold = 100)
 
   expect_equal(result$id, c("a", "b", "c", "d", "e"))
   expect_equal(result$value, c(10, 20, 30, 40, 50))
 })
 
-test_that("filter_na_speed filters confidence when present", {
+test_that("mask_na_speed filters confidence when present", {
   data <- anicore::anipoint(
     time = 1:7,
     x = c(1, 2, 3, 100, 5, 6, 7),
@@ -136,26 +136,26 @@ test_that("filter_na_speed filters confidence when present", {
     confidence = rep(0.9, 7)
   )
 
-  result <- filter_na_across(data, "speed", threshold = 20)
+  result <- mask_na_across(data, "speed", threshold = 20)
 
   expect_true(is.na(result$confidence[4]))
   expect_false(is.na(result$confidence[1]))
 })
 
-test_that("filter_na_speed works without confidence column", {
+test_that("mask_na_speed works without confidence column", {
   data <- anicore::anipoint(
     time = 1:5,
     x = c(0, 1, 2, 3, 4),
     y = c(0, 1, 2, 3, 4)
   )
 
-  expect_no_error(filter_na_across(data, "speed", threshold = 100))
+  expect_no_error(mask_na_across(data, "speed", threshold = 100))
   expect_false(
-    "confidence" %in% names(filter_na_across(data, "speed", threshold = 100))
+    "confidence" %in% names(mask_na_across(data, "speed", threshold = 100))
   )
 })
 
-test_that("filter_na_speed validates data is an aniframe", {
+test_that("mask_na_speed validates data is an aniframe", {
   data <- data.frame(
     time = 1:5,
     x = c(0, 1, 2, 3, 4),
@@ -163,12 +163,12 @@ test_that("filter_na_speed validates data is an aniframe", {
   )
 
   expect_error(
-    filter_na_across(data, "speed", threshold = 5),
+    mask_na_across(data, "speed", threshold = 5),
     class = "rlang_error"
   )
 })
 
-test_that("filter_na_speed validates required columns exist", {
+test_that("mask_na_speed validates required columns exist", {
   data <- anicore::anipoint(
     time = 1:5,
     x = c(0, 1, 2, 3, 4),
@@ -178,12 +178,12 @@ test_that("filter_na_speed validates required columns exist", {
   data <- dplyr::select(data, -x)
 
   expect_error(
-    filter_na_across(data, "speed", threshold = 5),
+    mask_na_across(data, "speed", threshold = 5),
     "Missing spatial column"
   )
 })
 
-test_that("filter_na_speed validates columns are numeric", {
+test_that("mask_na_speed validates columns are numeric", {
   data <- anicore::anipoint(
     time = 1:5,
     x = c(0, 1, 2, 3, 4),
@@ -193,11 +193,11 @@ test_that("filter_na_speed validates columns are numeric", {
   data$time <- as.character(data$time)
 
   expect_error(
-    filter_na_across(data, "speed", threshold = 5)
+    mask_na_across(data, "speed", threshold = 5)
   )
 })
 
-test_that("filter_na_speed validates threshold is auto or numeric", {
+test_that("mask_na_speed validates threshold is auto or numeric", {
   data <- anicore::anipoint(
     time = 1:5,
     x = c(0, 1, 2, 3, 4),
@@ -205,43 +205,43 @@ test_that("filter_na_speed validates threshold is auto or numeric", {
   )
 
   expect_error(
-    filter_na_across(data, "speed", threshold = "high"),
+    mask_na_across(data, "speed", threshold = "high"),
     "must be either"
   )
 
   expect_error(
-    filter_na_across(data, "speed", threshold = c(1, 2)),
+    mask_na_across(data, "speed", threshold = c(1, 2)),
     "single numeric value"
   )
 })
 
-test_that("filter_na_speed returns an aniframe", {
+test_that("mask_na_speed returns an aniframe", {
   data <- anicore::anipoint(
     time = 1:5,
     x = c(0, 1, 2, 3, 4),
     y = c(0, 1, 2, 3, 4)
   )
 
-  result <- filter_na_across(data, "speed", threshold = 100)
+  result <- mask_na_across(data, "speed", threshold = 100)
 
   expect_s3_class(result, "anipoint")
 })
 
-test_that("filter_na_speed handles constant position", {
+test_that("mask_na_speed handles constant position", {
   data <- anicore::anipoint(
     time = 1:5,
     x = c(5, 5, 5, 5, 5),
     y = c(5, 5, 5, 5, 5)
   )
 
-  result <- filter_na_across(data, "speed", threshold = 1)
+  result <- mask_na_across(data, "speed", threshold = 1)
 
   # All speeds should be 0, nothing filtered
   expect_false(any(is.na(result$x)))
   expect_false(any(is.na(result$y)))
 })
 
-test_that("filter_na_speed handles uneven time spacing", {
+test_that("mask_na_speed handles uneven time spacing", {
   # Single-frame outlier on an uneven time grid
   data <- anicore::anipoint(
     time = c(0, 1, 2, 2.1, 2.2, 3, 4),
@@ -249,7 +249,7 @@ test_that("filter_na_speed handles uneven time spacing", {
     y = c(0, 1, 2, 100, 4, 5, 6)
   )
 
-  result <- filter_na_across(data, "speed", threshold = 50)
+  result <- mask_na_across(data, "speed", threshold = 50)
 
   # The outlier at index 4 should be flagged
   expect_true(is.na(result$x[4]))
@@ -309,7 +309,7 @@ test_that("calculate_step_speed returns NA for groups too short to step", {
   )
 })
 
-test_that("filter_na_speed errors when time column is missing", {
+test_that("mask_na_speed errors when time column is missing", {
   data <- anicore::anipoint(
     time = 1:5,
     x = 1:5,
@@ -317,7 +317,7 @@ test_that("filter_na_speed errors when time column is missing", {
     variables_what = character(0)
   )
   data$time <- NULL
-  expect_error(filter_na_across(data, "speed"), "Missing required column.*time")
+  expect_error(mask_na_across(data, "speed"), "Missing required column.*time")
 })
 
 # --- grouping (issue #37) ---------------------------------------------------
@@ -335,7 +335,7 @@ speed_fixture <- function(sep, np = 30) {
     dplyr::group_by(individual)
 }
 
-test_that("filter_na_speed does not form steps across group boundaries", {
+test_that("mask_na_speed does not form steps across group boundaries", {
   d <- speed_fixture(1e4)
   speed <- dplyr::mutate(
     d,
@@ -349,19 +349,19 @@ test_that("filter_na_speed does not form steps across group boundaries", {
   expect_equal(speed[11], 1)
 })
 
-test_that("filter_na_speed detection is independent of other tracks", {
+test_that("mask_na_speed detection is independent of other tracks", {
   # The outlier in "a" is identical throughout; only "b" moves further away.
   # Before the fix, the contaminated auto threshold missed it from 1e4 up.
   for (sep in c(1e3, 1e4, 1e5, 1e7)) {
     expect_equal(
-      which(is.na(filter_na_across(speed_fixture(sep), "speed")$x)),
+      which(is.na(mask_na_across(speed_fixture(sep), "speed")$x)),
       5L,
       info = paste("separation", sep)
     )
   }
 })
 
-test_that("filter_na_speed auto threshold ignores cross-track steps", {
+test_that("mask_na_speed auto threshold ignores cross-track steps", {
   # Two stationary individuals: every within-track speed is 0, so the
   # threshold must be 0 no matter how far apart they are.
   fixture <- function(sep) {
@@ -381,11 +381,11 @@ test_that("filter_na_speed auto threshold ignores cross-track steps", {
       sp = calculate_step_speed(dplyr::pick(dplyr::all_of(c("x", "y"))), time)
     )$sp
     expect_equal(mean(speed, na.rm = TRUE), 0)
-    expect_true(!any(is.na(filter_na_across(d, "speed")$x)))
+    expect_true(!any(is.na(mask_na_across(d, "speed")$x)))
   }
 })
 
-test_that("filter_na_speed leaves one-row groups untouched", {
+test_that("mask_na_speed leaves one-row groups untouched", {
   # A group with fewer than two rows has no step, so speed is NA. if_else()
   # propagates a missing condition, which would blank an otherwise fine row.
   d <- anicore::anipoint(
@@ -398,13 +398,13 @@ test_that("filter_na_speed leaves one-row groups untouched", {
   ) |>
     dplyr::group_by(individual)
 
-  res <- filter_na_across(d, "speed", threshold = 0.5)
+  res <- mask_na_across(d, "speed", threshold = 0.5)
   expect_false(is.na(res$x[4]))
   expect_equal(res$x[4], 42)
   expect_false(is.na(res$confidence[4]))
 })
 
-test_that("filter_na_speed is unchanged on ungrouped data", {
+test_that("mask_na_speed is unchanged on ungrouped data", {
   d <- anicore::anipoint(
     time = 1:10,
     x = c(0:3, 500, 5:9),
@@ -412,7 +412,7 @@ test_that("filter_na_speed is unchanged on ungrouped data", {
     variables_what = character(0)
   )
   expect_equal(
-    which(is.na(filter_na_across(d, "speed", threshold = 100)$x)),
+    which(is.na(mask_na_across(d, "speed", threshold = 100)$x)),
     5L
   )
 
@@ -421,21 +421,21 @@ test_that("filter_na_speed is unchanged on ungrouped data", {
     dplyr::mutate(individual = "a") |>
     dplyr::group_by(individual)
   expect_equal(
-    filter_na_across(d_one_group, "speed", threshold = 100)$x,
-    filter_na_across(d, "speed", threshold = 100)$x
+    mask_na_across(d_one_group, "speed", threshold = 100)$x,
+    mask_na_across(d, "speed", threshold = 100)$x
   )
 })
 
 # --- coordinate-frame form (#30 step 2) -------------------------------------
 
-test_that("filter_na_speed requires time for a coordinate frame", {
+test_that("mask_na_speed requires time for a coordinate frame", {
   expect_error(
-    filter_na_speed(data.frame(x = 1:5, y = 1:5)),
+    mask_na_speed(data.frame(x = 1:5, y = 1:5)),
     "`time` is required"
   )
 })
 
-test_that("filter_na_speed coordinate-frame form matches the aniframe form", {
+test_that("mask_na_speed coordinate-frame form matches the aniframe form", {
   x <- c(0:3, 500, 5:9)
   y <- rep(0, 10)
   tm <- 1:10
@@ -446,13 +446,13 @@ test_that("filter_na_speed coordinate-frame form matches the aniframe form", {
     variables_what = character(0)
   )
   expect_equal(
-    filter_na_speed(data.frame(x = x, y = y), threshold = 100, time = tm),
-    as.data.frame(filter_na_across(d, "speed", threshold = 100))[, c("x", "y")],
+    mask_na_speed(data.frame(x = x, y = y), threshold = 100, time = tm),
+    as.data.frame(mask_na_across(d, "speed", threshold = 100))[, c("x", "y")],
     ignore_attr = TRUE
   )
 })
 
-test_that("filter_na_speed works inside mutate via pick()", {
+test_that("mask_na_speed works inside mutate via pick()", {
   set.seed(9)
   np <- 20
   d <- anicore::anipoint(
@@ -466,7 +466,7 @@ test_that("filter_na_speed works inside mutate via pick()", {
 
   via_pick <- dplyr::mutate(
     d,
-    filter_na_speed(
+    mask_na_speed(
       dplyr::pick(dplyr::all_of(c("x", "y"))),
       threshold = 100,
       time = time
@@ -474,30 +474,30 @@ test_that("filter_na_speed works inside mutate via pick()", {
   )
   expect_equal(
     as.data.frame(via_pick)[, c("x", "y")],
-    as.data.frame(filter_na_across(d, "speed", threshold = 100))[, c("x", "y")]
+    as.data.frame(mask_na_across(d, "speed", threshold = 100))[, c("x", "y")]
   )
 })
 
-test_that("filter_na_speed rejects a mismatched time length", {
+test_that("mask_na_speed rejects a mismatched time length", {
   expect_error(
-    filter_na_speed(data.frame(x = 1:5, y = 1:5), time = 1:3),
+    mask_na_speed(data.frame(x = 1:5, y = 1:5), time = 1:3),
     "one value per row"
   )
 })
 
-test_that("filter_na_speed computes an auto threshold on a coordinate frame", {
-  # Called directly, rather than through filter_na_across(), the threshold
+test_that("mask_na_speed computes an auto threshold on a coordinate frame", {
+  # Called directly, rather than through mask_na_across(), the threshold
   # is estimated from the rows it was given.
   coords <- data.frame(x = c(0:8, 500, 10:19), y = rep(0, 20))
-  out <- filter_na_speed(coords, threshold = "auto", time = seq_len(20))
+  out <- mask_na_speed(coords, threshold = "auto", time = seq_len(20))
 
   expect_equal(which(is.na(out$x)), 10L)
 })
 
-test_that("filter_na_speed rejects a pooled threshold", {
+test_that("mask_na_speed rejects a pooled threshold", {
   # Pooling needs groups; this function only ever sees the rows it was given.
   expect_error(
-    filter_na_speed(
+    mask_na_speed(
       data.frame(x = 1:5, y = rep(0, 5)),
       threshold = "pooled",
       time = 1:5

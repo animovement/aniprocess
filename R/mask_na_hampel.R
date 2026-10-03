@@ -12,12 +12,12 @@
 #' threshold on speed or on position cannot be.
 #'
 #' Unlike the classic Hampel filter, the point is masked rather than replaced
-#' with the median, so it composes like the rest of the `filter_na_*()`
+#' with the median, so it composes like the rest of the `mask_na_*()`
 #' family: mask, then fill with [replace_na_with()].
 #'
 #' @param data A data frame of numeric coordinate columns — typically supplied
 #'   by [dplyr::pick()] inside [dplyr::mutate()]. To filter a whole aniframe,
-#'   use [filter_na_across()].
+#'   use [mask_na_across()].
 #' @param window_width An odd whole number, at least 3 (default `5`): the
 #'   number of rows in the window, centred on the point being judged. Up to
 #'   `(window_width - 1) / 2` consecutive spike frames can be caught.
@@ -71,7 +71,7 @@
 #' does not shift the verdict on its neighbours: the median and the MAD both
 #' ignore up to `(window_width - 1) / 2` aberrant points in the window. A run
 #' of spikes longer than that dominates the window and is not caught — that is
-#' what [filter_na_excursion()] is for.
+#' what [mask_na_excursion()] is for.
 #'
 #' ## Missing values and edges
 #'
@@ -91,15 +91,15 @@
 #' [dplyr::mutate()]:
 #'
 #' ```r
-#' data |> mutate(filter_na_hampel(pick(all_of(c("x", "y")))))
+#' data |> mutate(mask_na_hampel(pick(all_of(c("x", "y")))))
 #' ```
 #'
 #' The deviation depends on all coordinates jointly, so this cannot be used
 #' with [dplyr::across()]. Every row of `data` is treated as one continuous
-#' track; called via [filter_na_across()], or with [dplyr::pick()] inside a
+#' track; called via [mask_na_across()], or with [dplyr::pick()] inside a
 #' grouped [dplyr::mutate()], a window never spans a track boundary.
 #' `confidence` is not a coordinate and so is never modified here;
-#' [filter_na_across()] blanks it on masked rows.
+#' [mask_na_across()] blanks it on masked rows.
 #'
 #' @references
 #' Pearson, R. K., Neuvo, Y., Astola, J., & Gabbouj, M. (2016). Generalized
@@ -112,29 +112,29 @@
 #'   x = c(0, 1, 2, 3, 4, 5, 6, 26, 46, 66, 86, 106),
 #'   y = c(0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0)
 #' )
-#' filter_na_hampel(coords)
+#' mask_na_hampel(coords)
 #'
 #' # A speed threshold low enough to catch the spike also takes the fast
 #' # stretch, whose steps are larger than the spike
-#' filter_na_speed(coords, threshold = 10, time = 1:12)
+#' mask_na_speed(coords, threshold = 10, time = 1:12)
 #'
 #' # A keypoint that barely moves: without a floor, its noise is flagged
 #' still <- data.frame(x = c(5, 5, 5.01, 5, 5, 5, 4.99, 5))
-#' filter_na_hampel(still)
-#' filter_na_hampel(still, min_distance = 0.05)
+#' mask_na_hampel(still)
+#' mask_na_hampel(still, min_distance = 0.05)
 #'
-#' @seealso [filter_na_speed()] and [filter_na_excursion()], which judge
+#' @seealso [mask_na_speed()] and [mask_na_excursion()], which judge
 #'   steps and excursions rather than deviations from a neighbourhood;
 #'   [filter_rollmedian()] to smooth with the median instead.
 #'
 #' @export
-filter_na_hampel <- function(
+mask_na_hampel <- function(
   data,
   window_width = 5,
   k = 3,
   min_distance = 0
 ) {
-  ensure_coords(data, across = "filter_na_across")
+  ensure_coords(data, across = "mask_na_across")
   ensure_odd_window(window_width)
   ensure_non_negative_scalar(k, "k")
   ensure_non_negative_scalar(min_distance, "min_distance")
@@ -155,7 +155,7 @@ filter_na_hampel <- function(
 #' window side by side.
 #'
 #' @param coords A data frame of the group's spatial columns.
-#' @inheritParams filter_na_hampel
+#' @inheritParams mask_na_hampel
 #'
 #' @return Logical vector of length `nrow(coords)`, `TRUE` on spikes.
 #' @keywords internal
