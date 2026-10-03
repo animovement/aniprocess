@@ -83,7 +83,7 @@ test_that("replace_na_across() says so when the index column is gone", {
     n_individuals = 1,
     n_keypoints = 1
   )
-  stripped <- suppressWarnings(dplyr::select(dplyr::ungroup(af), -"time"))
+  stripped <- drop_column_unchecked(af, "time")
 
   expect_error(
     replace_na_across(stripped, method = "linear"),

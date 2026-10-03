@@ -316,7 +316,7 @@ test_that("mask_na_speed errors when time column is missing", {
     y = 1:5,
     variables_what = character(0)
   )
-  data$time <- NULL
+  data <- drop_column_unchecked(data, "time")
   expect_error(mask_na_across(data, "speed"), "Missing required column.*time")
 })
 

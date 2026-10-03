@@ -241,8 +241,7 @@ test_that("filter_across errors when variables_when names a missing column", {
     y = as.numeric(1:6),
     variables_what = character(0)
   )
-  # Renaming the column leaves `variables_when` promising the old name.
-  d <- dplyr::rename(d, frame = time)
+  d <- drop_column_unchecked(d, "time")
 
   expect_error(filter_across(d, "kalman_irregular"), "Missing time column")
 })
