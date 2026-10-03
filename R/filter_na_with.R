@@ -16,12 +16,13 @@
 #'
 #' Method-specific arguments go through `...`: `min_value`/`max_value` for
 #' `"range"`, `threshold` and `time` for `"speed"`, `outlier_sd`/`return_sd`
-#' for `"excursion"`, the ROI bounds for `"roi"`, and `threshold` plus
-#' `confidence` for `"confidence"`.
+#' for `"excursion"`, `window_width`, `k` and `min_distance` for `"hampel"`,
+#' the ROI bounds for `"roi"`, and `threshold` plus `confidence` for
+#' `"confidence"`.
 #'
 #' @param x A numeric vector, or a data frame of numeric coordinate columns.
 #' @param method Criterion to apply. One of `"range"`, `"speed"`,
-#'   `"excursion"`, `"roi"` or `"confidence"`.
+#'   `"excursion"`, `"hampel"`, `"roi"` or `"confidence"`.
 #' @param ... Arguments passed to the underlying function.
 #'
 #' @return The same shape as `x`, with failing values replaced by `NA`.
@@ -37,7 +38,7 @@
 #' @export
 filter_na_with <- function(
   x,
-  method = c("range", "speed", "excursion", "roi", "confidence"),
+  method = c("range", "speed", "excursion", "hampel", "roi", "confidence"),
   ...
 ) {
   method <- match.arg(method)
@@ -47,6 +48,7 @@ filter_na_with <- function(
     range = filter_na_range,
     speed = filter_na_speed,
     excursion = filter_na_excursion,
+    hampel = filter_na_hampel,
     roi = filter_na_roi,
     confidence = filter_na_confidence
   )

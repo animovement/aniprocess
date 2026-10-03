@@ -4,6 +4,8 @@
 
 * `filter_na_segment_length()` masks points whose segments are far off their usual length (#91), such as a foot matched wrongly in multi-camera 3D that stays confident and steady for many frames. Each segment of the structure attached with `anicore::set_structure()` is compared with the structure's `length`, or else with its median length over the track, and is off when it differs by more than both `tolerance` (relative) and `min_difference` (absolute). The point to blame is masked rather than its neighbours: a wrong ankle stretches shin and foot, so the ankle goes and the knee and the toe stay. `segments` restricts the judging to the segments meant to be rigid.
 
+* `filter_na_hampel()` masks spikes — a point that jumps away for a frame or two and comes back — by its distance from the rolling median of the window around it, against `k` robust deviations of that window (#90). The threshold is local, so it is tight on slow stretches and loose on fast ones, where a single speed threshold has to accommodate the fastest movement in the track. With several coordinate columns the distance is Euclidean and a point is masked in all axes at once; `min_distance` floors the threshold so a keypoint that barely moves does not lose its noise. Also available as `filter_na_across(method = "hampel")` and `filter_na_with(method = "hampel")`.
+
 ## Changed
 
 * Works with anicore's `anipoint` class and rebuilt accessor API (animovement/anicore#154). The `*_across()` verbs take their default columns from `get_variables(data, "where", "position")`.

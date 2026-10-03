@@ -63,7 +63,7 @@ test_that("filter_na_with dispatches confidence on a frame", {
 })
 
 test_that("filter_na_with requires a frame for the multivariate methods", {
-  for (m in c("speed", "excursion", "roi", "confidence")) {
+  for (m in c("speed", "excursion", "hampel", "roi", "confidence")) {
     expect_error(
       filter_na_with(rnorm(10), m),
       "needs a frame of coordinate columns",

@@ -314,6 +314,10 @@ test_that("on_deltas is refused by the criteria it does not suit", {
     "second-order"
   )
   expect_error(
+    filter_na_across(d, "hampel", on_deltas = TRUE),
+    "neighbouring steps"
+  )
+  expect_error(
     filter_na_across(d, "roi", on_deltas = TRUE),
     "not a region of displacement"
   )
