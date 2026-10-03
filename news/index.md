@@ -33,6 +33,15 @@
   is still the right choice when the next sample does not exist yet —
   real-time tracking, closed-loop experiments.
 
+- [`filter_lowpass()`](https://animovement.dev/aniprocess/reference/filter_lowpass.md),
+  [`filter_highpass()`](https://animovement.dev/aniprocess/reference/filter_highpass.md),
+  [`filter_lowpass_fft()`](https://animovement.dev/aniprocess/reference/filter_lowpass_fft.md)
+  and
+  [`filter_highpass_fft()`](https://animovement.dev/aniprocess/reference/filter_highpass_fft.md)
+  share one reflection-padding helper, so the width applied and the
+  width removed cannot drift apart again
+  ([\#79](https://github.com/animovement/aniprocess/issues/79)).
+
 ### Fixed
 
 - [`filter_lowpass()`](https://animovement.dev/aniprocess/reference/filter_lowpass.md)
@@ -56,17 +65,6 @@
   ([\#79](https://github.com/animovement/aniprocess/issues/79)). `1:0`
   counts backwards, so the padding indexed positions 1 and 0 of a vector
   with neither.
-
-### Changed
-
-- [`filter_lowpass()`](https://animovement.dev/aniprocess/reference/filter_lowpass.md),
-  [`filter_highpass()`](https://animovement.dev/aniprocess/reference/filter_highpass.md),
-  [`filter_lowpass_fft()`](https://animovement.dev/aniprocess/reference/filter_lowpass_fft.md)
-  and
-  [`filter_highpass_fft()`](https://animovement.dev/aniprocess/reference/filter_highpass_fft.md)
-  share one reflection-padding helper, so the width applied and the
-  width removed cannot drift apart again
-  ([\#79](https://github.com/animovement/aniprocess/issues/79)).
 
 ## aniprocess 0.5.0 (2026-08-28)
 

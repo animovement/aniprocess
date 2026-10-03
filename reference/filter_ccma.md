@@ -82,7 +82,7 @@ filter_ccma(
 
 ## Value
 
-An aniframe of the same shape as the input, with the spatial columns
+A data frame with the same names and shape as `data`, its coordinates
 smoothed.
 
 ## Details
