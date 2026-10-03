@@ -52,6 +52,11 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="aniprocess-development-version">aniprocess (development version)<a class="anchor" aria-label="anchor" href="#aniprocess-development-version"></a></h2>
 <div class="section level3">
+<h3 id="added-development-version">Added<a class="anchor" aria-label="anchor" href="#added-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/filter_na_segment_length.html">filter_na_segment_length()</a></code> masks points whose segments are far off their usual length (<a href="https://github.com/animovement/aniprocess/issues/91" class="external-link">#91</a>), such as a foot matched wrongly in multi-camera 3D that stays confident and steady for many frames. Each segment of the structure attached with <code><a href="https://animovement.dev/anicore/reference/structures.html" class="external-link">anicore::set_structure()</a></code> is compared with the structure’s <code>length</code>, or else with its median length over the track, and is off when it differs by more than both <code>tolerance</code> (relative) and <code>min_difference</code> (absolute). The point to blame is masked rather than its neighbours: a wrong ankle stretches shin and foot, so the ankle goes and the knee and the toe stay. <code>segments</code> restricts the judging to the segments meant to be rigid.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="changed-development-version">Changed<a class="anchor" aria-label="anchor" href="#changed-development-version"></a></h3>
 <ul><li><p>Works with anicore’s <code>anipoint</code> class and rebuilt accessor API (animovement/anicore#154). The <code>*_across()</code> verbs take their default columns from <code>get_variables(data, "where", "position")</code>.</p></li>
 <li>

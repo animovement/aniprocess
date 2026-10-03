@@ -8,6 +8,7 @@
 <url><loc>https://animovement.dev/aniprocess/news/index.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/aniprocess-package.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/apply_across_columns.html</loc></url>
+<url><loc>https://animovement.dev/aniprocess/reference/blame_segment_points.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/calculate_step_speed.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/ccma_apply.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/ccma_convolve_valid.html</loc></url>
@@ -21,9 +22,11 @@
 <url><loc>https://animovement.dev/aniprocess/reference/dispatch_method.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/ensure_coords.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/ensure_keep_na.html</loc></url>
+<url><loc>https://animovement.dev/aniprocess/reference/ensure_non_negative_scalar.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/ensure_on_deltas_supported.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/ensure_positive_scalar.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/ensure_replace_na_args.html</loc></url>
+<url><loc>https://animovement.dev/aniprocess/reference/ensure_segment_length_data.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/excursion_mask.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/excursion_mask_joint.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/excursion_mask_per_axis.html</loc></url>
@@ -47,6 +50,7 @@
 <url><loc>https://animovement.dev/aniprocess/reference/filter_na_roi.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/filter_na_roi_rect.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/filter_na_roi_sphere.html</loc></url>
+<url><loc>https://animovement.dev/aniprocess/reference/filter_na_segment_length.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/filter_na_speed.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/filter_na_with.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/filter_needs_sampling_rate.html</loc></url>
@@ -61,6 +65,7 @@
 <url><loc>https://animovement.dev/aniprocess/reference/helper_column.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/index.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/interpolation_positions.html</loc></url>
+<url><loc>https://animovement.dev/aniprocess/reference/judge_segment_lengths.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/mask_across_columns.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/metadata_value.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/newly_masked.html</loc></url>
@@ -74,6 +79,8 @@
 <url><loc>https://animovement.dev/aniprocess/reference/replace_na_stine.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/replace_na_value.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/replace_na_with.html</loc></url>
+<url><loc>https://animovement.dev/aniprocess/reference/resolve_length_segments.html</loc></url>
+<url><loc>https://animovement.dev/aniprocess/reference/resolve_length_structure.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/resolve_variables.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/restore_na.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/rolling_with_min_obs.html</loc></url>

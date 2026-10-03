@@ -89,6 +89,9 @@ Replace values that fail a quality criterion with `NA`.
   : Filter values outside a range to NA
 - [`filter_na_roi()`](https://animovement.dev/aniprocess/reference/filter_na_roi.md)
   : Filter coordinates outside a region of interest (ROI)
+- [`filter_na_segment_length()`](https://animovement.dev/aniprocess/reference/filter_na_segment_length.md)
+  **\[experimental\]** : Mask points whose segments are far off their
+  usual length
 - [`filter_na_speed()`](https://animovement.dev/aniprocess/reference/filter_na_speed.md)
   : Filter values by speed threshold
 
