@@ -124,7 +124,9 @@ promises; they error rather than quietly compute it.</p></dd>
     <p>Beyond looping over columns, it fills in what the frame already knows:
 <code>"speed"</code> takes its <code>time</code> from the index column (<code><a href="https://animovement.dev/anicore/reference/get_index.html" class="external-link">anicore::get_index()</a></code>),
 and <code>"confidence"</code> takes its <code>confidence</code> from the column of that name.
-Either can be passed explicitly to override.</p>
+Either can be passed explicitly to override. For <code>"confidence"</code>, the
+warning about rows with no score is given once for the whole frame,
+not once per group; see <code><a href="mask_na_confidence.html">mask_na_confidence()</a></code> for <code>missing</code>.</p>
 <p>Only <code>"range"</code> is univariate. The others decide per row using all the
 selected columns at once, and blank every one of them on a flagged row.</p>
 <p>Where a <code>confidence</code> column is present, it is blanked on rows that this

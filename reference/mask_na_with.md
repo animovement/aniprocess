@@ -47,7 +47,7 @@ Method-specific arguments go through `...`: `min_value`/`max_value` for
 `"range"`, `threshold` and `time` for `"speed"`,
 `outlier_sd`/`return_sd` for `"excursion"`, `window_width`, `k` and
 `min_distance` for `"hampel"`, the ROI bounds for `"roi"`, and
-`threshold` plus `confidence` for `"confidence"`.
+`threshold`, `confidence` and `missing` for `"confidence"`.
 
 ## See also
 

@@ -66,7 +66,11 @@ Beyond looping over columns, it fills in what the frame already knows:
 `"speed"` takes its `time` from the index column
 ([`anicore::get_index()`](https://animovement.dev/anicore/reference/get_index.html)),
 and `"confidence"` takes its `confidence` from the column of that name.
-Either can be passed explicitly to override.
+Either can be passed explicitly to override. For `"confidence"`, the
+warning about rows with no score is given once for the whole frame, not
+once per group; see
+[`mask_na_confidence()`](https://animovement.dev/aniprocess/reference/mask_na_confidence.md)
+for `missing`.
 
 Only `"range"` is univariate. The others decide per row using all the
 selected columns at once, and blank every one of them on a flagged row.

@@ -32,6 +32,25 @@
 
 ### Changed
 
+- [`mask_na_confidence()`](https://animovement.dev/aniprocess/reference/mask_na_confidence.md)
+  takes a `missing` argument for rows whose confidence score is `NA`
+  ([\#97](https://github.com/animovement/aniprocess/issues/97)), passed
+  through by `mask_na_across("confidence")` and
+  `mask_na_with("confidence")`. `"keep"`, the default, leaves them
+  unmasked as before, since a missing score means *not assessed*, not
+  *poor*; `"mask"` treats a missing score as failing the threshold.
+  Masking them used to take a second call,
+  [`mask_na_range()`](https://animovement.dev/aniprocess/reference/mask_na_range.md)
+  on `confidence`.
+
+  The warning about those rows now counts only rows with a position left
+  to mask, so it no longer fires when the unscored rows are already
+  `NA`, as in the SLEAP sample data. It is given once per call and names
+  the argument, rather than once every 8 hours from inside
+  [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html)
+  with the context of its first group, and supplying `missing` silences
+  it.
+
 - The NA-masking functions are renamed from `filter_na_*()` to
   `mask_na_*()`
   ([\#94](https://github.com/animovement/aniprocess/issues/94)). They

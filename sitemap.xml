@@ -18,6 +18,7 @@
 <url><loc>https://animovement.dev/aniprocess/reference/ccma_filter_one.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/ccma_kernel.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/ccma_validate_window.html</loc></url>
+<url><loc>https://animovement.dev/aniprocess/reference/count_unscored.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/derivative_wrapper.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/dispatch_method.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/ensure_coords.html</loc></url>
@@ -89,5 +90,6 @@
 <url><loc>https://animovement.dev/aniprocess/reference/restore_na.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/rolling_with_min_obs.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/row_median.html</loc></url>
+<url><loc>https://animovement.dev/aniprocess/reference/warn_unscored_confidence.html</loc></url>
 </urlset>
 
