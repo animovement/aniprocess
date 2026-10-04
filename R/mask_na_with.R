@@ -17,8 +17,8 @@
 #' Method-specific arguments go through `...`: `min_value`/`max_value` for
 #' `"range"`, `threshold` and `time` for `"speed"`, `outlier_sd`/`return_sd`
 #' for `"excursion"`, `window_width`, `k` and `min_distance` for `"hampel"`,
-#' the ROI bounds for `"roi"`, and `threshold` plus `confidence` for
-#' `"confidence"`.
+#' the ROI bounds for `"roi"`, and `threshold`, `confidence` and `missing`
+#' for `"confidence"`.
 #'
 #' @param x A numeric vector, or a data frame of numeric coordinate columns.
 #' @param method Criterion to apply. One of `"range"`, `"speed"`,

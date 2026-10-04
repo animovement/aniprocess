@@ -12,7 +12,9 @@
 #' Beyond looping over columns, it fills in what the frame already knows:
 #' `"speed"` takes its `time` from the index column ([anicore::get_index()]),
 #' and `"confidence"` takes its `confidence` from the column of that name.
-#' Either can be passed explicitly to override.
+#' Either can be passed explicitly to override. For `"confidence"`, the
+#' warning about rows with no score is given once for the whole frame,
+#' not once per group; see [mask_na_confidence()] for `missing`.
 #'
 #' Only `"range"` is univariate. The others decide per row using all the
 #' selected columns at once, and blank every one of them on a flagged row.
@@ -127,6 +129,16 @@ mask_na_across <- function(
     ) %||%
       "confidence"
     args$confidence <- NULL
+
+    # mask_na_confidence() would warn once per group, and both its warning and
+    # its error for a bad `missing` would arrive wrapped in mutate()'s
+    # context. Settle `missing` here, and warn once for the frame below.
+    warn_unscored <- !"missing" %in% names(args)
+    args$missing <- if (warn_unscored) {
+      "keep"
+    } else {
+      rlang::arg_match0(args$missing, c("keep", "mask"), arg_nm = "missing")
+    }
   }
   for (col in unlist(helpers, use.names = FALSE)) {
     if (!col %in% names(data)) {
@@ -170,8 +182,15 @@ mask_na_across <- function(
     out$confidence[masked] <- NA_real_
   }
 
-  # Masking on confidence also masks the failing confidence values.
   if (method == "confidence") {
+    # Once for the whole frame, counted on the rows as they came in.
+    if (warn_unscored) {
+      warn_unscored_confidence(
+        count_unscored(data, data[[helpers$confidence]], variables)
+      )
+    }
+
+    # Masking on confidence also masks the failing confidence values.
     threshold <- args$threshold %||% formals(mask_na_confidence)$threshold
     out$confidence <- mask_na_range(
       out$confidence,
