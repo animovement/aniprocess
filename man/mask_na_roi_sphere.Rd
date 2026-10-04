@@ -2,7 +2,7 @@
 % Please edit documentation in R/mask_na_roi.R
 \name{mask_na_roi_sphere}
 \alias{mask_na_roi_sphere}
-\title{Filter coordinates outside a circular/spherical ROI}
+\title{Mask coordinates outside a circular/spherical ROI}
 \usage{
 mask_na_roi_sphere(data, x_center, y_center, z_center, radius, has_z)
 }

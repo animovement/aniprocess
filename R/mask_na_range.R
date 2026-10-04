@@ -1,9 +1,9 @@
-#' Filter values outside a range to NA
+#' Mask values outside a range to NA
 #'
 #' Replaces values in a numeric vector that fall outside the specified range
 #' with NA. Values already NA in the input remain NA.
 #'
-#' @param x A numeric vector to filter
+#' @param x A numeric vector to mask
 #' @param min_value Minimum value (inclusive). Values below this become NA.
 #'   Default is -Inf (no lower bound).
 #' @param max_value Maximum value (inclusive). Values above this become NA.

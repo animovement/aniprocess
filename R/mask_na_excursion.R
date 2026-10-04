@@ -1,4 +1,4 @@
-#' Filter Out Position Excursions That Return
+#' Mask position excursions that return
 #'
 #' @description
 #' Flags multi-frame tracking errors as `NA` using the criterion from
@@ -9,7 +9,7 @@
 #' position.
 #'
 #' @param data A data frame of numeric coordinate columns — typically supplied
-#'   by [dplyr::pick()] inside [dplyr::mutate()]. To filter a whole aniframe,
+#'   by [dplyr::pick()] inside [dplyr::mutate()]. To mask a whole aniframe,
 #'   use [mask_na_across()].
 #' @param outlier_sd Threshold (in standard deviations) for flagging
 #'   frame-to-frame jumps and for the "return to pre-excursion position"

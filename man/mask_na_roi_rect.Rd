@@ -2,14 +2,14 @@
 % Please edit documentation in R/mask_na_roi.R
 \name{mask_na_roi_rect}
 \alias{mask_na_roi_rect}
-\title{Filter coordinates outside a rectangular/cuboid ROI}
+\title{Mask coordinates outside a rectangular/cuboid ROI}
 \usage{
 mask_na_roi_rect(data, x_min, x_max, y_min, y_max, z_min, z_max, has_z)
 }
 \arguments{
 \item{data}{A data frame with numeric \code{x} and \code{y} columns (and optionally
 \code{z}) — typically supplied by \code{\link[dplyr:pick]{dplyr::pick()}} inside \code{\link[dplyr:mutate]{dplyr::mutate()}}.
-To filter a whole aniframe, use \code{\link[=mask_na_across]{mask_na_across()}}.}
+To mask a whole aniframe, use \code{\link[=mask_na_across]{mask_na_across()}}.}
 
 \item{x_min, x_max, y_min, y_max, z_min, z_max}{Bounds of the ROI.}
 

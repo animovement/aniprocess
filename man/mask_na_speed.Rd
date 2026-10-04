@@ -2,13 +2,13 @@
 % Please edit documentation in R/mask_na_speed.R
 \name{mask_na_speed}
 \alias{mask_na_speed}
-\title{Filter values by speed threshold}
+\title{Mask values that move faster than a speed threshold}
 \usage{
 mask_na_speed(data, threshold = "auto", time = NULL)
 }
 \arguments{
 \item{data}{A data frame of numeric coordinate columns — typically supplied
-by \code{\link[dplyr:pick]{dplyr::pick()}} inside \code{\link[dplyr:mutate]{dplyr::mutate()}}. To filter a whole aniframe,
+by \code{\link[dplyr:pick]{dplyr::pick()}} inside \code{\link[dplyr:mutate]{dplyr::mutate()}}. To mask a whole aniframe,
 use \code{\link[=mask_na_across]{mask_na_across()}}.}
 
 \item{threshold}{A numeric value specifying the speed threshold, or "auto".
@@ -25,7 +25,7 @@ confidence values replaced with NA.
 threshold.
 }
 \description{
-Filters out single-frame outliers based on movement speed. Spatial
+Masks single-frame outliers based on movement speed. Spatial
 coordinates and confidence values at flagged rows are replaced with NA.
 }
 \details{

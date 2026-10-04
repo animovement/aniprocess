@@ -1,11 +1,11 @@
-#' Filter values by speed threshold
+#' Mask values that move faster than a speed threshold
 #'
 #' @description
-#' Filters out single-frame outliers based on movement speed. Spatial
+#' Masks single-frame outliers based on movement speed. Spatial
 #' coordinates and confidence values at flagged rows are replaced with NA.
 #'
 #' @param data A data frame of numeric coordinate columns — typically supplied
-#'   by [dplyr::pick()] inside [dplyr::mutate()]. To filter a whole aniframe,
+#'   by [dplyr::pick()] inside [dplyr::mutate()]. To mask a whole aniframe,
 #'   use [mask_na_across()].
 #' @param time Numeric vector of time values, one per row.
 #' @param threshold A numeric value specifying the speed threshold, or "auto".
@@ -113,7 +113,7 @@ mask_na_speed <- function(data, threshold = "auto", time = NULL) {
   # propagates a missing condition and would blank those rows.
   exceeds <- !is.na(speed) & speed > threshold
 
-  # Filter spatial variables
+  # Mask spatial variables
   for (col in variables_where) {
     data[[col]] <- dplyr::if_else(exceeds, NA_real_, data[[col]])
   }

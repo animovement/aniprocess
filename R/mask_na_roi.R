@@ -1,14 +1,14 @@
-#' Filter coordinates outside a region of interest (ROI)
+#' Mask coordinates outside a region of interest (ROI)
 #'
 #' @description
-#' Filters out coordinates that fall outside a specified region of interest by
+#' Masks coordinates that fall outside a specified region of interest by
 #' setting them to NA. The ROI can be either rectangular/cuboid (defined by
 #' min/max coordinates) or circular/spherical (defined by center and radius).
 #' Handles 2D or 3D data according to whether a `z` column is present.
 #'
 #' @param data A data frame with numeric `x` and `y` columns (and optionally
 #'   `z`) — typically supplied by [dplyr::pick()] inside [dplyr::mutate()].
-#'   To filter a whole aniframe, use [mask_na_across()].
+#'   To mask a whole aniframe, use [mask_na_across()].
 #' @param x_min,x_max Bounds for x-coordinate (rectangular/cuboid ROI).
 #' @param y_min,y_max Bounds for y-coordinate (rectangular/cuboid ROI).
 #' @param z_min,z_max Bounds for z-coordinate (cuboid ROI, 3D only).
@@ -62,7 +62,7 @@ mask_na_roi <- function(
   missing_axes <- setdiff(c("x", "y"), variables_where)
   if (length(missing_axes) > 0L) {
     cli::cli_abort(c(
-      "ROI filtering needs coordinate{?s} {.val {missing_axes}}.",
+      "ROI masking needs coordinate{?s} {.val {missing_axes}}.",
       "i" = "Got {.val {variables_where}}."
     ))
   }
@@ -172,7 +172,7 @@ mask_na_roi <- function(
   data
 }
 
-#' Filter coordinates outside a rectangular/cuboid ROI
+#' Mask coordinates outside a rectangular/cuboid ROI
 #'
 #' @description
 #' Helper function for mask_na_roi() that handles rectangular (2D) or
@@ -181,7 +181,7 @@ mask_na_roi <- function(
 #'
 #' @param data A data frame with numeric `x` and `y` columns (and optionally
 #'   `z`) — typically supplied by [dplyr::pick()] inside [dplyr::mutate()].
-#'   To filter a whole aniframe, use [mask_na_across()].
+#'   To mask a whole aniframe, use [mask_na_across()].
 #' @param x_min,x_max,y_min,y_max,z_min,z_max Bounds of the ROI.
 #' @param has_z Logical indicating whether data has z coordinate.
 #'
@@ -242,7 +242,7 @@ mask_na_roi_rect <- function(
   data
 }
 
-#' Filter coordinates outside a circular/spherical ROI
+#' Mask coordinates outside a circular/spherical ROI
 #'
 #' @description
 #' Helper function for mask_na_roi() that handles circular (2D) or

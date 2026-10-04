@@ -8,7 +8,7 @@ mask_na_hampel(data, window_width = 5, k = 3, min_distance = 0)
 }
 \arguments{
 \item{data}{A data frame of numeric coordinate columns — typically supplied
-by \code{\link[dplyr:pick]{dplyr::pick()}} inside \code{\link[dplyr:mutate]{dplyr::mutate()}}. To filter a whole aniframe,
+by \code{\link[dplyr:pick]{dplyr::pick()}} inside \code{\link[dplyr:mutate]{dplyr::mutate()}}. To mask a whole aniframe,
 use \code{\link[=mask_na_across]{mask_na_across()}}.}
 
 \item{window_width}{An odd whole number, at least 3 (default \code{5}): the
