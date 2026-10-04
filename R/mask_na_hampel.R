@@ -16,7 +16,7 @@
 #' family: mask, then fill with [replace_na_with()].
 #'
 #' @param data A data frame of numeric coordinate columns — typically supplied
-#'   by [dplyr::pick()] inside [dplyr::mutate()]. To filter a whole aniframe,
+#'   by [dplyr::pick()] inside [dplyr::mutate()]. To mask a whole aniframe,
 #'   use [mask_na_across()].
 #' @param window_width An odd whole number, at least 3 (default `5`): the
 #'   number of rows in the window, centred on the point being judged. Up to

@@ -2,13 +2,13 @@
 % Please edit documentation in R/mask_na_confidence.R
 \name{mask_na_confidence}
 \alias{mask_na_confidence}
-\title{Filter low-confidence values in a dataset}
+\title{Mask low-confidence values to NA}
 \usage{
 mask_na_confidence(data, threshold = 0.6, confidence = NULL)
 }
 \arguments{
 \item{data}{A data frame of numeric coordinate columns — typically supplied
-by \code{\link[dplyr:pick]{dplyr::pick()}} inside \code{\link[dplyr:mutate]{dplyr::mutate()}}. To filter a whole aniframe,
+by \code{\link[dplyr:pick]{dplyr::pick()}} inside \code{\link[dplyr:mutate]{dplyr::mutate()}}. To mask a whole aniframe,
 use \code{\link[=mask_na_across]{mask_na_across()}}.}
 
 \item{threshold}{A numeric value specifying the minimum confidence level to
@@ -23,16 +23,16 @@ below the threshold.
 \description{
 This function replaces spatial coordinate values with \code{NA} if the confidence
 values are below a specified threshold. The \code{confidence} column is also
-filtered.
+masked.
 }
 \details{
 A missing confidence means \emph{not scored}, not \emph{scored badly}, so those rows
-are left unfiltered. A human annotator has no natural number to enter for
+are left unmasked. A human annotator has no natural number to enter for
 "I did not assess this", and tracker scores are not bounded at 1 — SLEAP
 can exceed it — so \code{NA} is the sensible thing to record rather than a
 sentinel value. A warning reports how many were missing, since silently
 skipping them would hide that those rows were never checked. To drop them
-as well, filter \code{confidence} directly with \code{\link[=mask_na_range]{mask_na_range()}}.
+as well, mask \code{confidence} directly with \code{\link[=mask_na_range]{mask_na_range()}}.
 }
 \section{Input shape}{
 
@@ -46,7 +46,7 @@ Takes and returns a frame of coordinate columns, so it composes inside
 
 The decision uses all coordinates at once, so this cannot be used with
 \code{\link[dplyr:across]{dplyr::across()}}. \code{confidence} is not a coordinate and so is never
-modified here; \code{\link[=mask_na_across]{mask_na_across()}} filters it as well.
+modified here; \code{\link[=mask_na_across]{mask_na_across()}} masks it as well.
 }
 
 \examples{

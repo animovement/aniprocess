@@ -170,7 +170,7 @@ mask_na_across <- function(
     out$confidence[masked] <- NA_real_
   }
 
-  # Filtering on confidence also drops the failing confidence values.
+  # Masking on confidence also masks the failing confidence values.
   if (method == "confidence") {
     threshold <- args$threshold %||% formals(mask_na_confidence)$threshold
     out$confidence <- mask_na_range(

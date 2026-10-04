@@ -2,7 +2,7 @@
 % Please edit documentation in R/mask_na_roi.R
 \name{mask_na_roi}
 \alias{mask_na_roi}
-\title{Filter coordinates outside a region of interest (ROI)}
+\title{Mask coordinates outside a region of interest (ROI)}
 \usage{
 mask_na_roi(
   data,
@@ -21,7 +21,7 @@ mask_na_roi(
 \arguments{
 \item{data}{A data frame with numeric \code{x} and \code{y} columns (and optionally
 \code{z}) — typically supplied by \code{\link[dplyr:pick]{dplyr::pick()}} inside \code{\link[dplyr:mutate]{dplyr::mutate()}}.
-To filter a whole aniframe, use \code{\link[=mask_na_across]{mask_na_across()}}.}
+To mask a whole aniframe, use \code{\link[=mask_na_across]{mask_na_across()}}.}
 
 \item{x_min, x_max}{Bounds for x-coordinate (rectangular/cuboid ROI).}
 
@@ -38,7 +38,7 @@ ROI. For 3D data, provide all three; for 2D data, only x and y.}
 \code{data}, with coordinates outside the ROI set to \code{NA}.
 }
 \description{
-Filters out coordinates that fall outside a specified region of interest by
+Masks coordinates that fall outside a specified region of interest by
 setting them to NA. The ROI can be either rectangular/cuboid (defined by
 min/max coordinates) or circular/spherical (defined by center and radius).
 Handles 2D or 3D data according to whether a \code{z} column is present.

@@ -1,11 +1,11 @@
-#' Filter low-confidence values in a dataset
+#' Mask low-confidence values to NA
 #'
 #' This function replaces spatial coordinate values with `NA` if the confidence
 #' values are below a specified threshold. The `confidence` column is also
-#' filtered.
+#' masked.
 #'
 #' @param data A data frame of numeric coordinate columns — typically supplied
-#'   by [dplyr::pick()] inside [dplyr::mutate()]. To filter a whole aniframe,
+#'   by [dplyr::pick()] inside [dplyr::mutate()]. To mask a whole aniframe,
 #'   use [mask_na_across()].
 #' @param threshold A numeric value specifying the minimum confidence level to
 #'   retain data. Must be a single value between 0 and 1. Default is 0.6.
@@ -16,12 +16,12 @@
 #'
 #' @details
 #' A missing confidence means *not scored*, not *scored badly*, so those rows
-#' are left unfiltered. A human annotator has no natural number to enter for
+#' are left unmasked. A human annotator has no natural number to enter for
 #' "I did not assess this", and tracker scores are not bounded at 1 — SLEAP
 #' can exceed it — so `NA` is the sensible thing to record rather than a
 #' sentinel value. A warning reports how many were missing, since silently
 #' skipping them would hide that those rows were never checked. To drop them
-#' as well, filter `confidence` directly with [mask_na_range()].
+#' as well, mask `confidence` directly with [mask_na_range()].
 #'
 #' @section Input shape:
 #' Takes and returns a frame of coordinate columns, so it composes inside
@@ -35,7 +35,7 @@
 #'
 #' The decision uses all coordinates at once, so this cannot be used with
 #' [dplyr::across()]. `confidence` is not a coordinate and so is never
-#' modified here; [mask_na_across()] filters it as well.
+#' modified here; [mask_na_across()] masks it as well.
 #'
 #' @examples
 #' coords <- data.frame(x = 1:5, y = 6:10)
@@ -86,7 +86,7 @@ mask_na_confidence <- function(data, threshold = 0.6, confidence = NULL) {
     cli::cli_warn(
       c(
         "{n_missing} confidence value{?s} {?is/are} missing.",
-        "i" = "Those rows are left unfiltered. Use {.fn mask_na_range} on {.field confidence} to drop them."
+        "i" = "Those rows are left unmasked. Use {.fn mask_na_range} on {.field confidence} to mask them."
       ),
       .frequency = "regularly",
       .frequency_id = "aniprocess_confidence_na"

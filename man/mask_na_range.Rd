@@ -2,12 +2,12 @@
 % Please edit documentation in R/mask_na_range.R
 \name{mask_na_range}
 \alias{mask_na_range}
-\title{Filter values outside a range to NA}
+\title{Mask values outside a range to NA}
 \usage{
 mask_na_range(x, min_value = -Inf, max_value = Inf)
 }
 \arguments{
-\item{x}{A numeric vector to filter}
+\item{x}{A numeric vector to mask}
 
 \item{min_value}{Minimum value (inclusive). Values below this become NA.
 Default is -Inf (no lower bound).}

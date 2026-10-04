@@ -2,13 +2,13 @@
 % Please edit documentation in R/mask_na_excursion.R
 \name{mask_na_excursion}
 \alias{mask_na_excursion}
-\title{Filter Out Position Excursions That Return}
+\title{Mask position excursions that return}
 \usage{
 mask_na_excursion(data, outlier_sd = 5, return_sd = 1, by_axis = TRUE)
 }
 \arguments{
 \item{data}{A data frame of numeric coordinate columns — typically supplied
-by \code{\link[dplyr:pick]{dplyr::pick()}} inside \code{\link[dplyr:mutate]{dplyr::mutate()}}. To filter a whole aniframe,
+by \code{\link[dplyr:pick]{dplyr::pick()}} inside \code{\link[dplyr:mutate]{dplyr::mutate()}}. To mask a whole aniframe,
 use \code{\link[=mask_na_across]{mask_na_across()}}.}
 
 \item{outlier_sd}{Threshold (in standard deviations) for flagging
