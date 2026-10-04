@@ -4,7 +4,12 @@
 \alias{mask_na_confidence}
 \title{Mask low-confidence values to NA}
 \usage{
-mask_na_confidence(data, threshold = 0.6, confidence = NULL)
+mask_na_confidence(
+  data,
+  threshold = 0.6,
+  confidence = NULL,
+  missing = c("keep", "mask")
+)
 }
 \arguments{
 \item{data}{A data frame of numeric coordinate columns — typically supplied
@@ -15,6 +20,10 @@ use \code{\link[=mask_na_across]{mask_na_across()}}.}
 retain data. Must be a single value between 0 and 1. Default is 0.6.}
 
 \item{confidence}{Numeric vector of confidence values, one per row.}
+
+\item{missing}{What to do with rows whose confidence is \code{NA}. \code{"keep"}
+(the default) leaves them unmasked; \code{"mask"} treats a missing score as
+failing the threshold, so they are masked like any low-confidence row.}
 }
 \value{
 \code{data}, with coordinates replaced by \code{NA} where confidence is
@@ -26,13 +35,18 @@ values are below a specified threshold. The \code{confidence} column is also
 masked.
 }
 \details{
-A missing confidence means \emph{not scored}, not \emph{scored badly}, so those rows
-are left unmasked. A human annotator has no natural number to enter for
-"I did not assess this", and tracker scores are not bounded at 1 — SLEAP
-can exceed it — so \code{NA} is the sensible thing to record rather than a
-sentinel value. A warning reports how many were missing, since silently
-skipping them would hide that those rows were never checked. To drop them
-as well, mask \code{confidence} directly with \code{\link[=mask_na_range]{mask_na_range()}}.
+A missing confidence means \emph{not assessed}, not \emph{assessed as poor}, so by
+default those rows are left unmasked. A human annotator has no natural
+number to enter for "I did not assess this", and tracker scores are not
+bounded at 1 — SLEAP can exceed it — so \code{NA} is the sensible thing to
+record rather than a sentinel value. Set \code{missing = "mask"} when you would
+rather drop what was never assessed.
+
+When \code{missing} is left at its default, a warning reports how many rows
+were left unmasked without a score, since silently skipping them would hide that
+they were never checked. Rows whose coordinates are already all \code{NA} are
+not counted: masking could not change them. Supplying \code{missing}, either
+value, says you have decided, and silences the warning.
 }
 \section{Input shape}{
 
@@ -56,5 +70,10 @@ mask_na_confidence(
   threshold = 0.6,
   confidence = c(0.5, 0.7, 0.4, 0.8, 0.9)
 )
+
+# Row 3 was never scored: kept by default, masked on request
+scores <- c(0.5, 0.7, NA, 0.8, 0.9)
+mask_na_confidence(coords, confidence = scores, missing = "keep")
+mask_na_confidence(coords, confidence = scores, missing = "mask")
 
 }

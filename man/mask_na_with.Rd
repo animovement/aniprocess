@@ -38,8 +38,8 @@ with \code{\link[dplyr:across]{dplyr::across()}}.
 Method-specific arguments go through \code{...}: \code{min_value}/\code{max_value} for
 \code{"range"}, \code{threshold} and \code{time} for \code{"speed"}, \code{outlier_sd}/\code{return_sd}
 for \code{"excursion"}, \code{window_width}, \code{k} and \code{min_distance} for \code{"hampel"},
-the ROI bounds for \code{"roi"}, and \code{threshold} plus \code{confidence} for
-\code{"confidence"}.
+the ROI bounds for \code{"roi"}, and \code{threshold}, \code{confidence} and \code{missing}
+for \code{"confidence"}.
 }
 \examples{
 mask_na_with(c(1, 5, 10, 15), "range", min_value = 3, max_value = 12)

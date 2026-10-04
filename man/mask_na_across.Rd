@@ -54,7 +54,9 @@ evaluated across a track boundary.
 Beyond looping over columns, it fills in what the frame already knows:
 \code{"speed"} takes its \code{time} from the index column (\code{\link[anicore:get_index]{anicore::get_index()}}),
 and \code{"confidence"} takes its \code{confidence} from the column of that name.
-Either can be passed explicitly to override.
+Either can be passed explicitly to override. For \code{"confidence"}, the
+warning about rows with no score is given once for the whole frame,
+not once per group; see \code{\link[=mask_na_confidence]{mask_na_confidence()}} for \code{missing}.
 
 Only \code{"range"} is univariate. The others decide per row using all the
 selected columns at once, and blank every one of them on a flagged row.

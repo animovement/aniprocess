@@ -7,6 +7,8 @@
 # - Preserves other columns in data
 # - Works with different coordinate systems
 # - Works when confidence is all NAs
+# - `missing` keeps or masks unscored rows, through every entry point
+# - Warns once, for rows that masking could change, unless `missing` is given
 # - Validates data is an aniframe
 # - Validates required columns exist (spatial variables from metadata)
 # - Validates threshold is single numeric value
@@ -185,10 +187,6 @@ test_that("mask_na_confidence leaves rows with a missing confidence alone", {
 })
 
 test_that("mask_na_confidence warns about missing confidence values", {
-  # The warning is rate-limited so a grouped mutate() does not emit one per
-  # group; reset the counter so this test sees it regardless of run order.
-  rlang::reset_warning_verbosity("aniprocess_confidence_na")
-
   data <- data.frame(
     time = 1:4,
     x = 1:4,
@@ -199,7 +197,8 @@ test_that("mask_na_confidence warns about missing confidence values", {
 
   expect_warning(
     mask_na_across(data, "confidence", threshold = 0.6),
-    "2 confidence values are missing"
+    "2 rows have no confidence score and were left unmasked",
+    class = "aniprocess_warning_unscored_confidence"
   )
 })
 
@@ -459,18 +458,24 @@ test_that("mask_na_confidence coordinate-frame form matches the aniframe form", 
     y = c(5, 6, 7, 8),
     confidence = conf
   )
-  expect_equal(
-    mask_na_confidence(
-      data.frame(x = c(1, 2, 3, 4), y = c(5, 6, 7, 8)),
-      threshold = 0.6,
-      confidence = conf
-    ),
-    as.data.frame(mask_na_across(d, "confidence", threshold = 0.6))[, c(
-      "x",
-      "y"
-    )],
-    ignore_attr = TRUE
-  )
+  for (missing in c("keep", "mask")) {
+    expect_equal(
+      mask_na_confidence(
+        data.frame(x = c(1, 2, 3, 4), y = c(5, 6, 7, 8)),
+        threshold = 0.6,
+        confidence = conf,
+        missing = missing
+      ),
+      as.data.frame(mask_na_across(
+        d,
+        "confidence",
+        threshold = 0.6,
+        missing = missing
+      ))[, c("x", "y")],
+      ignore_attr = TRUE,
+      info = missing
+    )
+  }
 })
 
 test_that("mask_na_confidence rejects a mismatched confidence length", {
@@ -490,5 +495,195 @@ test_that("mask_na_confidence rejects a non-numeric confidence", {
       confidence = letters[1:5]
     ),
     "must be numeric"
+  )
+})
+
+# --- missing confidence scores (#97) ----------------------------------------
+
+unscored_fixture <- function() {
+  anicore::anipoint(
+    time = 1:5,
+    x = c(1, 2, 3, NA, 5),
+    y = c(6, 7, 8, NA, 10),
+    confidence = c(0.9, NA, 0.2, NA, 0.8)
+  )
+}
+
+test_that("missing = 'keep' leaves unscored rows unmasked", {
+  out <- mask_na_across(unscored_fixture(), "confidence", missing = "keep")
+
+  expect_equal(out$x, c(1, 2, NA, NA, 5))
+  expect_equal(out$y, c(6, 7, NA, NA, 10))
+  expect_equal(out$confidence, c(0.9, NA, NA, NA, 0.8))
+})
+
+test_that("missing = 'mask' masks unscored rows", {
+  out <- mask_na_across(unscored_fixture(), "confidence", missing = "mask")
+
+  expect_equal(out$x, c(1, NA, NA, NA, 5))
+  expect_equal(out$y, c(6, NA, NA, NA, 10))
+  expect_equal(out$confidence, c(0.9, NA, NA, NA, 0.8))
+})
+
+test_that("missing defaults to 'keep'", {
+  d <- unscored_fixture()
+  expect_equal(
+    suppressWarnings(mask_na_across(d, "confidence")),
+    mask_na_across(d, "confidence", missing = "keep")
+  )
+})
+
+test_that("missing is passed through on a coordinate frame and by mask_na_with", {
+  coords <- data.frame(x = c(1, 2, 3), y = c(4, 5, 6))
+  conf <- c(0.9, NA, 0.2)
+
+  kept <- mask_na_confidence(coords, confidence = conf, missing = "keep")
+  masked <- mask_na_confidence(coords, confidence = conf, missing = "mask")
+  expect_equal(kept$x, c(1, 2, NA))
+  expect_equal(masked$x, c(1, NA, NA))
+  expect_equal(masked$y, c(4, NA, NA))
+
+  expect_equal(
+    mask_na_with(coords, "confidence", confidence = conf, missing = "mask"),
+    masked
+  )
+  expect_equal(
+    mask_na_with(coords, "confidence", confidence = conf, missing = "keep"),
+    kept
+  )
+})
+
+test_that("missing confidence is not counted where positions are already NA", {
+  # Row 4 has no score and no position, so masking it would change nothing
+  d <- anicore::anipoint(
+    time = 1:4,
+    x = c(1, 2, 3, NA),
+    y = c(5, 6, 7, NA),
+    confidence = c(0.9, 0.8, 0.7, NA)
+  )
+  expect_no_warning(mask_na_across(d, "confidence"))
+  expect_no_warning(
+    mask_na_confidence(
+      data.frame(x = c(1, NA), y = c(2, NA)),
+      confidence = c(0.9, NA)
+    )
+  )
+
+  # Row 2 of the fixture still has a position, row 4 does not: one is counted
+  expect_warning(
+    mask_na_across(unscored_fixture(), "confidence"),
+    "^1 row has no confidence score and was left unmasked"
+  )
+})
+
+test_that("a row with any position left counts as unscored", {
+  d <- anicore::anipoint(
+    time = 1:2,
+    x = c(1, 2),
+    y = c(3, NA),
+    confidence = c(0.9, NA)
+  )
+  expect_warning(
+    mask_na_across(d, "confidence"),
+    "1 row has no confidence score"
+  )
+})
+
+test_that("the missing-score warning names the argument and its values", {
+  cnd <- rlang::catch_cnd(
+    mask_na_across(unscored_fixture(), "confidence"),
+    classes = "warning"
+  )
+  msg <- cli::ansi_strip(conditionMessage(cnd))
+
+  expect_s3_class(cnd, "aniprocess_warning_unscored_confidence")
+  expect_match(msg, "missing = \"mask\"", fixed = TRUE)
+  expect_match(msg, "missing = \"keep\"", fixed = TRUE)
+  expect_match(msg, "to mask it,", fixed = TRUE)
+})
+
+test_that("the missing-score warning is raised once, without mutate() context", {
+  # Three groups, each with an unscored row that still has a position
+  d <- anicore::anipoint(
+    time = rep(1:3, 3),
+    keypoint = rep(c("a", "b", "c"), each = 3),
+    x = 1:9,
+    y = 1:9,
+    confidence = rep(c(0.9, NA, 0.8), 3)
+  )
+  expect_equal(dplyr::n_groups(d), 3L)
+
+  warnings <- list()
+  withCallingHandlers(
+    mask_na_across(d, "confidence"),
+    warning = function(cnd) {
+      warnings[[length(warnings) + 1L]] <<- cnd
+      invokeRestart("muffleWarning")
+    }
+  )
+
+  expect_length(warnings, 1L)
+  expect_s3_class(warnings[[1]], "aniprocess_warning_unscored_confidence")
+  msg <- conditionMessage(warnings[[1]])
+  expect_match(msg, "3 rows have no confidence score and were left unmasked")
+  expect_no_match(msg, "mutate|group", perl = TRUE)
+
+  # Not rate-limited: a second call warns again
+  expect_warning(
+    mask_na_across(d, "confidence"),
+    class = "aniprocess_warning_unscored_confidence"
+  )
+})
+
+test_that("the missing-score warning is quiet when missing is supplied", {
+  d <- unscored_fixture()
+  coords <- data.frame(x = c(1, 2), y = c(3, 4))
+
+  expect_no_warning(mask_na_across(d, "confidence", missing = "keep"))
+  expect_no_warning(mask_na_across(d, "confidence", missing = "mask"))
+  expect_no_warning(
+    mask_na_confidence(coords, confidence = c(0.9, NA), missing = "keep")
+  )
+  expect_no_warning(
+    mask_na_with(
+      coords,
+      "confidence",
+      confidence = c(0.9, NA),
+      missing = "keep"
+    )
+  )
+})
+
+test_that("mask_na_confidence and mask_na_with warn when missing is not given", {
+  coords <- data.frame(x = c(1, 2), y = c(3, 4))
+
+  expect_warning(
+    mask_na_confidence(coords, confidence = c(0.9, NA)),
+    "1 row has no confidence score and was left unmasked",
+    class = "aniprocess_warning_unscored_confidence"
+  )
+  expect_warning(
+    mask_na_with(coords, "confidence", confidence = c(0.9, NA)),
+    class = "aniprocess_warning_unscored_confidence"
+  )
+})
+
+test_that("missing is validated", {
+  coords <- data.frame(x = c(1, 2), y = c(3, 4))
+
+  expect_error(
+    mask_na_confidence(coords, confidence = c(0.9, NA), missing = "drop"),
+    "`missing` must be one of \"keep\" or \"mask\""
+  )
+  # Checked before mutate(), so the error comes from mask_na_across() itself
+  err <- rlang::catch_cnd(
+    mask_na_across(unscored_fixture(), "confidence", missing = "drop"),
+    classes = "error"
+  )
+  expect_match(conditionMessage(err), "`missing` must be one of")
+  expect_equal(rlang::call_name(err$call), "mask_na_across")
+  expect_error(
+    mask_na_with(coords, "confidence", confidence = c(0.9, NA), missing = NA),
+    class = "rlang_error"
   )
 })
