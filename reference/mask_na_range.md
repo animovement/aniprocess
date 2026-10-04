@@ -1,4 +1,4 @@
-# Filter values outside a range to NA
+# Mask values outside a range to NA
 
 Replaces values in a numeric vector that fall outside the specified
 range with NA. Values already NA in the input remain NA.
@@ -13,7 +13,7 @@ mask_na_range(x, min_value = -Inf, max_value = Inf)
 
 - x:
 
-  A numeric vector to filter
+  A numeric vector to mask
 
 - min_value:
 

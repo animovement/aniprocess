@@ -30,20 +30,20 @@ The same, for a vector or a frame of coordinates inside `mutate()`.
 Replace values that fail a quality criterion with `NA`.
 
 - [`mask_na_confidence()`](https://animovement.dev/aniprocess/reference/mask_na_confidence.md)
-  : Filter low-confidence values in a dataset
+  : Mask low-confidence values to NA
 - [`mask_na_excursion()`](https://animovement.dev/aniprocess/reference/mask_na_excursion.md)
-  : Filter Out Position Excursions That Return
+  : Mask position excursions that return
 - [`mask_na_hampel()`](https://animovement.dev/aniprocess/reference/mask_na_hampel.md)
   **\[experimental\]** : Mask spikes against a rolling median
 - [`mask_na_range()`](https://animovement.dev/aniprocess/reference/mask_na_range.md)
-  : Filter values outside a range to NA
+  : Mask values outside a range to NA
 - [`mask_na_roi()`](https://animovement.dev/aniprocess/reference/mask_na_roi.md)
-  : Filter coordinates outside a region of interest (ROI)
+  : Mask coordinates outside a region of interest (ROI)
 - [`mask_na_segment_length()`](https://animovement.dev/aniprocess/reference/mask_na_segment_length.md)
   **\[experimental\]** : Mask points whose segments are far off their
   usual length
 - [`mask_na_speed()`](https://animovement.dev/aniprocess/reference/mask_na_speed.md)
-  : Filter values by speed threshold
+  : Mask values that move faster than a speed threshold
 
 ## Fill missing values
 

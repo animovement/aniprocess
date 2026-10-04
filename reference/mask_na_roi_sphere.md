@@ -1,4 +1,4 @@
-# Filter coordinates outside a circular/spherical ROI
+# Mask coordinates outside a circular/spherical ROI
 
 Helper function for mask_na_roi() that handles circular (2D) or
 spherical (3D) ROIs. Sets coordinates to NA if they fall outside the

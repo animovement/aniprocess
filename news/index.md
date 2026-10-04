@@ -41,6 +41,12 @@
   and of this package’s smoothers — suggested they did not. Masking then
   filling now reads as `mask_na_*()` then `replace_na_*()`.
 
+- The help pages and messages of the `mask_na_*()` functions say *mask*
+  throughout, where some still said *filter* after the rename
+  ([\#94](https://github.com/animovement/aniprocess/issues/94)). The
+  warning about missing confidence scores now says those rows are left
+  unmasked.
+
 - Works with anicore’s `anipoint` class and rebuilt accessor API
   (animovement/anicore#154). The `*_across()` verbs take their default
   columns from `get_variables(data, "where", "position")`.

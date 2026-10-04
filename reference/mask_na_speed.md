@@ -1,7 +1,7 @@
-# Filter values by speed threshold
+# Mask values that move faster than a speed threshold
 
-Filters out single-frame outliers based on movement speed. Spatial
-coordinates and confidence values at flagged rows are replaced with NA.
+Masks single-frame outliers based on movement speed. Spatial coordinates
+and confidence values at flagged rows are replaced with NA.
 
 ## Usage
 
@@ -17,7 +17,7 @@ mask_na_speed(data, threshold = "auto", time = NULL)
   [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html)
   inside
   [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html).
-  To filter a whole aniframe, use
+  To mask a whole aniframe, use
   [`mask_na_across()`](https://animovement.dev/aniprocess/reference/mask_na_across.md).
 
 - threshold:

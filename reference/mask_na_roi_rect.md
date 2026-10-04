@@ -1,4 +1,4 @@
-# Filter coordinates outside a rectangular/cuboid ROI
+# Mask coordinates outside a rectangular/cuboid ROI
 
 Helper function for mask_na_roi() that handles rectangular (2D) or
 cuboid (3D) ROIs. Sets coordinates to NA if they fall outside the
@@ -19,7 +19,7 @@ mask_na_roi_rect(data, x_min, x_max, y_min, y_max, z_min, z_max, has_z)
   [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html)
   inside
   [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html).
-  To filter a whole aniframe, use
+  To mask a whole aniframe, use
   [`mask_na_across()`](https://animovement.dev/aniprocess/reference/mask_na_across.md).
 
 - x_min, x_max, y_min, y_max, z_min, z_max:

@@ -1,4 +1,4 @@
-# Filter Out Position Excursions That Return
+# Mask position excursions that return
 
 Flags multi-frame tracking errors as `NA` using the criterion from Todd,
 Kain & de Bivort (2017): a frame-to-frame jump of more than `outlier_sd`
@@ -20,7 +20,7 @@ mask_na_excursion(data, outlier_sd = 5, return_sd = 1, by_axis = TRUE)
   [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html)
   inside
   [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html).
-  To filter a whole aniframe, use
+  To mask a whole aniframe, use
   [`mask_na_across()`](https://animovement.dev/aniprocess/reference/mask_na_across.md).
 
 - outlier_sd:

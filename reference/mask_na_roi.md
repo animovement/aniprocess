@@ -1,8 +1,8 @@
-# Filter coordinates outside a region of interest (ROI)
+# Mask coordinates outside a region of interest (ROI)
 
-Filters out coordinates that fall outside a specified region of interest
-by setting them to NA. The ROI can be either rectangular/cuboid (defined
-by min/max coordinates) or circular/spherical (defined by center and
+Masks coordinates that fall outside a specified region of interest by
+setting them to NA. The ROI can be either rectangular/cuboid (defined by
+min/max coordinates) or circular/spherical (defined by center and
 radius). Handles 2D or 3D data according to whether a `z` column is
 present.
 
@@ -33,7 +33,7 @@ mask_na_roi(
   [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html)
   inside
   [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html).
-  To filter a whole aniframe, use
+  To mask a whole aniframe, use
   [`mask_na_across()`](https://animovement.dev/aniprocess/reference/mask_na_across.md).
 
 - x_min, x_max:

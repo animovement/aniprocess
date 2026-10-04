@@ -1,8 +1,8 @@
-# Filter low-confidence values in a dataset
+# Mask low-confidence values to NA
 
 This function replaces spatial coordinate values with `NA` if the
 confidence values are below a specified threshold. The `confidence`
-column is also filtered.
+column is also masked.
 
 ## Usage
 
@@ -18,7 +18,7 @@ mask_na_confidence(data, threshold = 0.6, confidence = NULL)
   [`dplyr::pick()`](https://dplyr.tidyverse.org/reference/pick.html)
   inside
   [`dplyr::mutate()`](https://dplyr.tidyverse.org/reference/mutate.html).
-  To filter a whole aniframe, use
+  To mask a whole aniframe, use
   [`mask_na_across()`](https://animovement.dev/aniprocess/reference/mask_na_across.md).
 
 - threshold:
@@ -38,12 +38,12 @@ threshold.
 ## Details
 
 A missing confidence means *not scored*, not *scored badly*, so those
-rows are left unfiltered. A human annotator has no natural number to
-enter for "I did not assess this", and tracker scores are not bounded at
-1 — SLEAP can exceed it — so `NA` is the sensible thing to record rather
+rows are left unmasked. A human annotator has no natural number to enter
+for "I did not assess this", and tracker scores are not bounded at 1 —
+SLEAP can exceed it — so `NA` is the sensible thing to record rather
 than a sentinel value. A warning reports how many were missing, since
 silently skipping them would hide that those rows were never checked. To
-drop them as well, filter `confidence` directly with
+drop them as well, mask `confidence` directly with
 [`mask_na_range()`](https://animovement.dev/aniprocess/reference/mask_na_range.md).
 
 ## Input shape
@@ -59,7 +59,7 @@ The decision uses all coordinates at once, so this cannot be used with
 [`dplyr::across()`](https://dplyr.tidyverse.org/reference/across.html).
 `confidence` is not a coordinate and so is never modified here;
 [`mask_na_across()`](https://animovement.dev/aniprocess/reference/mask_na_across.md)
-filters it as well.
+masks it as well.
 
 ## Examples
 
