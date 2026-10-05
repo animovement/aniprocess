@@ -57,8 +57,8 @@ filtered signal keeps its timing. A right-aligned one looks only
 backwards, which is what you want when the next sample does not exist
 yet — real-time tracking, closed-loop experiments — and lags the signal
 by `(window_width - 1) / 2` samples in exchange. Smoothing before
-`animetric::calculate_kinematics()` with a lagging filter moves every
-event later by that much.
+`animetric::add_kinematics()` with a lagging filter moves every event
+later by that much.
 
 The trade runs the other way at the edges: a centred window has no data
 beyond the ends of the series, so the first and last

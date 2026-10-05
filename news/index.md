@@ -78,8 +78,8 @@
   right-aligned window looks only backwards, so the filtered signal
   lagged by `(window_width - 1) / 2` samples: with `window_width = 11` a
   feature peaking at frame 100 came out at frame 105, and smoothing
-  before `calculate_kinematics()` moved every speed peak 200 ms later at
-  30 Hz. Nothing warned, because a lagged trace looks entirely
+  before `animetric::add_kinematics()` moved every speed peak 200 ms
+  later at 30 Hz. Nothing warned, because a lagged trace looks entirely
   plausible.
 
   The other five smoothers do not shift the signal —
