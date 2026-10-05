@@ -45,7 +45,7 @@ A centred window is symmetric about the point it replaces, so the filtered
 signal keeps its timing. A right-aligned one looks only backwards, which is
 what you want when the next sample does not exist yet — real-time tracking,
 closed-loop experiments — and lags the signal by \code{(window_width - 1) / 2}
-samples in exchange. Smoothing before \code{\link[animetric:calculate_kinematics]{animetric::calculate_kinematics()}}
+samples in exchange. Smoothing before \code{\link[animetric:add_kinematics]{animetric::add_kinematics()}}
 with a lagging filter moves every event later by that much.
 
 The trade runs the other way at the edges: a centred window has no data
