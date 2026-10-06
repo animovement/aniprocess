@@ -66,6 +66,8 @@ Suppress noise while preserving the movement you care about.
 
 - [`filter_ccma()`](https://animovement.dev/aniprocess/reference/filter_ccma.md)
   **\[experimental\]** : Apply Curvature-Corrected Moving Average (CCMA)
+- [`filter_deadband()`](https://animovement.dev/aniprocess/reference/filter_deadband.md)
+  **\[experimental\]** : Apply a deadband filter
 - [`filter_gaussian()`](https://animovement.dev/aniprocess/reference/filter_gaussian.md)
   : Apply Gaussian Kernel Smoother
 - [`filter_highpass()`](https://animovement.dev/aniprocess/reference/filter_highpass.md)

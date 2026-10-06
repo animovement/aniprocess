@@ -19,6 +19,7 @@
 <url><loc>https://animovement.dev/aniprocess/reference/ccma_kernel.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/ccma_validate_window.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/count_unscored.html</loc></url>
+<url><loc>https://animovement.dev/aniprocess/reference/deadband_core.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/derivative_wrapper.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/dispatch_method.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/ensure_coords.html</loc></url>
@@ -36,6 +37,7 @@
 <url><loc>https://animovement.dev/aniprocess/reference/filter-na-args.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/filter_across.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/filter_ccma.html</loc></url>
+<url><loc>https://animovement.dev/aniprocess/reference/filter_deadband.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/filter_gaussian.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/filter_highpass.html</loc></url>
 <url><loc>https://animovement.dev/aniprocess/reference/filter_highpass_fft.html</loc></url>

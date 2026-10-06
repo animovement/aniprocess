@@ -13,7 +13,7 @@ filter_across(
   data,
   method = c("gaussian", "rollmean", "rollmedian", "triangular", "sgolay", "lowpass",
     "highpass", "lowpass_fft", "highpass_fft", "kalman", "kalman_irregular", "one_euro",
-    "ccma"),
+    "ccma", "deadband"),
   variables = NULL,
   ...,
   on_deltas = FALSE
@@ -31,7 +31,7 @@ filter_across(
   Filter to apply. One of `"gaussian"`, `"rollmean"`, `"rollmedian"`,
   `"triangular"`, `"sgolay"`, `"lowpass"`, `"highpass"`,
   `"lowpass_fft"`, `"highpass_fft"`, `"kalman"`, `"kalman_irregular"`,
-  `"one_euro"` or `"ccma"`.
+  `"one_euro"`, `"ccma"` or `"deadband"`.
 
 - variables:
 
@@ -77,8 +77,10 @@ Beyond looping over columns, it fills in what the frame already knows:
 ([`anicore::get_index()`](https://animovement.dev/anicore/reference/get_index.html)).
 Either can still be passed explicitly to override.
 
-`"ccma"` is multivariate — each output coordinate depends on all of them
-— so it is applied jointly rather than column by column.
+`"ccma"` and `"deadband"` are multivariate — each output coordinate
+depends on all of them — so they are applied jointly rather than column
+by column, and need a Cartesian frame. `on_deltas` does not apply to
+them.
 
 ## See also
 

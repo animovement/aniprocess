@@ -4,6 +4,22 @@
 
 ### Added
 
+- [`filter_deadband()`](https://animovement.dev/aniprocess/reference/filter_deadband.md)
+  holds a still subject still
+  ([\#104](https://github.com/animovement/aniprocess/issues/104)). The
+  output stays put until the tracked point has moved more than
+  `threshold` away from it, so tracking noise on a stationary point is
+  removed rather than scaled down, and no longer inflates distance
+  travelled or keeps speed off zero. `mode = "hold"` (the default) then
+  jumps to the point, as OptiTrack Motive’s Deadband Filter and
+  EthoVision XT’s Minimal Distance Moved do; `mode = "drag"` follows it
+  at `threshold` behind without jumping. With several coordinate columns
+  the distance is Euclidean. Incomplete rows are left as they are, and
+  `max_gap` sets how long a gap keeps the anchor, as in
+  `replace_na_*()`. Also available as
+  `filter_across(method = "deadband")` and
+  `filter_with(method = "deadband")`.
+
 - [`mask_na_segment_length()`](https://animovement.dev/aniprocess/reference/mask_na_segment_length.md)
   masks points whose segments are far off their usual length
   ([\#91](https://github.com/animovement/aniprocess/issues/91)), such as
@@ -31,6 +47,10 @@
   `mask_na_with(method = "hampel")`.
 
 ### Changed
+
+- [`filter_across()`](https://animovement.dev/aniprocess/reference/filter_across.md)
+  refuses `on_deltas = TRUE` for `"ccma"` and `"deadband"`, which work
+  on positions, rather than ignoring it.
 
 - [`mask_na_confidence()`](https://animovement.dev/aniprocess/reference/mask_na_confidence.md)
   takes a `missing` argument for rows whose confidence score is `NA`

@@ -11,7 +11,7 @@ filter_with(
   x,
   method = c("gaussian", "rollmean", "rollmedian", "triangular", "sgolay", "lowpass",
     "highpass", "lowpass_fft", "highpass_fft", "kalman", "kalman_irregular", "one_euro",
-    "ccma"),
+    "ccma", "deadband"),
   ...
 )
 ```
@@ -27,7 +27,7 @@ filter_with(
   Filter to apply. One of `"gaussian"`, `"rollmean"`, `"rollmedian"`,
   `"triangular"`, `"sgolay"`, `"lowpass"`, `"highpass"`,
   `"lowpass_fft"`, `"highpass_fft"`, `"kalman"`, `"kalman_irregular"`,
-  `"one_euro"` or `"ccma"`.
+  `"one_euro"`, `"ccma"` or `"deadband"`.
 
 - ...:
 
@@ -43,14 +43,16 @@ Returns the same shape it is given. A numeric vector gives a numeric
 vector; a data frame of coordinate columns gives a data frame.
 
 Most methods are univariate and are applied one column at a time when
-given a frame. `"ccma"` is multivariate — each output coordinate depends
-on all of them — so it requires a frame and cannot be used with
+given a frame. `"ccma"` and `"deadband"` are multivariate — each output
+coordinate depends on all of them — so they require a frame and cannot
+be used with
 [`dplyr::across()`](https://dplyr.tidyverse.org/reference/across.html).
 
 Method-specific arguments are passed through `...`, so a required one
 still has to be supplied: `sampling_rate` for `"sgolay"`, `"lowpass"`,
 `"highpass"`, the `_fft` variants and `"kalman"`; `times` for
-`"kalman_irregular"`; `cutoff_freq` for the frequency filters.
+`"kalman_irregular"`; `cutoff_freq` for the frequency filters;
+`threshold` for `"deadband"`.
 
 ## See also
 
