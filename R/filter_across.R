@@ -20,14 +20,16 @@
 #' `"kalman_irregular"` takes its `times` from the index column
 #' ([anicore::get_index()]). Either can still be passed explicitly to override.
 #'
-#' `"ccma"` is multivariate — each output coordinate depends on all of
-#' them — so it is applied jointly rather than column by column.
+#' `"ccma"` and `"deadband"` are multivariate — each output coordinate
+#' depends on all of them — so they are applied jointly rather than column
+#' by column, and need a Cartesian frame. `on_deltas` does not apply to
+#' them.
 #'
 #' @param data An aniframe.
 #' @param method Filter to apply. One of `"gaussian"`, `"rollmean"`,
 #'   `"rollmedian"`, `"triangular"`, `"sgolay"`, `"lowpass"`, `"highpass"`,
 #'   `"lowpass_fft"`, `"highpass_fft"`, `"kalman"`, `"kalman_irregular"`,
-#'   `"one_euro"` or `"ccma"`.
+#'   `"one_euro"`, `"ccma"` or `"deadband"`.
 #' @param variables Columns to filter, as a tidyselect expression.
 #'   Defaults to the declared position columns.
 #' @param ... Arguments passed to the underlying filter.
@@ -70,7 +72,8 @@ filter_across <- function(
     "kalman",
     "kalman_irregular",
     "one_euro",
-    "ccma"
+    "ccma",
+    "deadband"
   ),
   variables = NULL,
   ...,
@@ -82,23 +85,35 @@ filter_across <- function(
   variables <- resolve_variables(data, rlang::enquo(variables))
   args <- rlang::list2(...)
 
-  # ccma is multivariate: hand it all the columns at once.
-  if (method == "ccma") {
-    # The curvature math is Cartesian-specific, and only the aniframe knows
-    # its coordinate system -- filter_ccma() sees bare columns.
+  # ccma and deadband are multivariate: hand them all the columns at once.
+  if (method %in% c("ccma", "deadband")) {
+    # Both measure Euclidean distances, and only the aniframe knows its
+    # coordinate system -- the filters themselves see bare columns.
     coord_system <- as.character(
       anicore::get_metadata(data, "coordinate_system")
     )
     if (length(coord_system) > 0L && !startsWith(coord_system, "cartesian")) {
+      reason <- if (method == "ccma") {
+        "The curvature math (cross product, Euclidean norm, circumradius) is Cartesian-specific."
+      } else {
+        "The dead zone is a Euclidean distance, which is Cartesian-specific."
+      }
       cli::cli_abort(c(
-        "CCMA requires a Cartesian coordinate system; got {.val {coord_system}}.",
-        "i" = "The curvature math (cross product, Euclidean norm, circumradius) is Cartesian-specific."
+        "{.val {method}} requires a Cartesian coordinate system; got {.val {coord_system}}.",
+        "i" = reason
       ))
     }
+    # Both need absolute positions; on differences they would be meaningless.
+    if (isTRUE(on_deltas)) {
+      cli::cli_abort(
+        "{.arg on_deltas} does not apply to {.val {method}}, which works on positions."
+      )
+    }
+    fn <- if (method == "ccma") filter_ccma else filter_deadband
     return(dplyr::mutate(
       data,
       do.call(
-        filter_ccma,
+        fn,
         c(list(dplyr::pick(dplyr::all_of(variables))), args)
       )
     ))
@@ -146,7 +161,8 @@ filter_across <- function(
 
 #' Look up the function implementing a filter method.
 #'
-#' "ccma" is handled before this lookup, being the only multivariate method.
+#' "ccma" and "deadband" are handled before this lookup, being the
+#' multivariate methods.
 #'
 #' @keywords internal
 filter_method_fn <- function(method) {

@@ -10,20 +10,21 @@
 #' vector; a data frame of coordinate columns gives a data frame.
 #'
 #' Most methods are univariate and are applied one column at a time when
-#' given a frame. `"ccma"` is multivariate — each output coordinate depends
-#' on all of them — so it requires a frame and cannot be used with
-#' [dplyr::across()].
+#' given a frame. `"ccma"` and `"deadband"` are multivariate — each output
+#' coordinate depends on all of them — so they require a frame and cannot be
+#' used with [dplyr::across()].
 #'
 #' Method-specific arguments are passed through `...`, so a required one
 #' still has to be supplied: `sampling_rate` for `"sgolay"`, `"lowpass"`,
 #' `"highpass"`, the `_fft` variants and `"kalman"`; `times` for
-#' `"kalman_irregular"`; `cutoff_freq` for the frequency filters.
+#' `"kalman_irregular"`; `cutoff_freq` for the frequency filters; `threshold`
+#' for `"deadband"`.
 #'
 #' @param x A numeric vector, or a data frame of numeric coordinate columns.
 #' @param method Filter to apply. One of `"gaussian"`, `"rollmean"`,
 #'   `"rollmedian"`, `"triangular"`, `"sgolay"`, `"lowpass"`, `"highpass"`,
 #'   `"lowpass_fft"`, `"highpass_fft"`, `"kalman"`, `"kalman_irregular"`,
-#'   `"one_euro"` or `"ccma"`.
+#'   `"one_euro"`, `"ccma"` or `"deadband"`.
 #' @param ... Arguments passed to the underlying filter.
 #'
 #' @return The same shape as `x`, filtered.
@@ -55,7 +56,8 @@ filter_with <- function(
     "kalman",
     "kalman_irregular",
     "one_euro",
-    "ccma"
+    "ccma",
+    "deadband"
   ),
   ...
 ) {
@@ -75,14 +77,15 @@ filter_with <- function(
     kalman = filter_kalman,
     kalman_irregular = filter_kalman_irregular,
     one_euro = filter_one_euro,
-    ccma = filter_ccma
+    ccma = filter_ccma,
+    deadband = filter_deadband
   )
 
   dispatch_method(
     x,
     method = method,
     fn = fn,
-    multivariate = method == "ccma",
+    multivariate = method %in% c("ccma", "deadband"),
     generic = "filter_with",
     ...
   )

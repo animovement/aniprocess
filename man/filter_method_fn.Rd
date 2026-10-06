@@ -7,6 +7,7 @@
 filter_method_fn(method)
 }
 \description{
-"ccma" is handled before this lookup, being the only multivariate method.
+"ccma" and "deadband" are handled before this lookup, being the
+multivariate methods.
 }
 \keyword{internal}

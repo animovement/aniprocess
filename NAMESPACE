@@ -2,6 +2,7 @@
 
 export(filter_across)
 export(filter_ccma)
+export(filter_deadband)
 export(filter_gaussian)
 export(filter_highpass)
 export(filter_highpass_fft)

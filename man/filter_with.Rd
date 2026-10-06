@@ -8,7 +8,7 @@ filter_with(
   x,
   method = c("gaussian", "rollmean", "rollmedian", "triangular", "sgolay", "lowpass",
     "highpass", "lowpass_fft", "highpass_fft", "kalman", "kalman_irregular", "one_euro",
-    "ccma"),
+    "ccma", "deadband"),
   ...
 )
 }
@@ -18,7 +18,7 @@ filter_with(
 \item{method}{Filter to apply. One of \code{"gaussian"}, \code{"rollmean"},
 \code{"rollmedian"}, \code{"triangular"}, \code{"sgolay"}, \code{"lowpass"}, \code{"highpass"},
 \code{"lowpass_fft"}, \code{"highpass_fft"}, \code{"kalman"}, \code{"kalman_irregular"},
-\code{"one_euro"} or \code{"ccma"}.}
+\code{"one_euro"}, \code{"ccma"} or \code{"deadband"}.}
 
 \item{...}{Arguments passed to the underlying filter.}
 }
@@ -35,14 +35,15 @@ Returns the same shape it is given. A numeric vector gives a numeric
 vector; a data frame of coordinate columns gives a data frame.
 
 Most methods are univariate and are applied one column at a time when
-given a frame. \code{"ccma"} is multivariate — each output coordinate depends
-on all of them — so it requires a frame and cannot be used with
-\code{\link[dplyr:across]{dplyr::across()}}.
+given a frame. \code{"ccma"} and \code{"deadband"} are multivariate — each output
+coordinate depends on all of them — so they require a frame and cannot be
+used with \code{\link[dplyr:across]{dplyr::across()}}.
 
 Method-specific arguments are passed through \code{...}, so a required one
 still has to be supplied: \code{sampling_rate} for \code{"sgolay"}, \code{"lowpass"},
 \code{"highpass"}, the \verb{_fft} variants and \code{"kalman"}; \code{times} for
-\code{"kalman_irregular"}; \code{cutoff_freq} for the frequency filters.
+\code{"kalman_irregular"}; \code{cutoff_freq} for the frequency filters; \code{threshold}
+for \code{"deadband"}.
 }
 \examples{
 x <- c(1, 2, 3, 100, 5, 6, 7, 8, 9)

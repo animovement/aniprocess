@@ -8,7 +8,7 @@ filter_across(
   data,
   method = c("gaussian", "rollmean", "rollmedian", "triangular", "sgolay", "lowpass",
     "highpass", "lowpass_fft", "highpass_fft", "kalman", "kalman_irregular", "one_euro",
-    "ccma"),
+    "ccma", "deadband"),
   variables = NULL,
   ...,
   on_deltas = FALSE
@@ -20,7 +20,7 @@ filter_across(
 \item{method}{Filter to apply. One of \code{"gaussian"}, \code{"rollmean"},
 \code{"rollmedian"}, \code{"triangular"}, \code{"sgolay"}, \code{"lowpass"}, \code{"highpass"},
 \code{"lowpass_fft"}, \code{"highpass_fft"}, \code{"kalman"}, \code{"kalman_irregular"},
-\code{"one_euro"} or \code{"ccma"}.}
+\code{"one_euro"}, \code{"ccma"} or \code{"deadband"}.}
 
 \item{variables}{Columns to filter, as a tidyselect expression.
 Defaults to the declared position columns.}
@@ -62,8 +62,10 @@ Beyond looping over columns, it fills in what the frame already knows:
 \code{"kalman_irregular"} takes its \code{times} from the index column
 (\code{\link[anicore:get_index]{anicore::get_index()}}). Either can still be passed explicitly to override.
 
-\code{"ccma"} is multivariate — each output coordinate depends on all of
-them — so it is applied jointly rather than column by column.
+\code{"ccma"} and \code{"deadband"} are multivariate — each output coordinate
+depends on all of them — so they are applied jointly rather than column
+by column, and need a Cartesian frame. \code{on_deltas} does not apply to
+them.
 }
 \examples{
 \dontrun{

@@ -2,11 +2,15 @@
 
 ## Added
 
+* `filter_deadband()` holds a still subject still (#104). The output stays put until the tracked point has moved more than `threshold` away from it, so tracking noise on a stationary point is removed rather than scaled down, and no longer inflates distance travelled or keeps speed off zero. `mode = "hold"` (the default) then jumps to the point, as OptiTrack Motive's Deadband Filter and EthoVision XT's Minimal Distance Moved do; `mode = "drag"` follows it at `threshold` behind without jumping. With several coordinate columns the distance is Euclidean. Incomplete rows are left as they are, and `max_gap` sets how long a gap keeps the anchor, as in `replace_na_*()`. Also available as `filter_across(method = "deadband")` and `filter_with(method = "deadband")`.
+
 * `mask_na_segment_length()` masks points whose segments are far off their usual length (#91), such as a foot matched wrongly in multi-camera 3D that stays confident and steady for many frames. Each segment of the structure attached with `anicore::set_structure()` is compared with the structure's `length`, or else with its median length over the track, and is off when it differs by more than both `tolerance` (relative) and `min_difference` (absolute). The point to blame is masked rather than its neighbours: a wrong ankle stretches shin and foot, so the ankle goes and the knee and the toe stay. `segments` restricts the judging to the segments meant to be rigid.
 
 * `mask_na_hampel()` masks spikes — a point that jumps away for a frame or two and comes back — by its distance from the rolling median of the window around it, against `k` robust deviations of that window (#90). The threshold is local, so it is tight on slow stretches and loose on fast ones, where a single speed threshold has to accommodate the fastest movement in the track. With several coordinate columns the distance is Euclidean and a point is masked in all axes at once; `min_distance` floors the threshold so a keypoint that barely moves does not lose its noise. Also available as `mask_na_across(method = "hampel")` and `mask_na_with(method = "hampel")`.
 
 ## Changed
+
+* `filter_across()` refuses `on_deltas = TRUE` for `"ccma"` and `"deadband"`, which work on positions, rather than ignoring it.
 
 * `mask_na_confidence()` takes a `missing` argument for rows whose confidence score is `NA` (#97), passed through by `mask_na_across("confidence")` and `mask_na_with("confidence")`. `"keep"`, the default, leaves them unmasked as before, since a missing score means *not assessed*, not *poor*; `"mask"` treats a missing score as failing the threshold. Masking them used to take a second call, `mask_na_range()` on `confidence`.
 
