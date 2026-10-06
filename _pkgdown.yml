@@ -51,6 +51,7 @@ reference:
   desc: Suppress noise while preserving the movement you care about.
   contents:
   - filter_ccma
+  - filter_deadband
   - filter_gaussian
   - filter_highpass
   - filter_highpass_fft
