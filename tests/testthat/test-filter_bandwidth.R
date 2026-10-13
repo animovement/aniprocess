@@ -1,8 +1,5 @@
 # tests/testthat/test-filters.R
 
-library(testthat)
-library(signal)
-
 # Helper function to generate test signals
 generate_test_signal <- function(
   freq1 = 2,

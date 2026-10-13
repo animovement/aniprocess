@@ -1,21 +1,4 @@
 #' @keywords internal
-check_signal <- function() {
-  rlang::check_installed(
-    "signal",
-    reason = "to use the bandwidth filters",
-    action = function(...) {
-      utils::install.packages(
-        'signal',
-        repos = c(
-          'https://animovement.r-universe.dev',
-          'https://cloud.r-project.org'
-        )
-      )
-    }
-  )
-}
-
-#' @keywords internal
 check_stinepack <- function() {
   rlang::check_installed(
     "stinepack",

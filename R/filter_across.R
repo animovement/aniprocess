@@ -46,7 +46,7 @@
 #' @return An aniframe of the same shape, with the selected columns
 #'   filtered.
 #'
-#' @examplesIf rlang::is_installed("signal")
+#' @examples
 #' tracking_data <- anicore::example_anipoint() |>
 #'   anicore::set_metadata(sampling_rate = 30)
 #'
