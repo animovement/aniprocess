@@ -18,6 +18,7 @@ gap_fixture <- function() {
 }
 
 test_that("replace_na_across forwards every method", {
+  skip_if_not_installed("stinepack")
   d <- gap_fixture()
 
   for (m in c("linear", "spline", "stine", "locf")) {

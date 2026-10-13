@@ -6,6 +6,7 @@
 # - "value" requires a value
 
 test_that("replace_na_with dispatches every method", {
+  skip_if_not_installed("stinepack")
   x <- c(1, NA, NA, 4, 5, NA, 7)
 
   expect_equal(replace_na_with(x, "linear"), replace_na_linear(x))
@@ -247,6 +248,7 @@ test_that("value replacement works correctly", {
 })
 
 test_that("min_gap and max_gap work together correctly", {
+  skip_if_not_installed("stinepack")
   # Test all methods with both constraints
   methods <- c("linear", "spline", "stine", "locf")
 
