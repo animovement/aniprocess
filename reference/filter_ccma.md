@@ -161,17 +161,17 @@ filter_across(af, "ccma", window_width_ma = 11, window_width_cc = 7)
 #> # Keypoints:   centroid
 #> # Sessions:    1
 #> # Trials:      1
-#>    individual keypoint session trial  time       x       y confidence
-#>         <int> <fct>      <int> <int> <int>   <dbl>   <dbl>      <dbl>
-#>  1          1 centroid       1     1     1 -1.10    0.229       0.450
-#>  2          1 centroid       1     1     2 -0.916  -0.0276      0.830
-#>  3          1 centroid       1     1     3 -0.726  -0.257       0.438
-#>  4          1 centroid       1     1     4 -0.530  -0.413       0.761
-#>  5          1 centroid       1     1     5 -0.313  -0.444       0.896
-#>  6          1 centroid       1     1     6 -0.159  -0.296       0.873
-#>  7          1 centroid       1     1     7 -0.186  -0.150       0.687
-#>  8          1 centroid       1     1     8 -0.211  -0.0153      0.605
-#>  9          1 centroid       1     1     9 -0.182   0.124       0.944
-#> 10          1 centroid       1     1    10 -0.0986  0.260       0.653
+#>    individual keypoint session trial  time        x        y confidence
+#>         <int> <fct>      <int> <int> <int>    <dbl>    <dbl>      <dbl>
+#>  1          1 centroid       1     1     1 -0.142    0.860        0.499
+#>  2          1 centroid       1     1     2 -0.252    0.507        0.769
+#>  3          1 centroid       1     1     3 -0.283    0.209        0.843
+#>  4          1 centroid       1     1     4 -0.244    0.00557      0.695
+#>  5          1 centroid       1     1     5 -0.0494  -0.108        0.952
+#>  6          1 centroid       1     1     6  0.0759   0.0140       0.884
+#>  7          1 centroid       1     1     7  0.0621   0.121        0.517
+#>  8          1 centroid       1     1     8 -0.00571  0.168        0.689
+#>  9          1 centroid       1     1     9 -0.0545   0.154        0.655
+#> 10          1 centroid       1     1    10 -0.0552   0.188        0.772
 #> # ℹ 50 more rows
 ```

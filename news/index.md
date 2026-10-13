@@ -48,6 +48,15 @@
 
 ### Changed
 
+- `signal` moves from Suggests to Imports, so the Butterworth and
+  Savitzky-Golay filters
+  ([`filter_lowpass()`](https://animovement.dev/aniprocess/reference/filter_lowpass.md),
+  [`filter_highpass()`](https://animovement.dev/aniprocess/reference/filter_highpass.md),
+  [`filter_sgolay()`](https://animovement.dev/aniprocess/reference/filter_sgolay.md),
+  and the methods of
+  [`filter_across()`](https://animovement.dev/aniprocess/reference/filter_across.md)
+  that use them) work without an install prompt.
+
 - [`filter_across()`](https://animovement.dev/aniprocess/reference/filter_across.md)
   refuses `on_deltas = TRUE` for `"ccma"` and `"deadband"`, which work
   on positions, rather than ignoring it.

@@ -177,22 +177,20 @@ find_troughs(x)
 
 # Usage with dplyr
 library(dplyr)
-data_frame(
+data.frame(
   time = 1:10,
   value = c(5, 3, 1, 4, 2, 1, 3, 0, 4, 5)
-) %>%
+) |>
   mutate(troughs = find_troughs(value, window_width = 3))
-#> # A tibble: 10 × 3
-#>     time value troughs
-#>    <int> <dbl> <lgl>  
-#>  1     1     5 NA     
-#>  2     2     3 FALSE  
-#>  3     3     1 TRUE   
-#>  4     4     4 FALSE  
-#>  5     5     2 FALSE  
-#>  6     6     1 TRUE   
-#>  7     7     3 FALSE  
-#>  8     8     0 TRUE   
-#>  9     9     4 FALSE  
-#> 10    10     5 NA     
+#>    time value troughs
+#> 1     1     5      NA
+#> 2     2     3   FALSE
+#> 3     3     1    TRUE
+#> 4     4     4   FALSE
+#> 5     5     2   FALSE
+#> 6     6     1    TRUE
+#> 7     7     3   FALSE
+#> 8     8     0    TRUE
+#> 9     9     4   FALSE
+#> 10   10     5      NA
 ```

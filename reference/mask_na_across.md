@@ -103,14 +103,56 @@ for the vector-level generic.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+tracking_data <- anicore::example_anipoint()
+
 # time comes from the aniframe's metadata
 mask_na_across(tracking_data, "speed", threshold = "auto")
+#> # Individuals: 1, 2, 3
+#> # Keypoints:   head, neck, shoulder_right, shoulder_left, abdomen, hip_right,
+#> #   hip_left, knee_right, knee_left, foot_right, foot_left
+#> # Sessions:    1
+#> # Trials:      1
+#>    individual keypoint session trial  time      x      y confidence
+#>         <int> <fct>      <int> <int> <int>  <dbl>  <dbl>      <dbl>
+#>  1          1 head           1     1     1  0.933  0.574      0.912
+#>  2          1 head           1     1     2  0.303  1.34       0.685
+#>  3          1 head           1     1     3 -1.96  -0.461      0.908
+#>  4          1 head           1     1     4  0.354 -0.192      0.912
+#>  5          1 head           1     1     5  0.450 -2.08       0.951
+#>  6          1 head           1     1     6  0.660 -1.91       0.832
+#>  7          1 head           1     1     7 -1.03   1.41       0.801
+#>  8          1 head           1     1     8 -2.37   0.528      0.463
+#>  9          1 head           1     1     9 -0.325  0.644      0.820
+#> 10          1 head           1     1    10 -0.944  0.901      0.425
+#> # ℹ 1,640 more rows
 
-mask_na_across(tracking_data, "range", min_value = 0, max_value = 1920)
+mask_na_across(tracking_data, "range", min_value = -2, max_value = 2)
+#> # Individuals: 1, 2, 3
+#> # Keypoints:   head, neck, shoulder_right, shoulder_left, abdomen, hip_right,
+#> #   hip_left, knee_right, knee_left, foot_right, foot_left
+#> # Sessions:    1
+#> # Trials:      1
+#>    individual keypoint session trial  time      x      y confidence
+#>         <int> <fct>      <int> <int> <int>  <dbl>  <dbl>      <dbl>
+#>  1          1 head           1     1     1  0.933  0.574      0.912
+#>  2          1 head           1     1     2  0.303  1.34       0.685
+#>  3          1 head           1     1     3 -1.96  -0.461      0.908
+#>  4          1 head           1     1     4  0.354 -0.192      0.912
+#>  5          1 head           1     1     5  0.450 NA          0.951
+#>  6          1 head           1     1     6  0.660 -1.91       0.832
+#>  7          1 head           1     1     7 -1.03   1.41       0.801
+#>  8          1 head           1     1     8 NA      0.528      0.463
+#>  9          1 head           1     1     9 -0.325  0.644      0.820
+#> 10          1 head           1     1    10 -0.944  0.901      0.425
+#> # ℹ 1,640 more rows
 
 # trackball positions are integrated displacements: reject the step,
 # not the position it left behind
+trackball_data <- anicore::as_anipoint(data.frame(
+  time = 1:8,
+  x = cumsum(c(0, 1, 1, 1, 50, 1, 1, 1)),
+  y = cumsum(c(0, 1, 1, 1, 1, 1, 1, 1))
+))
 mask_na_across(
   trackball_data,
   "range",
@@ -118,5 +160,15 @@ mask_na_across(
   max_value = 10,
   on_deltas = TRUE
 )
-} # }
+#> # Keypoints: centroid
+#>   keypoint  time     x     y
+#>   <fct>    <int> <dbl> <dbl>
+#> 1 centroid     1     0     0
+#> 2 centroid     2     1     1
+#> 3 centroid     3     2     2
+#> 4 centroid     4     3     3
+#> 5 centroid     5    NA     4
+#> 6 centroid     6     4     5
+#> 7 centroid     7     5     6
+#> 8 centroid     8     6     7
 ```

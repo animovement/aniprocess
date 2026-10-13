@@ -48,11 +48,13 @@ The function applies both minimum and maximum gap criteria:
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 x <- c(1, NA, NA, 4, 5, NA, NA, NA, 9)
 replace_na_value(x, value = 0)  # fills all gaps with 0
+#> [1] 1 0 0 4 5 0 0 0 9
 replace_na_value(x, value = -1, min_gap = 2)  # only gaps >= 2
+#> [1]  1 -1 -1  4  5 -1 -1 -1  9
 replace_na_value(x, value = -999, max_gap = 2)  # only gaps <= 2
+#> [1]    1 -999 -999    4    5   NA   NA   NA    9
 replace_na_value(x, value = 0, min_gap = 2, max_gap = 3)  # gaps between 2 and 3
-} # }
+#> [1] 1 0 0 4 5 0 0 0 9
 ```

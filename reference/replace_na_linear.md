@@ -55,11 +55,13 @@ The function applies both minimum and maximum gap criteria:
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 x <- c(1, NA, NA, 4, 5, NA, NA, NA, 9)
 replace_na_linear(x)  # interpolates all gaps
+#> [1] 1 2 3 4 5 6 7 8 9
 replace_na_linear(x, min_gap = 2)  # only gaps >= 2
+#> [1] 1 2 3 4 5 6 7 8 9
 replace_na_linear(x, max_gap = 2)  # only gaps <= 2
+#> [1]  1  2  3  4  5 NA NA NA  9
 replace_na_linear(x, min_gap = 2, max_gap = 3)  # gaps between 2 and 3
-} # }
+#> [1] 1 2 3 4 5 6 7 8 9
 ```

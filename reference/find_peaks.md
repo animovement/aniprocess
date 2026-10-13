@@ -184,24 +184,20 @@ library(dplyr)
 #> The following objects are masked from ‘package:base’:
 #> 
 #>     intersect, setdiff, setequal, union
-data_frame(
+data.frame(
   time = 1:10,
   value = c(1, 3, 7, 4, 2, 6, 5, 8, 4, 2)
-) %>%
+) |>
   mutate(peaks = find_peaks(value, window_width = 3))
-#> Warning: `data_frame()` was deprecated in tibble 1.1.0.
-#> ℹ Please use `tibble()` instead.
-#> # A tibble: 10 × 3
-#>     time value peaks
-#>    <int> <dbl> <lgl>
-#>  1     1     1 NA   
-#>  2     2     3 FALSE
-#>  3     3     7 TRUE 
-#>  4     4     4 FALSE
-#>  5     5     2 FALSE
-#>  6     6     6 TRUE 
-#>  7     7     5 FALSE
-#>  8     8     8 TRUE 
-#>  9     9     4 FALSE
-#> 10    10     2 NA   
+#>    time value peaks
+#> 1     1     1    NA
+#> 2     2     3 FALSE
+#> 3     3     7  TRUE
+#> 4     4     4 FALSE
+#> 5     5     2 FALSE
+#> 6     6     6  TRUE
+#> 7     7     5 FALSE
+#> 8     8     8  TRUE
+#> 9     9     4 FALSE
+#> 10   10     2    NA
 ```

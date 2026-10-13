@@ -44,11 +44,13 @@ The function applies both minimum and maximum gap criteria:
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 x <- c(1, NA, NA, 4, 5, NA, NA, NA, 9)
 replace_na_locf(x)  # fills all gaps
+#> [1] 1 1 1 4 5 5 5 5 9
 replace_na_locf(x, min_gap = 2)  # only gaps >= 2
+#> [1] 1 1 1 4 5 5 5 5 9
 replace_na_locf(x, max_gap = 2)  # only gaps <= 2
+#> [1]  1  1  1  4  5 NA NA NA  9
 replace_na_locf(x, min_gap = 2, max_gap = 3)  # gaps between 2 and 3
-} # }
+#> [1] 1 1 1 4 5 5 5 5 9
 ```
