@@ -68,14 +68,16 @@ by column, and need a Cartesian frame. \code{on_deltas} does not apply to
 them.
 }
 \examples{
-\dontrun{
+\dontshow{if (rlang::is_installed("signal")) withAutoprint(\{ # examplesIf}
+tracking_data <- anicore::example_anipoint() |>
+  anicore::set_metadata(sampling_rate = 30)
+
 # sampling_rate is taken from the aniframe's metadata
 filter_across(tracking_data, "lowpass", cutoff_freq = 5)
 
 # restrict to some of the spatial columns
 filter_across(tracking_data, "gaussian", variables = c(x, y), sigma = 2)
-}
-
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 \code{\link[=filter_with]{filter_with()}} for the vector-level generic.

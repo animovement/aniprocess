@@ -41,10 +41,11 @@ grouping — so a gap is never filled by
 interpolating between two different tracks.
 }
 \examples{
-\dontrun{
+tracking_data <- anicore::example_anipoint()
+tracking_data$x[c(2, 3, 10)] <- NA
+
 replace_na_across(tracking_data, "linear", max_gap = 5)
 replace_na_across(tracking_data, "value", value = 0, variables = c(x, y))
-}
 
 }
 \seealso{

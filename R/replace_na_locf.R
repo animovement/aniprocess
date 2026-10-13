@@ -21,13 +21,11 @@
 #' If both parameters are specified, min_gap must be less than or equal to max_gap.
 #'
 #' @examples
-#' \dontrun{
 #' x <- c(1, NA, NA, 4, 5, NA, NA, NA, 9)
 #' replace_na_locf(x)  # fills all gaps
 #' replace_na_locf(x, min_gap = 2)  # only gaps >= 2
 #' replace_na_locf(x, max_gap = 2)  # only gaps <= 2
 #' replace_na_locf(x, min_gap = 2, max_gap = 3)  # gaps between 2 and 3
-#' }
 #'
 #' @export
 replace_na_locf <- function(x, min_gap = 1, max_gap = Inf) {

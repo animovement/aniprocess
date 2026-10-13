@@ -46,14 +46,15 @@
 #' @return An aniframe of the same shape, with the selected columns
 #'   filtered.
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf rlang::is_installed("signal")
+#' tracking_data <- anicore::example_anipoint() |>
+#'   anicore::set_metadata(sampling_rate = 30)
+#'
 #' # sampling_rate is taken from the aniframe's metadata
 #' filter_across(tracking_data, "lowpass", cutoff_freq = 5)
 #'
 #' # restrict to some of the spatial columns
 #' filter_across(tracking_data, "gaussian", variables = c(x, y), sigma = 2)
-#' }
 #'
 #' @seealso [filter_with()] for the vector-level generic.
 #' @export

@@ -43,11 +43,11 @@ Stineman interpolation is particularly good at preserving the shape of the data
 and avoiding overshooting.
 }
 \examples{
-\dontrun{
+\dontshow{if (rlang::is_installed("stinepack")) withAutoprint(\{ # examplesIf}
 x <- c(1, NA, NA, 4, 5, NA, NA, NA, 9)
 replace_na_stine(x)  # interpolates all gaps
 replace_na_stine(x, min_gap = 2)  # only gaps >= 2
 replace_na_stine(x, max_gap = 2)  # only gaps <= 2
 replace_na_stine(x, min_gap = 2, max_gap = 3)  # gaps between 2 and 3
-}
+\dontshow{\}) # examplesIf}
 }
