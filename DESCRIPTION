@@ -6,16 +6,18 @@ Authors@R:
     person(
       "Mikkel", 
       "Roald-Arbøl", 
-      role = c("aut", "cre"), 
+      role = c("aut", "cre", "cph"), 
       email = "animovement.84w1m@passmail.com",
       comment = c(ORCID = "0000-0002-9998-0058")
       )
 Description: An R package for signal processing and filtering of movement data.
 License: MIT + file LICENSE
+Depends:
+    R (>= 4.1.0)
 URL: https://animovement.dev/aniprocess/, https://github.com/animovement/aniprocess/
 BugReports: https://github.com/animovement/aniprocess/issues
 Encoding: UTF-8
-LazyData: true
+Language: en-GB
 Imports:
     anicore (>= 0.8.0.9003),
     cli,
@@ -24,16 +26,16 @@ Imports:
     lifecycle,
     methods,
     rlang,
+    signal,
     tidyselect
 Suggests:
     covr,
-    knitr,
-    signal,
     stinepack,
     testthat (>= 3.0.0)
 Additional_repositories: https://animovement.r-universe.dev
 Config/testthat/edition: 3
-Config/Needs/website: animovement/animovementtemplate
+Config/Needs/website:
+    animovement/animovementtemplate,
+    knitr
 Roxygen: list(markdown = TRUE)
-VignetteBuilder: knitr
 Config/roxygen2/version: 8.1.0

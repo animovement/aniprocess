@@ -54,13 +54,17 @@
 #' \doi{10.1088/1478-3975/14/1/015002}.
 #'
 #' @examples
-#' \dontrun{
+#' # A two-frame glitch: x jumps away at row 41 and returns at row 43
+#' coords <- data.frame(
+#'   x = c(rep(0:1, 20), 50, 50, rep(0:1, 19)),
+#'   y = rep(0:1, 40)
+#' )
+#'
 #' # Default Todd thresholds, per-axis.
 #' mask_na_excursion(coords)
 #'
 #' # Joint Euclidean variant, looser thresholds.
 #' mask_na_excursion(coords, outlier_sd = 4, by_axis = FALSE)
-#' }
 #'
 #' @seealso [mask_na_speed()] for single-frame outliers.
 #'

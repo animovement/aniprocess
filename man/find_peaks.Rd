@@ -117,10 +117,10 @@ find_peaks(x)
 
 # Usage with dplyr
 library(dplyr)
-data_frame(
+data.frame(
   time = 1:10,
   value = c(1, 3, 7, 4, 2, 6, 5, 8, 4, 2)
-) \%>\%
+) |>
   mutate(peaks = find_peaks(value, window_width = 3))
 
 }

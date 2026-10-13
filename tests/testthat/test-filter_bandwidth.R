@@ -1,8 +1,5 @@
 # tests/testthat/test-filters.R
 
-library(testthat)
-library(signal)
-
 # Helper function to generate test signals
 generate_test_signal <- function(
   freq1 = 2,
@@ -96,6 +93,7 @@ test_that("filters handle invalid inputs appropriately", {
 
 # Test NA handling
 test_that("filters handle NA values correctly with different methods", {
+  skip_if_not_installed("stinepack")
   x <- generate_test_signal()
 
   # Create signal with NAs
@@ -179,6 +177,7 @@ test_that("filters handle NA values correctly with different methods", {
 
 # Test keep_na functionality
 test_that("keep_na parameter works correctly", {
+  skip_if_not_installed("stinepack")
   x <- generate_test_signal()
 
   # Create signal with NAs
@@ -252,6 +251,7 @@ test_that("FFT-based filters perform similarly to Butterworth", {
 
 # Test NA handling in FFT filters
 test_that("FFT filters handle NA values consistently", {
+  skip_if_not_installed("stinepack")
   x <- generate_test_signal()
   x_with_na <- x
   na_positions <- c(100, 200, 300:305)

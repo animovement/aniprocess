@@ -117,10 +117,10 @@ find_troughs(x)
 
 # Usage with dplyr
 library(dplyr)
-data_frame(
+data.frame(
   time = 1:10,
   value = c(5, 3, 1, 4, 2, 1, 3, 0, 4, 5)
-) \%>\%
+) |>
   mutate(troughs = find_troughs(value, window_width = 3))
 
 }

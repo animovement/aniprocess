@@ -89,9 +89,6 @@ filter_lowpass <- function(
   keep_na = TRUE,
   ...
 ) {
-  # Check that signal is installed
-  check_signal()
-
   # Input validation
   if (!is.numeric(x)) {
     cli::cli_abort("Input signal must be numeric")
@@ -230,9 +227,6 @@ filter_highpass <- function(
   keep_na = TRUE,
   ...
 ) {
-  # Check that signal is installed
-  check_signal()
-
   # Input validation
   if (!is.numeric(x)) {
     cli::cli_abort("Input signal must be numeric")

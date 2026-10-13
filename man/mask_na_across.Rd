@@ -81,14 +81,20 @@ and there is no step into it to judge.
 }
 
 \examples{
-\dontrun{
+tracking_data <- anicore::example_anipoint()
+
 # time comes from the aniframe's metadata
 mask_na_across(tracking_data, "speed", threshold = "auto")
 
-mask_na_across(tracking_data, "range", min_value = 0, max_value = 1920)
+mask_na_across(tracking_data, "range", min_value = -2, max_value = 2)
 
 # trackball positions are integrated displacements: reject the step,
 # not the position it left behind
+trackball_data <- anicore::as_anipoint(data.frame(
+  time = 1:8,
+  x = cumsum(c(0, 1, 1, 1, 50, 1, 1, 1)),
+  y = cumsum(c(0, 1, 1, 1, 1, 1, 1, 1))
+))
 mask_na_across(
   trackball_data,
   "range",
@@ -96,7 +102,6 @@ mask_na_across(
   max_value = 10,
   on_deltas = TRUE
 )
-}
 
 }
 \seealso{

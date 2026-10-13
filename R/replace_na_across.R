@@ -23,10 +23,11 @@
 #' @return An aniframe of the same shape, with gaps filled.
 #'
 #' @examples
-#' \dontrun{
+#' tracking_data <- anicore::example_anipoint()
+#' tracking_data$x[c(2, 3, 10)] <- NA
+#'
 #' replace_na_across(tracking_data, "linear", max_gap = 5)
 #' replace_na_across(tracking_data, "value", value = 0, variables = c(x, y))
-#' }
 #'
 #' @seealso [replace_na_with()] for the vector-level generic.
 #' @export
