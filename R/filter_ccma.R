@@ -73,7 +73,8 @@
 #' @references
 #' Steinecker, T. & Wuensche, H.-J. (2023). A Simple and Model-Free
 #' Path Filtering Algorithm for Smoothing and Accuracy. *2023 IEEE
-#' Intelligent Vehicles Symposium (IV)*.
+#' Intelligent Vehicles Symposium (IV)*, 1-7.
+#' \doi{10.1109/IV55152.2023.10186704}.
 #'
 #' Reference Python implementation:
 #' <https://github.com/UniBwTAS/ccma>

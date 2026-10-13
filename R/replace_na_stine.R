@@ -28,6 +28,10 @@
 #' Stineman interpolation is particularly good at preserving the shape of the data
 #' and avoiding overshooting.
 #'
+#' @references
+#' Stineman, R. W. (1980). A consistently well-behaved method of
+#' interpolation. *Creative Computing*, 6(7), 54-57.
+#'
 #' @examplesIf rlang::is_installed("stinepack")
 #' x <- c(1, NA, NA, 4, 5, NA, NA, NA, 9)
 #' replace_na_stine(x)  # interpolates all gaps
