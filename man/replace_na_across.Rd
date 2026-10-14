@@ -33,8 +33,6 @@ to the declared position columns.}
 An aniframe of the same shape, with gaps filled.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
 The aniframe-level entry point to the \verb{replace_na_*()} family. Fills
 gaps in the frame's declared position columns, within its existing
 grouping — so a gap is never filled by

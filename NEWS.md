@@ -10,6 +10,8 @@
 
 ## Changed
 
+* `filter_across()`, `mask_na_across()` and `replace_na_across()` are no longer experimental; they are now stable (#110).
+
 * `signal` moves from Suggests to Imports, so the Butterworth and Savitzky-Golay filters (`filter_lowpass()`, `filter_highpass()`, `filter_sgolay()`, and the methods of `filter_across()` that use them) work without an install prompt.
 
 * `filter_across()` refuses `on_deltas = TRUE` for `"ccma"` and `"deadband"`, which work on positions, rather than ignoring it.

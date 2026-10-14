@@ -43,8 +43,6 @@ An aniframe of the same shape, with failing values replaced by
 \code{NA}.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
 The aniframe-level entry point to the \verb{mask_na_*()} family. Applies a
 named criterion to the frame's declared position columns, within its
 existing grouping — so a criterion is never
