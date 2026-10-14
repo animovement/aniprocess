@@ -74,7 +74,8 @@
 #'
 #' @references
 #' Savitzky, A., & Golay, M.J.E. (1964). Smoothing and Differentiation of Data by
-#' Simplified Least Squares Procedures. Analytical Chemistry, 36(8), 1627-1639.
+#' Simplified Least Squares Procedures. *Analytical Chemistry*, 36(8),
+#' 1627-1639. \doi{10.1021/ac60214a047}.
 #'
 #' @export
 filter_sgolay <- function(

@@ -121,7 +121,8 @@ filter_across(af, "ccma", window_width_ma = 11, window_width_cc = 7)
 \references{
 Steinecker, T. & Wuensche, H.-J. (2023). A Simple and Model-Free
 Path Filtering Algorithm for Smoothing and Accuracy. \emph{2023 IEEE
-Intelligent Vehicles Symposium (IV)}.
+Intelligent Vehicles Symposium (IV)}, 1-7.
+\doi{10.1109/IV55152.2023.10186704}.
 
 Reference Python implementation:
 \url{https://github.com/UniBwTAS/ccma}

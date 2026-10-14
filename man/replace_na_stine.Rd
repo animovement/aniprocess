@@ -51,3 +51,7 @@ replace_na_stine(x, max_gap = 2)  # only gaps <= 2
 replace_na_stine(x, min_gap = 2, max_gap = 3)  # gaps between 2 and 3
 \dontshow{\}) # examplesIf}
 }
+\references{
+Stineman, R. W. (1980). A consistently well-behaved method of
+interpolation. \emph{Creative Computing}, 6(7), 54-57.
+}
