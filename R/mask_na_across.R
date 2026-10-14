@@ -1,8 +1,6 @@
 #' Mask values to NA across an aniframe's spatial columns
 #'
 #' @description
-#' `r lifecycle::badge('experimental')`
-#'
 #' The aniframe-level entry point to the `mask_na_*()` family. Applies a
 #' named criterion to the frame's declared position columns, within its
 #' existing grouping — so a criterion is never
