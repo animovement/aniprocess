@@ -55,6 +55,11 @@ The function applies both minimum and maximum gap criteria:
 Stineman interpolation is particularly good at preserving the shape of
 the data and avoiding overshooting.
 
+## References
+
+Stineman, R. W. (1980). A consistently well-behaved method of
+interpolation. *Creative Computing*, 6(7), 54-57.
+
 ## Examples
 
 ``` r
