@@ -32,9 +32,9 @@
 
 * `filter_lowpass()`, `filter_highpass()`, `filter_lowpass_fft()` and `filter_highpass_fft()` share one reflection-padding helper, so the width applied and the width removed cannot drift apart again (#79).
 
-## Deprecated
+## Removed
 
-* `filter_na_across()`, `filter_na_with()`, `filter_na_confidence()`, `filter_na_excursion()`, `filter_na_range()`, `filter_na_roi()` and `filter_na_speed()` are deprecated in favour of `mask_na_across()`, `mask_na_with()`, `mask_na_confidence()`, `mask_na_excursion()`, `mask_na_range()`, `mask_na_roi()` and `mask_na_speed()` (#94). They warn and forward to the new name, and will be removed after the next release.
+* The deprecated `filter_na_across()`, `filter_na_with()`, `filter_na_confidence()`, `filter_na_excursion()`, `filter_na_range()`, `filter_na_roi()` and `filter_na_speed()` are removed; use `mask_na_across()`, `mask_na_with()`, `mask_na_confidence()`, `mask_na_excursion()`, `mask_na_range()`, `mask_na_roi()` and `mask_na_speed()` (#94, #110).
 
 ## Fixed
 
