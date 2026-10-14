@@ -1,7 +1,5 @@
 # Apply a filter across an aniframe's spatial columns
 
-**\[experimental\]**
-
 The aniframe-level entry point to the `filter_*()` family. Applies a
 named filter to the frame's declared position columns, within its
 existing grouping.

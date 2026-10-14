@@ -1,7 +1,5 @@
 # Fill missing values across an aniframe's spatial columns
 
-**\[experimental\]**
-
 The aniframe-level entry point to the `replace_na_*()` family. Fills
 gaps in the frame's declared position columns, within its existing
 grouping — so a gap is never filled by interpolating between two

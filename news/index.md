@@ -48,6 +48,13 @@
 
 ### Changed
 
+- [`filter_across()`](https://animovement.dev/aniprocess/reference/filter_across.md),
+  [`mask_na_across()`](https://animovement.dev/aniprocess/reference/mask_na_across.md)
+  and
+  [`replace_na_across()`](https://animovement.dev/aniprocess/reference/replace_na_across.md)
+  are no longer experimental; they are now stable
+  ([\#110](https://github.com/animovement/aniprocess/issues/110)).
+
 - `signal` moves from Suggests to Imports, so the Butterworth and
   Savitzky-Golay filters
   ([`filter_lowpass()`](https://animovement.dev/aniprocess/reference/filter_lowpass.md),

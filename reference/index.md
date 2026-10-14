@@ -5,14 +5,11 @@
 Apply a named method across the spatial columns, within groups.
 
 - [`filter_across()`](https://animovement.dev/aniprocess/reference/filter_across.md)
-  **\[experimental\]** : Apply a filter across an aniframe's spatial
-  columns
+  : Apply a filter across an aniframe's spatial columns
 - [`mask_na_across()`](https://animovement.dev/aniprocess/reference/mask_na_across.md)
-  **\[experimental\]** : Mask values to NA across an aniframe's spatial
-  columns
+  : Mask values to NA across an aniframe's spatial columns
 - [`replace_na_across()`](https://animovement.dev/aniprocess/reference/replace_na_across.md)
-  **\[experimental\]** : Fill missing values across an aniframe's
-  spatial columns
+  : Fill missing values across an aniframe's spatial columns
 
 ## Choose a method by name
 
